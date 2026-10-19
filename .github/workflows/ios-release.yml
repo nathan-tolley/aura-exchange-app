@@ -1,0 +1,97 @@
+# Manually builds the chosen branch into an unsigned iOS .ipa on a GitHub macOS
+# runner (real Apple hardware) and publishes it as a GitHub Release.
+# Run it from Actions -> iOS release -> Run workflow. See README.md.
+name: iOS release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version as major.minor.patch, e.g. 1.2.0 (blank = version in pubspec.yaml)"
+        required: false
+        default: ""
+      prerelease:
+        description: "Mark as a pre-release"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write # create the release and its tag
+
+concurrency:
+  group: ios-release
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: "3.47.7" # keep in step with your local Flutter
+
+jobs:
+  release:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Work out the version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          RUN: ${{ github.run_number }}
+        run: |
+          VERSION="${INPUT_VERSION:-$(sed -nE 's/^version: *([0-9]+\.[0-9]+\.[0-9]+).*/\1/p' pubspec.yaml)}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version must look like 1.2.0, got '$VERSION'"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION.$RUN" >> "$GITHUB_OUTPUT"
+          echo "Releasing v$VERSION.$RUN from $GITHUB_REF_NAME"
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v6
+        with:
+          path: ~/flutter
+          key: flutter-${{ runner.os }}-${{ env.FLUTTER_VERSION }}
+
+      - name: Install Flutter ${{ env.FLUTTER_VERSION }}
+        run: |
+          [ -x ~/flutter/bin/flutter ] || git clone --depth 1 -b "$FLUTTER_VERSION" https://github.com/flutter/flutter.git ~/flutter
+          echo "$HOME/flutter/bin" >> "$GITHUB_PATH"
+
+      - name: Analyze and test
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+
+      - name: Build (release, unsigned)
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          RUN: ${{ github.run_number }}
+        run: flutter build ios --release --no-codesign --build-name "$VERSION" --build-number "$RUN"
+
+      - name: Package .ipa
+        id: ipa
+        env:
+          NAME: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.ipa
+        run: |
+          mkdir Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          zip -qry "$NAME" Payload
+          echo "file=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          FILE: ${{ steps.ipa.outputs.file }}
+          PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          flags=()
+          [ "$PRERELEASE" = "true" ] && flags+=(--prerelease)
+          gh release create "$TAG" "$FILE" \
+            --target "$GITHUB_SHA" \
+            --title "$TAG" \
+            --notes "Built from \`$GITHUB_REF_NAME\` (${GITHUB_SHA:0:7}). Install the .ipa with Sideloadly." \
+            --generate-notes \
+            "${flags[@]}"
