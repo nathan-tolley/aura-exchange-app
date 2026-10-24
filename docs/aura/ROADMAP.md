@@ -56,6 +56,7 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - an idempotency-key helper bound to user actions
 - [ ] `errors.dart`: parse the one error shape. `l10n/strings.dart` builds copy for every code in `API-CONTRACT.md`.
 - [ ] `format/`: money, change, percent, ticker, exchange-local time, relative time and countdown, with unit tests using the examples in `DESIGN.md` → Numbers.
+  - *2026-10-24: money, change, percent, impact, tape change, quantity, ticker and countdown were pulled forward into A1 (the components need them), with tests in `test/format/`. Exchange-local time and relative time are still to do.*
 - [ ] `stream.dart`:
   - subscribe per exchange
   - ping every 25 s
