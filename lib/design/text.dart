@@ -17,7 +17,11 @@ TextStyle auraBaseTextStyle({bool? systemSans}) {
   final system = systemSans ?? auraUsesSystemSans;
   return AuraType.body.copyWith(
     fontFamily: system ? null : 'Inter',
-    letterSpacing: 0,
+    // The references set -0.005em on all text (about -0.075 at 15 pt); styles
+    // with their own tracking (display, price, impact, headline) override it.
+    letterSpacing: -0.075,
+    // Extra line height splits evenly above and below, as in CSS.
+    leadingDistribution: TextLeadingDistribution.even,
     decoration: TextDecoration.none,
   );
 }

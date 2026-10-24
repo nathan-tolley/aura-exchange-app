@@ -4,16 +4,11 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A1 → fonts (branch `a1-design-foundation`). A0 is done locally; its GitHub items wait on Nathan.
-- State: done (Nathan OK'd the download on 2026-10-24)
-- Next action: golden harness (`test/support/golden.dart`: 420 pt preview at 2×, content 358 pt wide from x 16), `dart_test.yaml` with a `golden` tag, release workflow runs `flutter test --exclude-tags golden`; then component batch 1. The A1 order (each its own commit):
-  1. `tool/gen_tokens.dart`: `design/tokens.json` → `lib/design/tokens.dart` (must reproduce the committed file exactly) and `design/icons.json` → `lib/design/icon_paths.dart`.
-  2. `lib/format/` basics pulled forward from A2 (money split into `A$`/whole/cents, U+2212 minus, change string), unit-tested with the `DESIGN.md` → Numbers examples. `AuraMoney` and `AuraPriceChange` need them.
-  3. `AuraIcon` (CustomPainter, 24-unit viewBox, 1.7 stroke, round caps).
-  4. Fonts, once Nathan OKs the download: google/fonts variable TTFs (Newsreader + Italic, JetBrains Mono, Inter), weights through the `wght` axis. On web and in goldens a `DefaultTextStyle` supplies Inter; iOS keeps SF.
-  5. Components, exact values from `design/reference/web/components.css`, in batches: text primitives (Money, PriceChange, Tag, StatusChip, Countdown, ImpactDisc, Avatar, IconButton) → controls (Button, SlideToConfirm, Stepper, SegmentedControl, Tabs, SearchField) → structure (SectionHeader, StatCard, RangeBar, Receipt, NavCard/NavRow, QuoteCard, Banner, EmptyState, Toast) → composites (Sparkline, ChartTooltip, StockRow, HeroCard, Tape, TabBar, Sheet). Inside-sheet variants included.
-  6. State Gallery at a debug-only `/gallery` route.
-  7. Goldens at @2x with real fonts loaded in `test/flutter_test_config.dart`, each compared with `design/reference/components/<Name>.png`. Tag them `golden`, and have the release workflow run `flutter test --exclude-tags golden`, because Windows-rendered goldens won't match the macOS runner pixel for pixel.
+- Step: A1 → components batch 1 done (branch `a1-design-foundation`). A0 is done locally; its GitHub items wait on Nathan.
+- State: paused at a usage limit, all work committed
+- Next action: components batch 2 (Button, SlideToConfirm, Stepper, SegmentedControl, Tabs, SearchField): one file each in `lib/design/widgets/`, previews added to `test/goldens/components_test.dart`, then `flutter test test/goldens --update-goldens` and compare every golden with its reference (see "How to compare" below). Then batch 3 (SectionHeader, StatCard, RangeBar, Receipt, NavCard/NavRow, QuoteCard, Banner, EmptyState, Toast), batch 4 (Sparkline, ChartTooltip, StockRow, HeroCard, Tape, TabBar, Sheet), the State Gallery, and the inside-sheet variants.
+- How to compare: goldens are 840 px wide at 2× like the references. Diff each golden against `design/reference/components/<Name>.png` and look at both. Batch 1 is within 0–3% differing pixels (antialiasing), except StatusChip and Tag, whose 12.5 pt text sits 2 pt lower than the preview card's. Recheck that against the real header chip in A3 (W01) before changing anything.
+- Lessons: put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`.
 - Uncommitted work: none
 - Waiting on Nathan:
   - **Create the GitHub repo.** Creating the public repo `nathan-tolley/aura-exchange-app` was blocked by Claude Code's auto-mode permission check, so this repo exists only locally (made from the template's commit `1268d28`, no remote). When you're happy to publish, run these from this folder. They create the repo empty, then push `main` first so it becomes the default branch:
@@ -38,4 +33,5 @@ One line per finished step: date · step · what · commit.
 - 2026-10-24 · A1 · `tool/gen_tokens.dart`: tokens.json → `lib/design/tokens.dart` (identical to the handoff's), icons.json → `lib/design/icon_paths.dart` (`AuraIcons` enum); drift test · `dd0817a`
 - 2026-10-24 · A1 · `lib/format/`: money (parts, U+2212), change, percent, impact, tape change, quantity, ticker, countdown; 14 unit tests from `DESIGN.md` → Numbers · `965cfbe`
 - 2026-10-24 · A1 · `AuraIcon` (CustomPainter from the generated paths, stroke weight in viewBox units, filled variant, decorative unless labelled); all 34 checked by eye against `Icon.png` · `5be5258`
-- 2026-10-24 · A1 · Fonts: Newsreader (+ Italic), JetBrains Mono and Inter variable TTFs from google/fonts with OFL licenses (registered in `main.dart`); tests load them; `auraBaseTextStyle()` as the app's default text style · (this commit)
+- 2026-10-24 · A1 · Fonts: Newsreader (+ Italic), JetBrains Mono and Inter variable TTFs from google/fonts with OFL licenses (registered in `main.dart`); tests load them; `auraBaseTextStyle()` as the app's default text style · `71ec383`
+- 2026-10-24 · A1 · Golden harness (2× capture, `golden` tag, release workflow skips goldens), base text tracking and even leading to match the references, and components batch 1: Money, PriceChange, Tag, StatusChip (+ `glass`), Countdown, ImpactDisc, Avatar, IconButton, with goldens and behavior tests · (this commit)

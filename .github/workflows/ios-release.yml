@@ -62,7 +62,7 @@ jobs:
         run: |
           flutter pub get
           flutter analyze
-          flutter test
+          flutter test --exclude-tags golden # goldens are rendered on Windows; macOS rasterizes text differently
 
       - name: Build (release, unsigned)
         env:

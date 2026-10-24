@@ -26,7 +26,8 @@ void main() {
     expect(style.fontFamily, 'Inter');
     expect(style.fontSize, AuraType.body.fontSize);
     expect(style.color, AuraColors.ink);
-    expect(style.letterSpacing, 0);
+    expect(style.letterSpacing, -0.075);
+    expect(style.leadingDistribution, TextLeadingDistribution.even);
     expect(auraBaseTextStyle(systemSans: true).fontFamily, isNull);
   });
 }
