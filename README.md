@@ -1,31 +1,23 @@
-# Flutter iOS template
+# Aura Exchange
 
-A plain Flutter app that GitHub builds into an iPhone app (`.ipa`). You
-install it on your own iPhone for free with Sideloadly. You don't need a Mac
-or a paid Apple Developer account.
+The iPhone app for Aura Exchange, a play-money social stock market where every
+friend is a listed stock and prices move on things that happen to them.
 
-## What's different from `flutter create`
+It's Flutter, made from `nathan-tolley/flutter-ios-template`. GitHub builds the
+unsigned `.ipa`, and you install it for free with Sideloadly. The server is a
+separate project; this app talks to it only through the `/v1` contract in
+`api/openapi.yaml`.
 
-| File | What it does |
+| Where | What |
 |---|---|
-| `.github/workflows/ios-release.yml` | When you run it by hand, a GitHub macOS runner builds the branch you pick into an unsigned `.ipa` and publishes it as a GitHub Release. Pushing does nothing. |
+| `CLAUDE.md` | Working rules for this repo |
+| `docs/aura/` | Decisions, plan, API contract rules, screens, roadmap and progress |
+| `design/` | The Graphite design system and the reference screens to match |
+| `api/openapi.yaml` | A synced copy of the API's contract (the API repo owns it) |
+| `.github/workflows/ios-release.yml` | Run by hand: a GitHub macOS runner builds the branch you pick into an unsigned `.ipa` and publishes it as a GitHub Release. Pushing does nothing. |
 
-Everything else is a normal `flutter create --platforms ios` app.
-
-## Start a new app
-
-1. On GitHub, open this repo and click **Use this template** → **Create a new
-   repository**. Make it **public**: macOS build minutes are free for public
-   repos.
-2. Clone it, then give the app its own identity:
-   - `pubspec.yaml`: change `name: my_app`.
-   - `ios/Runner/Info.plist`: change `CFBundleDisplayName` (the name under the
-     icon).
-   - `ios/Runner.xcodeproj/project.pbxproj`: replace every
-     `io.github.nathantolley.myApp` with a unique bundle ID, such as
-     `io.github.nathantolley.coolapp`. Keep it the same forever, or app
-     updates won't keep their data.
-3. Build your app in `lib/`.
+Bundle ID: `io.github.nathantolley.auraexchange`. Never change it, or updates
+won't keep their data.
 
 ## Make a release
 
