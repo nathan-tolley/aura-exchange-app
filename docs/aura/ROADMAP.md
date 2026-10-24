@@ -20,7 +20,7 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - Start `docs/aura/PROGRESS.md` (see `CLAUDE.md` → Progress and resuming).
   - Commit this on its own.
 - [x] `flutter create --platforms web .` for the dev preview only. Make sure the iOS workflow still builds just iOS.
-- [ ] Add the packages from `CLAUDE.md`, the folder layout, and `analysis_options` with stricter lints (`prefer_const_constructors`, `always_declare_return_types`, `avoid_print`).
+- [x] Add the packages from `CLAUDE.md`, the folder layout, and `analysis_options` with stricter lints (`prefer_const_constructors`, `always_declare_return_types`, `avoid_print`).
 - [ ] Workflow: pass `--dart-define=API_BASE_URL=${{ vars.API_BASE_URL }}` to `flutter build ios`.
 - **Check:**
   - `flutter analyze` and `flutter test` are clean.
@@ -31,6 +31,7 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
 ## A1: Design foundation
 
 - [ ] `lib/design/tokens.dart` from `design/aura_tokens.dart`, plus `tool/gen_tokens.dart` that regenerates it from `design/tokens.json`.
+  - *2026-10-24: `lib/design/tokens.dart` was copied in A0 so the shell could use `AuraColors.bg`. The generator is still to do.*
 - [ ] Fonts in `assets/fonts/`, declared in `pubspec.yaml`:
   - Newsreader (Regular, Italic)
   - JetBrains Mono (Regular, Medium)
