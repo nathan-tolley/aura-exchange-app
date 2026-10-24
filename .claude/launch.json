@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "prism",
+      "runtimeExecutable": "npx.cmd",
+      "runtimeArgs": ["--yes", "@stoplight/prism-cli", "mock", "api/openapi.yaml", "--port", "4010"],
+      "port": 4010
+    },
+    {
+      "name": "app-web",
+      "runtimeExecutable": "flutter.bat",
+      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "5555", "--dart-define=API_BASE_URL=http://localhost:4010"],
+      "port": 5555
+    }
+  ]
+}

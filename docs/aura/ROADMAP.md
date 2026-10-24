@@ -27,6 +27,7 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - `flutter run -d chrome` shows a blank `bg` screen.
   - Prism is serving `api/openapi.yaml` on :4010.
   - One manual run of **iOS release** produces an `.ipa`.
+  - *2026-10-24: the first three pass. `flutter analyze` and `flutter test` are clean; the web build shows a blank `#0b0c0e` screen at 390×844 with no console errors; Prism serves the spec on :4010 (`/health` 200, forced codes work, but see `CONTRACT-REQUESTS.md` #1). The iOS release run waits on the GitHub repo and Nathan's OK.*
 
 ## A1: Design foundation
 
