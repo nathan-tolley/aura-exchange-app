@@ -4,9 +4,9 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A1 → `AuraIcon` (branch `a1-design-foundation`). A0 is done locally; its GitHub items wait on Nathan.
-- State: done; paused for Nathan's OK on the font download (item 4)
-- Next action: if the fonts are OK, item 4 (download into `assets/fonts/` with their OFL licenses, declare them in `pubspec.yaml`, set up `test/flutter_test_config.dart` and the web/test `DefaultTextStyle`). If not yet, start item 5 (components) without goldens. The A1 order (each its own commit):
+- Step: A1 → fonts (branch `a1-design-foundation`). A0 is done locally; its GitHub items wait on Nathan.
+- State: done (Nathan OK'd the download on 2026-10-24)
+- Next action: golden harness (`test/support/golden.dart`: 420 pt preview at 2×, content 358 pt wide from x 16), `dart_test.yaml` with a `golden` tag, release workflow runs `flutter test --exclude-tags golden`; then component batch 1. The A1 order (each its own commit):
   1. `tool/gen_tokens.dart`: `design/tokens.json` → `lib/design/tokens.dart` (must reproduce the committed file exactly) and `design/icons.json` → `lib/design/icon_paths.dart`.
   2. `lib/format/` basics pulled forward from A2 (money split into `A$`/whole/cents, U+2212 minus, change string), unit-tested with the `DESIGN.md` → Numbers examples. `AuraMoney` and `AuraPriceChange` need them.
   3. `AuraIcon` (CustomPainter, 24-unit viewBox, 1.7 stroke, round caps).
@@ -21,7 +21,6 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
     `git push -u origin main`
     Don't use "Use this template" on GitHub now: it would start with its own first commit, unrelated to this history.
   - **First push and first iOS release run.** Both need your OK (the A0 check includes one manual run of iOS release).
-  - **Font download for A1.** OK to add these OFL fonts from the official Google Fonts repo (github.com/google/fonts) to `assets/fonts/`, with their licenses? `Newsreader[opsz,wght].ttf` (452 KB), `Newsreader-Italic[opsz,wght].ttf` (496 KB), `JetBrainsMono[wght].ttf` (187 KB), `Inter[opsz,wght].ttf` (877 KB, web preview and goldens only). About 2.0 MB in total.
   - **Contract request #1** (`docs/aura/CONTRACT-REQUESTS.md`): named error examples in the spec, so Prism can return `QUOTE_STALE`, `UPDATE_REQUIRED` and the rest. For the API session; not blocking the app.
   - Not blocking yet: the open questions and the three design-pass rules in `docs/aura/DECISIONS.md`.
 
@@ -38,4 +37,5 @@ One line per finished step: date · step · what · commit.
 - 2026-10-24 · A0 · Checks: analyze and test clean; the web build shows blank `bg` at 390×844; Prism serves `api/openapi.yaml` on :4010. Logged contract request #1 (error examples) · `c149ea9`
 - 2026-10-24 · A1 · `tool/gen_tokens.dart`: tokens.json → `lib/design/tokens.dart` (identical to the handoff's), icons.json → `lib/design/icon_paths.dart` (`AuraIcons` enum); drift test · `dd0817a`
 - 2026-10-24 · A1 · `lib/format/`: money (parts, U+2212), change, percent, impact, tape change, quantity, ticker, countdown; 14 unit tests from `DESIGN.md` → Numbers · `965cfbe`
-- 2026-10-24 · A1 · `AuraIcon` (CustomPainter from the generated paths, stroke weight in viewBox units, filled variant, decorative unless labelled); all 34 checked by eye against `Icon.png` · (this commit)
+- 2026-10-24 · A1 · `AuraIcon` (CustomPainter from the generated paths, stroke weight in viewBox units, filled variant, decorative unless labelled); all 34 checked by eye against `Icon.png` · `5be5258`
+- 2026-10-24 · A1 · Fonts: Newsreader (+ Italic), JetBrains Mono and Inter variable TTFs from google/fonts with OFL licenses (registered in `main.dart`); tests load them; `auraBaseTextStyle()` as the app's default text style · (this commit)

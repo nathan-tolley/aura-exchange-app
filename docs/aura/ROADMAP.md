@@ -33,10 +33,11 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
 
 - [x] `lib/design/tokens.dart` from `design/aura_tokens.dart`, plus `tool/gen_tokens.dart` that regenerates it from `design/tokens.json`.
   - *2026-10-24: the generator reproduces the handoff's file exactly, also writes `lib/design/icon_paths.dart` from `design/icons.json`, and `test/tool/gen_tokens_test.dart` fails if either output drifts.*
-- [ ] Fonts in `assets/fonts/`, declared in `pubspec.yaml`:
+- [x] Fonts in `assets/fonts/`, declared in `pubspec.yaml`:
   - Newsreader (Regular, Italic)
   - JetBrains Mono (Regular, Medium)
   - Inter (Regular, Medium, SemiBold), for web preview and goldens only
+  - *2026-10-24: as variable fonts from google/fonts, which cover every weight listed. Their OFL licenses are registered with `LicenseRegistry`, and `test/flutter_test_config.dart` loads the fonts so goldens render real type.*
 - [x] `AuraIcon`, painting `design/icons.json`.
   - *2026-10-24: all 34 icons and the filled star were rendered and checked by eye against `design/reference/components/Icon.png`. Its golden comes with the other goldens, once fonts are in.*
 - [ ] Every component in `design/COMPONENTS.md` as `lib/design/widgets/aura_<name>.dart`, with the same props.

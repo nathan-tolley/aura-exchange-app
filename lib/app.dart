@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
+import 'design/text.dart';
 import 'design/tokens.dart';
 
 /// The app shell. Graphite is dark only (design/DESIGN.md), and every screen
@@ -13,11 +14,12 @@ class AuraApp extends StatelessWidget {
     return CupertinoApp.router(
       title: 'Aura Exchange',
       color: AuraColors.bg,
-      theme: const CupertinoThemeData(
+      theme: CupertinoThemeData(
         brightness: Brightness.dark,
         primaryColor: AuraColors.ink,
         scaffoldBackgroundColor: AuraColors.bg,
         barBackgroundColor: AuraColors.bg,
+        textTheme: CupertinoTextThemeData(textStyle: auraBaseTextStyle()),
       ),
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
