@@ -1,0 +1,56 @@
+/* Aura Exchange — generated from tokens.json */
+:root, [data-theme="graphite"] {
+  --bg: #0b0c0e;
+  --raised: #161719;
+  --raised-2: #202225;
+  --line: #1d1f22;
+  --line-strong: #2a2d30;
+  --ink: #f2f3f5;
+  --ink-secondary: #b4b8bc;
+  --ink-tertiary: #888d92;
+  --ink-faint: #52565b;
+  --up: #58ce96;
+  --down: #ef736c;
+  --warn: #edb65c;
+  --on-up: #0a0e12;
+  --on-ink: var(--bg);
+  --focus-ring: 0 0 0 2px #0b0c0e, 0 0 0 4px #f2f3f5;
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-sheet: 16px;
+  --radius-full: 9999px;
+  --size-hit: 44px;
+  --size-avatar: 36px;
+  --size-action: 52px;
+  --size-button-lg: 54px;
+  --size-tabbar: 56px;
+  --size-row: 64px;
+  --font-sans: "SF Pro Text", -apple-system, BlinkMacSystemFont, Inter, system-ui, sans-serif;
+  --font-display: "SF Pro Display", -apple-system, "Inter Display", Inter, sans-serif;
+  --font-serif: "New York", ui-serif, Newsreader, Georgia, serif;
+  --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, monospace;
+}
+.display { font-family: var(--font-display); font-size: 44px; line-height: 48px; font-weight: 400; letter-spacing: -0.03em; }
+.price { font-family: var(--font-display); font-size: 24px; line-height: 28px; font-weight: 400; letter-spacing: -0.015em; }
+.impact { font-family: var(--font-display); font-size: 32px; line-height: 34px; font-weight: 400; letter-spacing: -0.02em; }
+.headline { font-family: var(--font-serif); font-size: 25px; line-height: 31px; font-weight: 400; letter-spacing: -0.01em; }
+.quote { font-family: var(--font-serif); font-size: 17px; line-height: 25px; font-weight: 400; }
+.title { font-family: var(--font-sans); font-size: 17px; line-height: 22px; font-weight: 600; }
+.heading { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 600; }
+.row-title { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 600; }
+.body { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 400; }
+.value { font-family: var(--font-sans); font-size: 16px; line-height: 21px; font-weight: 500; }
+.button { font-family: var(--font-sans); font-size: 17px; line-height: 22px; font-weight: 600; }
+.footnote { font-family: var(--font-sans); font-size: 12.5px; line-height: 16px; font-weight: 400; }
+.caption { font-family: var(--font-sans); font-size: 11px; line-height: 14px; font-weight: 500; }
+.tape { font-family: var(--font-mono); font-size: 11px; line-height: 14px; font-weight: 400; letter-spacing: 0.02em; }
+.countdown { font-family: var(--font-mono); font-size: 13px; line-height: 16px; font-weight: 500; }
