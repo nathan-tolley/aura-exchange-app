@@ -37,7 +37,8 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - Newsreader (Regular, Italic)
   - JetBrains Mono (Regular, Medium)
   - Inter (Regular, Medium, SemiBold), for web preview and goldens only
-- [ ] `AuraIcon`, painting `design/icons.json`.
+- [x] `AuraIcon`, painting `design/icons.json`.
+  - *2026-10-24: all 34 icons and the filled star were rendered and checked by eye against `design/reference/components/Icon.png`. Its golden comes with the other goldens, once fonts are in.*
 - [ ] Every component in `design/COMPONENTS.md` as `lib/design/widgets/aura_<name>.dart`, with the same props.
   - Get exact values from `design/reference/web/components.css` (`.ax-<name>`).
   - Implement the inside-a-sheet variants (lifted surfaces, `lineStrong` hairlines, disabled button on `raised2`).
