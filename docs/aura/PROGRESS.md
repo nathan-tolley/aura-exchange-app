@@ -16,8 +16,9 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` â
   7. Goldens at @2x with real fonts loaded in `test/flutter_test_config.dart`, each compared with `design/reference/components/<Name>.png`. Tag them `golden`, and have the release workflow run `flutter test --exclude-tags golden`, because Windows-rendered goldens won't match the macOS runner pixel for pixel.
 - Uncommitted work: none
 - Waiting on Nathan:
-  - **Create the GitHub repo.** Creating the public repo `nathan-tolley/aura-exchange-app` was blocked by Claude Code's auto-mode permission check, so this repo exists only locally (made from the template's commit `1268d28`, no remote). When you're happy to publish, run this from this folder; it creates the repo empty and pushes `main`:
-    `gh repo create nathan-tolley/aura-exchange-app --public --source . --remote origin --push`
+  - **Create the GitHub repo.** Creating the public repo `nathan-tolley/aura-exchange-app` was blocked by Claude Code's auto-mode permission check, so this repo exists only locally (made from the template's commit `1268d28`, no remote). When you're happy to publish, run these from this folder. They create the repo empty, then push `main` first so it becomes the default branch:
+    `gh repo create nathan-tolley/aura-exchange-app --public --source . --remote origin`
+    `git push -u origin main`
     Don't use "Use this template" on GitHub now: it would start with its own first commit, unrelated to this history.
   - **First push and first iOS release run.** Both need your OK (the A0 check includes one manual run of iOS release).
   - **Font download for A1.** OK to add these OFL fonts from the official Google Fonts repo (github.com/google/fonts) to `assets/fonts/`, with their licenses? `Newsreader[opsz,wght].ttf` (452 KB), `Newsreader-Italic[opsz,wght].ttf` (496 KB), `JetBrainsMono[wght].ttf` (187 KB), `Inter[opsz,wght].ttf` (877 KB, web preview and goldens only). About 2.0 MB in total.
