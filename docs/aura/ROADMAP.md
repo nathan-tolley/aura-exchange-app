@@ -31,8 +31,8 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
 
 ## A1: Design foundation
 
-- [ ] `lib/design/tokens.dart` from `design/aura_tokens.dart`, plus `tool/gen_tokens.dart` that regenerates it from `design/tokens.json`.
-  - *2026-10-24: `lib/design/tokens.dart` was copied in A0 so the shell could use `AuraColors.bg`. The generator is still to do.*
+- [x] `lib/design/tokens.dart` from `design/aura_tokens.dart`, plus `tool/gen_tokens.dart` that regenerates it from `design/tokens.json`.
+  - *2026-10-24: the generator reproduces the handoff's file exactly, also writes `lib/design/icon_paths.dart` from `design/icons.json`, and `test/tool/gen_tokens_test.dart` fails if either output drifts.*
 - [ ] Fonts in `assets/fonts/`, declared in `pubspec.yaml`:
   - Newsreader (Regular, Italic)
   - JetBrains Mono (Regular, Medium)

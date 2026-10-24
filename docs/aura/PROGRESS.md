@@ -4,9 +4,9 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A0 → done locally (the GitHub repo, first push and iOS release run wait on Nathan)
+- Step: A1 → token and icon generator (branch `a1-design-foundation`). A0 is done locally; its GitHub items wait on Nathan.
 - State: done
-- Next action: A1 on branch `a1-design-foundation`, in this order (each its own commit):
+- Next action: A1 item 2, `lib/format/` basics with unit tests. The A1 order (each its own commit):
   1. `tool/gen_tokens.dart`: `design/tokens.json` → `lib/design/tokens.dart` (must reproduce the committed file exactly) and `design/icons.json` → `lib/design/icon_paths.dart`.
   2. `lib/format/` basics pulled forward from A2 (money split into `A$`/whole/cents, U+2212 minus, change string), unit-tested with the `DESIGN.md` → Numbers examples. `AuraMoney` and `AuraPriceChange` need them.
   3. `AuraIcon` (CustomPainter, 24-unit viewBox, 1.7 stroke, round caps).
@@ -34,4 +34,5 @@ One line per finished step: date · step · what · commit.
 - 2026-10-24 · A0 · Web platform for the Chrome preview only (the iOS workflow still builds just iOS); web shell named and on `bg` · `49247a7`
 - 2026-10-24 · A0 · Packages (Riverpod 3, go_router 18, dio 5, web_socket_channel, flutter_secure_storage, decimal, intl, timezone, path_drawing, uuid, json_serializable, swagger_parser), `lib/` + `test/` layout, stricter lints, dark `CupertinoApp.router` on `bg`; `cupertino_icons` and Material icons removed. Analyze and test clean · `6254b93`
 - 2026-10-24 · A0 · iOS release passes `--dart-define=API_BASE_URL` from the repo variable `API_BASE_URL` (via `env`); started `docs/aura/NOTES.md` · `d859277`
-- 2026-10-24 · A0 · Checks: analyze and test clean; the web build shows blank `bg` at 390×844; Prism serves `api/openapi.yaml` on :4010. Logged contract request #1 (error examples) · (this commit)
+- 2026-10-24 · A0 · Checks: analyze and test clean; the web build shows blank `bg` at 390×844; Prism serves `api/openapi.yaml` on :4010. Logged contract request #1 (error examples) · `c149ea9`
+- 2026-10-24 · A1 · `tool/gen_tokens.dart`: tokens.json → `lib/design/tokens.dart` (identical to the handoff's), icons.json → `lib/design/icon_paths.dart` (`AuraIcons` enum); drift test · (this commit)
