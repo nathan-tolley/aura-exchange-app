@@ -19,7 +19,7 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - `openapi.yaml` to `api/openapi.yaml`, plus a new `api/SYNCED.md`.
   - Start `docs/aura/PROGRESS.md` (see `CLAUDE.md` → Progress and resuming).
   - Commit this on its own.
-- [ ] `flutter create --platforms web .` for the dev preview only. Make sure the iOS workflow still builds just iOS.
+- [x] `flutter create --platforms web .` for the dev preview only. Make sure the iOS workflow still builds just iOS.
 - [ ] Add the packages from `CLAUDE.md`, the folder layout, and `analysis_options` with stricter lints (`prefer_const_constructors`, `always_declare_return_types`, `avoid_print`).
 - [ ] Workflow: pass `--dart-define=API_BASE_URL=${{ vars.API_BASE_URL }}` to `flutter build ios`.
 - **Check:**

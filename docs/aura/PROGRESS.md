@@ -4,9 +4,9 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A0 → copy the handoff in
+- Step: A0 → web platform for the dev preview
 - State: done
-- Next action: A0 → `flutter create --platforms web .` (dev preview only), then the packages, folder layout and stricter lints from `CLAUDE.md`
+- Next action: A0 → add the packages, folder layout and stricter lints from `CLAUDE.md`; `CupertinoApp` dark on a blank `bg` screen
 - Uncommitted work: none
 - Waiting on Nathan:
   - **Create the GitHub repo.** Creating the public repo `nathan-tolley/aura-exchange-app` was blocked by Claude Code's auto-mode permission check, so this repo exists only locally (made from the template's commit `1268d28`, no remote). When you're happy to publish, run this from this folder; it creates the repo empty and pushes `main`:
@@ -21,4 +21,5 @@ One line per finished step: date · step · what · commit.
 
 - 2026-10-24 · A0 · Local repo cloned from `flutter-ios-template` (`1268d28`). GitHub repo not created yet (see Waiting on Nathan). Local Flutter 3.47.7 matches `FLUTTER_VERSION`.
 - 2026-10-24 · A0 · Identity: `aura_exchange`, "Aura Exchange", `io.github.nathantolley.auraexchange`, dark only, `aura://` scheme, portrait · `5e7e6f6`
-- 2026-10-24 · A0 · Handoff copied in: `CLAUDE.md`, `docs/aura/`, `design/`, `api/openapi.yaml` + `SYNCED.md`, this file · (this commit)
+- 2026-10-24 · A0 · Handoff copied in: `CLAUDE.md`, `docs/aura/`, `design/`, `api/openapi.yaml` + `SYNCED.md`, this file · `334a327`
+- 2026-10-24 · A0 · Web platform for the Chrome preview only (the iOS workflow still builds just iOS); web shell named and on `bg` · (this commit)
