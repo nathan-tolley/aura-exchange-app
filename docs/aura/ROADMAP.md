@@ -21,7 +21,7 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - Commit this on its own.
 - [x] `flutter create --platforms web .` for the dev preview only. Make sure the iOS workflow still builds just iOS.
 - [x] Add the packages from `CLAUDE.md`, the folder layout, and `analysis_options` with stricter lints (`prefer_const_constructors`, `always_declare_return_types`, `avoid_print`).
-- [ ] Workflow: pass `--dart-define=API_BASE_URL=${{ vars.API_BASE_URL }}` to `flutter build ios`.
+- [x] Workflow: pass `--dart-define=API_BASE_URL=${{ vars.API_BASE_URL }}` to `flutter build ios`.
 - **Check:**
   - `flutter analyze` and `flutter test` are clean.
   - `flutter run -d chrome` shows a blank `bg` screen.

@@ -68,7 +68,10 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
           RUN: ${{ github.run_number }}
-        run: flutter build ios --release --no-codesign --build-name "$VERSION" --build-number "$RUN"
+          API_BASE_URL: ${{ vars.API_BASE_URL }} # repo variable; empty means the app's built-in default
+        run: |
+          flutter build ios --release --no-codesign --build-name "$VERSION" --build-number "$RUN" \
+            --dart-define=API_BASE_URL="$API_BASE_URL"
 
       - name: Package .ipa
         id: ipa
