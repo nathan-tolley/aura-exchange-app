@@ -10,6 +10,7 @@ import 'design/gallery/screen_states.dart';
 import 'design/tokens.dart';
 import 'design/widgets/aura_tab_bar.dart';
 import 'features/onboarding/create_exchange_screen.dart';
+import 'features/onboarding/ipo_screen.dart';
 import 'features/onboarding/sign_in_screen.dart';
 import 'features/system/boot_screen.dart';
 
@@ -148,7 +149,7 @@ final List<RouteBase> _routes = [
       GoRoute(path: 'waiting', builder: (_, _) => const WaitingScreen()),
     ],
   ),
-  GoRoute(path: Routes.ipo, builder: (_, _) => const _Pending()),
+  GoRoute(path: Routes.ipo, builder: (_, _) => const IpoScreen()),
   GoRoute(path: '/invite/:code', builder: (_, _) => const _Pending()),
   StatefulShellRoute.indexedStack(
     builder: (context, state, shell) => shell,

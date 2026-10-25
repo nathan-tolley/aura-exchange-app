@@ -634,6 +634,58 @@ const listYourself = 'List yourself';
 const youPickTickerNext = 'You pick your ticker next.';
 
 // ---------------------------------------------------------------------------
+// Your IPO (SCREENS.md #3)
+// ---------------------------------------------------------------------------
+
+const ipoTitle = 'Your IPO';
+
+/// "Listing makes you a stock on The Group Chat. ..."
+String ipoBody(String exchange) =>
+    'Listing makes you a stock on $exchange. Your friends can buy you, short '
+    'you and file events about you.';
+const ifYouList = 'If you list';
+const whoTradesYou = 'Who trades you';
+const everyoneButYou = 'Everyone but you';
+const whatMovesYou = 'What moves you';
+const whatTheGroupFiles = 'What the group files';
+const changingYourMind = 'Changing your mind';
+const optOutInSettings = 'Opt out any time in Settings';
+const theAnalystRoastsEvents =
+    'The Analyst roasts what happened, never who you are.';
+const chooseTicker = 'Choose a ticker';
+const pickTickerTitle = 'Pick your ticker';
+const pickTickerBody = "3 to 5 letters. It's how the tape will name you.";
+const tickerLabel = 'Ticker';
+const tickerPlaceholder = 'NAME';
+const tickerLength = '3 to 5 letters.';
+String tickerChecking(String ticker) => 'Checking $ticker…';
+String tickerFree(String ticker) => '$ticker is free.';
+String tickerTaken(String ticker) => '$ticker is taken.';
+String useTicker(String ticker) => 'Use $ticker';
+const tickerCantCheck = "Can't check it while you're offline.";
+String listMeAs(String ticker) => 'List me as $ticker';
+const listMe = 'List me';
+const listing = 'Listing…';
+const pickFreeTicker = 'Pick a free ticker first.';
+const yourConsent =
+    'This is your consent to be listed. You can opt out in Settings.';
+
+/// Listing while offline.
+const ipoOffline = ErrorCopy(
+  title: "You're offline",
+  body: 'Listing needs a connection. Retry when you have one.',
+  action: 'Retry',
+);
+String listedTitle(String ticker) => "You're listed as $ticker";
+
+/// "The market opens at 3 listings. 1 of 3 so far."
+String listedBody(int listed, int minListings) => listed >= minListings
+    ? '$listed listed, so trading has started.'
+    : 'The market opens at $minListings listings. $listed of $minListings '
+          'so far.';
+const openTheExchange = 'Open the exchange';
+
+// ---------------------------------------------------------------------------
 // Launch problems (SCREENS.md #24)
 // ---------------------------------------------------------------------------
 

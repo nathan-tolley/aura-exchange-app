@@ -52,6 +52,12 @@ final List<GalleryScreen> screenStates = [
   GalleryScreen('S01c', 'Sign in, wrong code', (_) => signInWrongCode()),
   GalleryScreen('S01d', 'Sign in, code expired', (_) => signInCodeExpired()),
   GalleryScreen('S01e', 'Sign in, offline', (_) => signInNoNetwork()),
+  GalleryScreen('S03a', 'Your IPO, consent', (_) => ipoConsent()),
+  GalleryScreen('S03b', 'Your IPO, ticker free', (_) => ipoFree()),
+  GalleryScreen('S03c', 'Your IPO, ticker taken', (_) => ipoTaken()),
+  GalleryScreen('S03d', 'Your IPO, typing', (_) => ipoTyping()),
+  GalleryScreen('S03e', 'Your IPO, offline', (_) => ipoNoNetwork()),
+  GalleryScreen('S03f', 'Your IPO, listed', (_) => ipoListed()),
   GalleryScreen('S04a', 'Create an exchange, name', (_) => createName()),
   GalleryScreen(
     'S04b',
@@ -63,7 +69,11 @@ final List<GalleryScreen> screenStates = [
     'Create an exchange, picking a timezone',
     (_) => createZoneSheet(),
   ),
-  GalleryScreen('S04d', 'Create an exchange, offline', (_) => createNoNetwork()),
+  GalleryScreen(
+    'S04d',
+    'Create an exchange, offline',
+    (_) => createNoNetwork(),
+  ),
   GalleryScreen(
     'S04e',
     'Invite friends, making the link',

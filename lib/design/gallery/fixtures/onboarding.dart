@@ -4,6 +4,8 @@ import '../../../api/errors.dart';
 import '../../../api/generated/export.dart';
 import '../../../features/onboarding/create_exchange_model.dart';
 import '../../../features/onboarding/create_exchange_view.dart';
+import '../../../features/onboarding/ipo_model.dart';
+import '../../../features/onboarding/ipo_view.dart';
 import '../../../features/onboarding/sign_in_model.dart';
 import '../../../features/onboarding/sign_in_view.dart';
 import '../../../features/system/exchange_down_model.dart';
@@ -260,5 +262,71 @@ Widget waiting() => WaitingView(
 /// S04i: waiting, while the exchange loads.
 Widget waitingLoading() =>
     const WaitingView(model: null, onInvite: _noop, onList: _noop);
+
+// Your IPO (S03).
+
+/// S03a: what listing means.
+Widget ipoConsent() =>
+    const IpoConsentView(exchangeName: 'The Group Chat', onContinue: _noop);
+
+/// S03b: the ticker free.
+Widget ipoFree() => _ipoTicker(
+  const IpoState(
+    step: IpoStep.ticker,
+    ticker: 'NATE',
+    check: TickerCheckState.free,
+  ),
+);
+
+/// S03c: the ticker taken, with the server's suggestions.
+Widget ipoTaken() => _ipoTicker(
+  const IpoState(
+    step: IpoStep.ticker,
+    ticker: 'JAKE',
+    check: TickerCheckState.taken,
+    suggestions: [r'$JAKEY', r'$JKE', r'$JAKES'],
+  ),
+);
+
+/// S03d: still typing, two letters in.
+Widget ipoTyping() =>
+    _ipoTicker(const IpoState(step: IpoStep.ticker, ticker: 'NA'));
+
+/// S03e: listing failed offline.
+Widget ipoNoNetwork() => _ipoTicker(
+  const IpoState(
+    step: IpoStep.ticker,
+    ticker: 'NATE',
+    check: TickerCheckState.free,
+    problem: ApiError.offline(),
+  ),
+);
+
+/// S03f: listed, the first of three.
+Widget ipoListed() => IpoListedView(
+  model: ipoListedModel(
+    ListingRef.fromJson({
+      'id': '11111111-0000-4000-8000-000000000003',
+      'ticker': r'$NATE',
+      'displayName': 'Nathan',
+      'avatarUrl': null,
+    }),
+    _exchange(listed: 1, members: 2),
+  ),
+  onInvite: _noop,
+  onOpen: _noop,
+);
+
+Widget _ipoTicker(IpoState state) => Controlled(
+  texts: [state.ticker],
+  builder: (context, c) => IpoTickerView(
+    model: ipoTickerModel(state),
+    ticker: c[0],
+    placeholder: 'NATH',
+    onSuggestion: (_) {},
+    onList: _noop,
+    onBack: _noop,
+  ),
+);
 
 void _noop() {}
