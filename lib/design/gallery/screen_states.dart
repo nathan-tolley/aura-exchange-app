@@ -1,6 +1,12 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../features/home/home_view.dart';
+import '../../features/stock/stock_header.dart';
+import '../../features/trade/trade_sheet_view.dart';
+import '../../l10n/strings.dart';
+import '../tokens.dart';
+import '../widgets/aura_status_chip.dart';
 import 'screen_fixtures.dart';
 
 /// A screen in one of its states, built from fixtures. The State Gallery
@@ -42,7 +48,63 @@ final List<GalleryScreen> screenStates = [
     (_) => _home(homeIpoDay()),
     reference: 'W12-EmptyExchange',
   ),
+  GalleryScreen(
+    'W05',
+    'Trade sheet, rejected',
+    (_) => _sheetOver(
+      _annaPage('124.10'),
+      TradeTicketView(
+        model: tradeRejected(),
+        onClose: _noop,
+        onOrderType: (_) {},
+        onQuantity: (_) {},
+        onBannerAction: _noop,
+        onTrade: _noop,
+      ),
+    ),
+    reference: 'W05-TradeRejected',
+  ),
+  GalleryScreen(
+    'W06',
+    'Trade sheet, requote',
+    (_) => _sheetOver(
+      _annaPage('125.36'),
+      RequoteView(
+        model: requote(),
+        onClose: _noop,
+        onConfirmed: _noop,
+        onDecline: _noop,
+      ),
+    ),
+    reference: 'W06-Requote',
+  ),
 ];
+
+/// $ANNA's stock page as it shows behind the trade sheet.
+Widget _annaPage(String price) => StockHeader(
+  status: AuraStatus.open,
+  line: stockLine(r'$ANNA', 'Anna'),
+  price: Decimal.parse(price),
+  onBack: _noop,
+);
+
+/// A sheet presented over a screen, as the app's modal route draws it: the
+/// screen on `bg` under the scrim, the sheet at the bottom.
+Widget _sheetOver(Widget page, Widget sheet) => Builder(
+  builder: (context) => ColoredBox(
+    color: AuraColors.bg,
+    child: Stack(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
+          child: page,
+        ),
+        const Positioned.fill(child: ColoredBox(color: AuraColors.scrim)),
+        Align(alignment: Alignment.bottomCenter, child: sheet),
+      ],
+    ),
+  ),
+);
 
 /// Home with every control live, as on the phone, so nothing in the gallery
 /// or a golden looks disabled unless the state disables it.

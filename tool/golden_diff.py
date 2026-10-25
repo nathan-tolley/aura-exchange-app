@@ -8,8 +8,10 @@ Development only (Python 3 with Pillow and numpy); the app never runs it.
         by side (written next to the golden unless OUT is given).
 
     python tool/golden_diff.py bands REFERENCE.png [--x0 PT --x1 PT]
+                                    [--y0 PT] [--bg-at XPT,YPT]
         The horizontal bands that hold content (anything that isn't the
-        background colour of the top-left pixel), in points (pixels / 2),
+        background colour of the top-left pixel, or of the pixel at
+        --bg-at, e.g. inside a sheet), from --y0 down, in points (pixels / 2),
         with each band's left and right edge. For measuring the drawn
         screens, which have no HTML source.
 """
@@ -60,14 +62,14 @@ def diff(golden_path, reference_path, out_path=None):
     print(f"side by side: {out}")
 
 
-def bands(path, x0=None, x1=None):
+def bands(path, x0=None, x1=None, y0=0.0, bg_at=None):
     image = load(path)
+    bg = image[0, 0] if bg_at is None else image[int(bg_at[1] * 2), int(bg_at[0] * 2)]
     if x0 is not None:
         image = image[:, int(x0 * 2):int(x1 * 2)]
-    bg = image[0, 0]
     content = (np.abs(image - bg).max(axis=2) > 10)
     rows = content.any(axis=1)
-    y = 0
+    y = int(y0 * 2)
     h = len(rows)
     offset = int(x0 * 2) if x0 is not None else 0
     while y < h:
@@ -91,4 +93,8 @@ if __name__ == "__main__":
         if "--x0" in args:
             x0 = float(args[args.index("--x0") + 1])
             x1 = float(args[args.index("--x1") + 1])
-        bands(args[0], x0, x1)
+        y0 = float(args[args.index("--y0") + 1]) if "--y0" in args else 0.0
+        bg_at = None
+        if "--bg-at" in args:
+            bg_at = [float(v) for v in args[args.index("--bg-at") + 1].split(",")]
+        bands(args[0], x0, x1, y0, bg_at)

@@ -606,3 +606,61 @@ const inviteSomeone = 'Invite someone';
 const inviteSomeoneNote = 'Anyone with the link can list';
 const firstOnTheTape = 'First thing on the tape';
 const analystAtTheOpen = 'The Analyst · when the market opens';
+
+// ---------------------------------------------------------------------------
+// Trade sheet (W05, W06)
+// ---------------------------------------------------------------------------
+
+/// "Buy $ANNA"; with a quantity once it's settled, "Buy 12 $ANNA".
+String tradeTitle(Side side, String ticker, {Decimal? quantity}) =>
+    quantity == null
+    ? '${_verb(side)} $ticker'
+    : '${_verb(side)} ${formatQuantity(quantity)} $ticker';
+
+const orderMarket = 'Market';
+const orderLimit = 'Limit';
+const orderStop = 'Stop';
+const orderType = 'Order type';
+
+/// Under the stepper: "shares at about A$124.10".
+String sharesAtAbout(Decimal price) => 'shares at about ${formatMoney(price)}';
+
+/// "20 × A$124.10".
+String quantityAt(Decimal quantity, Decimal price) =>
+    '${formatQuantity(quantity)} × ${formatMoney(price)}';
+
+/// "Fee (0.5%)": the rate as the server sends it, without trailing zeros.
+String feeLabel(Decimal ratePct) => 'Fee (${ratePct.toString()}%)';
+
+const estimatedTotal = 'Estimated total';
+const youSaw = 'You saw';
+const newTotal = 'New total';
+
+/// "A$1,511.84 (+15.19)": the new total and how far it moved.
+String totalWithChange(Decimal total, Decimal change) =>
+    '${formatMoney(total)} (${formatSigned(change)})';
+
+/// The ticket's button: "Buy 20 $ANNA".
+String tradeButton(Side side, Decimal quantity, String ticker) =>
+    '${_verb(side)} ${formatQuantity(quantity)} $ticker';
+
+/// The requote's slider: "Slide to buy at A$125.36".
+String slideToTradeAt(Side side, Decimal price) =>
+    'Slide to ${_verb(side).toLowerCase()} at ${formatMoney(price)}';
+
+/// The requote's way out: "Don't buy".
+String dontTrade(Side side) => "Don't ${_verb(side).toLowerCase()}";
+
+const priceHoldsFor = 'This price holds for';
+
+// ---------------------------------------------------------------------------
+// Stock page (W10, and behind the trade sheet)
+// ---------------------------------------------------------------------------
+
+/// "$ANNA · Anna", or with the last trade while halted:
+/// "$MIA · Mia · last trade 4:51 pm".
+String stockLine(String ticker, String name, {String? lastTrade}) => [
+  formatTicker(ticker),
+  name,
+  if (lastTrade != null) 'last trade $lastTrade',
+].join(' · ');

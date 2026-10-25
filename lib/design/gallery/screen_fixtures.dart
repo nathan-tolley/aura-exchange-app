@@ -4,6 +4,8 @@ import '../../data/freshness.dart';
 import '../../data/live_market.dart';
 import '../../features/home/home_model.dart';
 import '../../features/home/home_view.dart';
+import '../../features/trade/trade_model.dart';
+import '../../features/trade/trade_sheet_view.dart';
 import '../../format/time.dart';
 import '../../l10n/strings.dart';
 import '../icons.dart';
@@ -290,3 +292,96 @@ HomeViewModel homeIpoDay() {
     ),
   );
 }
+
+Quote _quote({
+  required String side,
+  required String quantity,
+  required String price,
+  required String gross,
+  required String fee,
+  required String total,
+  required String cashAfter,
+  required DateTime now,
+  Map<String, Object?>? previous,
+}) => Quote.fromJson({
+  'asOf': now.toIso8601String(),
+  'marketState': 'OPEN',
+  'nextChangeAt': null,
+  'id': '22222222-0000-4000-8000-000000000001',
+  'listingId': _anna,
+  'side': side,
+  'quantity': quantity,
+  'price': price,
+  'gross': gross,
+  'feeRate': '0.50',
+  'fee': fee,
+  'total': total,
+  'priceImpactPct': '0.40',
+  'currentPrice': price,
+  'expiresAt': now.add(const Duration(seconds: 15)).toIso8601String(),
+  'previous': previous,
+  'short': null,
+  'cashAfter': cashAfter,
+});
+
+/// W05: buying 20 $ANNA with A$2,264.50 in cash. Sunday 1 pm in Sydney, so
+/// Monday's 9 am stimulus check is tomorrow's.
+TradeTicketModel tradeRejected() {
+  final now = DateTime.utc(2026, 10, 25, 2);
+  return tradeTicketModel(
+    quote: _quote(
+      side: 'BUY',
+      quantity: '20',
+      price: '124.10',
+      gross: '2482.00',
+      fee: '12.41',
+      total: '2494.41',
+      cashAfter: '-229.91',
+      now: now,
+    ),
+    ticker: r'$ANNA',
+    rejection: const ApiError(
+      code: 'INSUFFICIENT_CASH',
+      params: {
+        'needed': '2494.41',
+        'available': '2264.50',
+        'shortBy': '229.91',
+        'maxQuantity': '18',
+        'nextStimulusAt': '2026-10-25T22:00:00Z',
+      },
+      retryable: false,
+      action: ApiAction.reduceQuantity,
+      status: 422,
+    ),
+    context: ErrorContext(zone: sydney, now: now),
+  );
+}
+
+/// W06: someone bought $ANNA between the quote and the slide.
+RequoteModel requote() => requoteModel(
+  quote: _quote(
+    side: 'BUY',
+    quantity: '12',
+    price: '125.36',
+    gross: '1504.32',
+    fee: '7.52',
+    total: '1511.84',
+    cashAfter: '752.66',
+    now: fixtureNow,
+    previous: {
+      'quoteId': '22222222-0000-4000-8000-000000000000',
+      'price': '124.10',
+      'total': '1496.65',
+      'changePct': '1.02',
+    },
+  ),
+  stale: const ApiError(
+    code: 'QUOTE_STALE',
+    params: {'oldPrice': '124.10', 'newPrice': '125.36', 'changePct': '1.02'},
+    retryable: true,
+    action: ApiAction.requote,
+    status: 409,
+  ),
+  ticker: r'$ANNA',
+  now: fixtureNow,
+);

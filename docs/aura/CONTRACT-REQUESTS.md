@@ -57,3 +57,13 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** The Prism check forces `AUTH_EXPIRED` signed out (no refresh). The refresh and replay are tested against a fake server.
 
+## 6. A refused quote that still shows its numbers (2026-10-25 · open)
+
+**What's missing.** W05 shows a refused trade with its receipt (20 × A$124.10 = A$2,482.00, fee A$12.41, estimated total A$2,494.41) **and** the reason with its fix ("You're A$229.91 short … Buy 18 instead"). Today `POST /quotes` either returns a `Quote` (whose `cashAfter` can be negative, "the trade would be rejected", but which has no `maxQuantity`) or fails with `422 INSUFFICIENT_CASH` (which has `maxQuantity` but no gross, fee or total). Neither answer has both.
+
+**Ask (additive), either of:**
+- **A.** On a quote that would be refused, return `201` with the `Quote` plus a `rejection` field in the error shape (`code`, `params`, `retryable`, `action`). The app shows the receipt and the banner from one answer. Preferred.
+- **B.** Keep the 422, and add the priced numbers to the params of `INSUFFICIENT_CASH`, `ORDER_TOO_LARGE` and `SHORT_CAP`: `price`, `gross`, `feeRate`, `fee`, `total`.
+
+**Meanwhile.** `tradeTicketModel()` (`lib/features/trade/trade_model.dart`) takes a `Quote` and an optional `ApiError` rejection, which is option A's shape. The W05 fixture supplies both.
+

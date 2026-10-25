@@ -32,6 +32,8 @@ abstract final class AuraColors {
   static const Color onUp = Color(0xFF0A0E12);
   /// Text on an ink fill: primary and Buy button labels. 17.6:1.
   static const Color onInk = Color(0xFF0B0C0E);
+  /// Behind a sheet: dims the screen it came from to two fifths, so the sheet is the only thing lit (W05, W06). Black at 60%.
+  static const Color scrim = Color(0x99000000);
 }
 
 /// 4pt spacing scale. 16 is the screen gutter.

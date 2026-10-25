@@ -32,7 +32,9 @@ class AuraReceipt extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (final row in rows) _Row(row, bottom: line),
-          if (total != null) _Row(total!, isTotal: true),
+          // The drawn screens close the receipt with a hairline under the
+          // total too (W05, W06, W13); the component preview doesn't.
+          if (total != null) _Row(total!, bottom: line, isTotal: true),
         ],
       ),
     );
@@ -50,7 +52,8 @@ class _Row extends StatelessWidget {
   Widget build(BuildContext context) {
     const base = TextStyle(fontSize: 14, height: 19 / 14);
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 11),
+      // 10 above and 12 below: the references set the text 1 pt high.
+      padding: const EdgeInsets.only(top: 10, bottom: 12),
       foregroundDecoration: BoxDecoration(
         border: bottom == null ? null : Border(bottom: bottom!),
       ),

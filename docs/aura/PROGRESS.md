@@ -4,10 +4,9 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A3 → step 3: W05 trade rejected and W06 requote (branch `a3-worst-moments`)
-- State: next (steps 1–2 committed: scaffold and W09, W11, W12)
-- Next action: the trade sheet over the dimmed stock page. Measure W05/W06 with `python tool/golden_diff.py bands`, build `lib/features/trade/` (view + presenter from `Quote` and `ApiError` through `errorCopy`), add both to `screen_states.dart` with references, then diff and tune. Remaining after that:
-  4. W10 halted (stock page + halt vote).
+- Step: A3 → step 4: W10 halted (branch `a3-worst-moments`)
+- State: next (steps 1–3 committed: scaffold, Home W09/W11/W12, trade sheet W05/W06)
+- Next action: W10, the stock page while halted with the news-halt vote. Measure with `python tool/golden_diff.py bands design/reference/screens/W10-Halted.png`; reuse `StockHeader`; build `lib/features/stock/` (halt status, vote countdown, serif headline with impact, vote rows as `AuraNavRow`s, the disabled Sell/Buy bar with its reason). Remaining after that:
   5. W07 margin warning sheet, W08 liquidated receipt.
   6. W04 Chapter 7.
   7. W01 rumor about you, W02 ruling on you, W03 SEC charge.
@@ -18,6 +17,7 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 - Waiting on Nathan:
   - **First iOS release run.** The GitHub repo exists (public, `origin/main` at `39234c4`, created by Nathan on 2026-10-24). Later pushes and the A0 check's one manual run of iOS release still need your OK.
   - **Contract request #2** (`docs/aura/CONTRACT-REQUESTS.md`): `nextStimulusAt` on `INSUFFICIENT_CASH`, so W05 can say "tomorrow's stimulus check" without the app copying the schedule. Not blocking; the copy falls back to "the next stimulus check".
+  - **Contract request #6**: a refused quote that still carries its numbers (W05 needs the receipt and `maxQuantity` together). Not blocking; the presenter takes a `Quote` plus the rejection.
   - **Contract request #5**: ASCII example tokens, so a refresh against Prism can be replayed. Not blocking.
   - **Contract requests #3 and #4** (`docs/aura/CONTRACT-REQUESTS.md`): `changeAbs` on ticks (the app derives it meanwhile), and whether the server sends a tick at least every 60 s in PRE, AFTER and HALTED (otherwise quiet periods read Delayed). Not blocking.
   - **W13's footnote** says "You'll get a notification when it's back", which the app can't do without push. Keep it, or change the lead-in (for example "This screen checks again by itself", with the screen polling `/health`)? Needed before A3's W13 golden.
@@ -55,3 +55,4 @@ One line per finished step: date · step · what · commit.
 - 2026-10-25 · A2 · A2 check: `test/prism/` (opt-in tag) passes against Prism, 36 tests including all 31 forced codes; only connection errors read as offline (`APP_UNEXPECTED` otherwise); errors unit tests; contract request #5. 270 tests, analyze clean · (this commit)
 - 2026-10-25 · A2 · Merged `a2-api-layer` into `main` (`e8690b7`); A3 plan written into Now · (this commit)
 - 2026-10-25 · A3 · Screen scaffold (`expectScreen`, `tool/golden_diff.py`, Screens in the State Gallery) and Home: W09 2.17%, W11 2.01%, W12 2.00%; 12.5 pt text lifted 2 pt and the banner fixed in the components (all touched component goldens closer); 277 tests · (this commit)
+- 2026-10-25 · A3 · Trade sheet: W05 1.08%, W06 1.21% (ticket and requote from `Quote` + `ApiError`); `scrim` token (generator reads `#rrggbbaa`); receipt text 1 pt up with a line under the total, sheet title 11/13 pt; contract request #6 · (this commit)

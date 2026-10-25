@@ -85,7 +85,7 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
 Each screen is driven by fixtures identical to the reference data. These prove the design system in Flutter before the flows are built.
 
 - [ ] W01 Rumor about you · W02 Ruling on you · W03 SEC charge · W04 Chapter 7 · W05 Trade rejected · W06 Requote · W07 Margin warning · W08 Liquidated · W09 Home closed · W10 Halted · W11 Home offline · W12 Home IPO day · W13 Exchange down
-  - *2026-10-25: done: W09 (2.17% of pixels differ), W11 (2.01%), W12 (2.00%), through the Home presenter from API-shaped fixtures, each in the State Gallery under Screens. On the way: 12.5 pt text now sits where the references draw it, and the banner's text and action moved to match (see `NOTES.md`).*
+  - *2026-10-25: done: W05 (1.08% of pixels differ), W06 (1.21%), W09 (2.17%), W11 (2.01%), W12 (2.00%), through presenters from API-shaped fixtures, each in the State Gallery under Screens. On the way: 12.5 pt text now sits where the references draw it, and the banner, receipt and sheet moved to match (see `NOTES.md`).*
 - **Check:** for each one, open the golden (390×844 @2x) and `design/reference/screens/W##-*.png` side by side. They are near identical apart from the font. Note any deliberate difference in `docs/aura/NOTES.md`.
 
 ## A4: Phase 1 flows (every state in `SCREENS.md`)
