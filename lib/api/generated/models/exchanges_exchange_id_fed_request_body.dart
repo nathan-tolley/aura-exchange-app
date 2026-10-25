@@ -16,9 +16,11 @@ class ExchangesExchangeIdFedRequestBody {
   factory ExchangesExchangeIdFedRequestBody.fromJson(Map<String, Object?> json) => _$ExchangesExchangeIdFedRequestBodyFromJson(json);
   
   /// Percent units, decimal string, 2 dp (−12.19 = −12.19%)
+  @JsonKey(includeIfNull: false)
   final String? borrowRateDailyPct;
 
   /// Aura Bucks, decimal string, 2 dp
+  @JsonKey(includeIfNull: false)
   final String? allowance;
 
   Map<String, Object?> toJson() => _$ExchangesExchangeIdFedRequestBodyToJson(this);

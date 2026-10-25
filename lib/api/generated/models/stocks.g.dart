@@ -14,6 +14,6 @@ Stocks _$StocksFromJson(Map<String, dynamic> json) => Stocks(
 );
 
 Map<String, dynamic> _$StocksToJson(Stocks instance) => <String, dynamic>{
-  'listing': instance.listing,
-  'seasonChangePct': instance.seasonChangePct,
+  'listing': ?instance.listing,
+  'seasonChangePct': ?instance.seasonChangePct,
 };

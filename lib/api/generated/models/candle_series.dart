@@ -30,6 +30,7 @@ class CandleSeries {
   final MarketState marketState;
 
   /// When marketState next changes
+  @JsonKey(includeIfNull: true)
   final DateTime? nextChangeAt;
   final CandleSeriesInterval interval;
   final List<Candle> candles;

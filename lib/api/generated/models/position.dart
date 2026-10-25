@@ -53,8 +53,10 @@ class Position {
 
   /// Percent units, decimal string, 2 dp (−12.19 = −12.19%)
   final String unrealizedPnlPct;
+  @JsonKey(includeIfNull: true)
   final ShortDetail? short;
   final DateTime openedAt;
+  @JsonKey(includeIfNull: true)
   final DateTime? closedAt;
 
   Map<String, Object?> toJson() => _$PositionToJson(this);

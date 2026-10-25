@@ -47,6 +47,7 @@ class Trade {
 
   /// Aura Bucks, decimal string, 2 dp
   final String cashAfter;
+  @JsonKey(includeIfNull: true)
   final Position? position;
   final DateTime executedAt;
 

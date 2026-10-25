@@ -18,6 +18,7 @@ class GetExchangesExchangeIdEventsResponse {
   
   factory GetExchangesExchangeIdEventsResponse.fromJson(Map<String, Object?> json) => _$GetExchangesExchangeIdEventsResponseFromJson(json);
   
+  @JsonKey(includeIfNull: true)
   final String? nextCursor;
   final List<EventSummary> items;
 

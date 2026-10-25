@@ -20,9 +20,13 @@ class NotificationPrefs {
   factory NotificationPrefs.fromJson(Map<String, Object?> json) => _$NotificationPrefsFromJson(json);
   
   /// Percent units, decimal string, 2 dp (−12.19 = −12.19%)
+  @JsonKey(includeIfNull: false)
   final String? holdingMovedPct;
+  @JsonKey(includeIfNull: false)
   final QuietHours? quietHours;
+  @JsonKey(includeIfNull: false)
   final bool? bells;
+  @JsonKey(includeIfNull: false)
   final List<String>? disabledTypes;
 
   Map<String, Object?> toJson() => _$NotificationPrefsToJson(this);

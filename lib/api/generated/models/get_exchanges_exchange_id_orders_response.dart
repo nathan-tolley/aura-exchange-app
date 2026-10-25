@@ -18,6 +18,7 @@ class GetExchangesExchangeIdOrdersResponse {
   
   factory GetExchangesExchangeIdOrdersResponse.fromJson(Map<String, Object?> json) => _$GetExchangesExchangeIdOrdersResponseFromJson(json);
   
+  @JsonKey(includeIfNull: true)
   final String? nextCursor;
   final List<Order> items;
 

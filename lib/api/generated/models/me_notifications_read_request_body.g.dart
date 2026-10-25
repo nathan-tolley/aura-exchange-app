@@ -16,6 +16,6 @@ MeNotificationsReadRequestBody _$MeNotificationsReadRequestBodyFromJson(
 Map<String, dynamic> _$MeNotificationsReadRequestBodyToJson(
   MeNotificationsReadRequestBody instance,
 ) => <String, dynamic>{
-  'ids': instance.ids,
-  'upTo': instance.upTo?.toIso8601String(),
+  'ids': ?instance.ids,
+  'upTo': ?instance.upTo?.toIso8601String(),
 };

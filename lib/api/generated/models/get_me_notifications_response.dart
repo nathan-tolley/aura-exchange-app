@@ -18,6 +18,7 @@ class GetMeNotificationsResponse {
   
   factory GetMeNotificationsResponse.fromJson(Map<String, Object?> json) => _$GetMeNotificationsResponseFromJson(json);
   
+  @JsonKey(includeIfNull: true)
   final String? nextCursor;
   final List<Notification> items;
 

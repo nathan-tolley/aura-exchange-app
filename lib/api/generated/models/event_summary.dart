@@ -29,8 +29,11 @@ class EventSummary {
   final ListingRef subject;
   final EventStatus status;
   final String teaser;
+  @JsonKey(includeIfNull: true)
   final String? headline;
+  @JsonKey(includeIfNull: true)
   final int? impactFinal;
+  @JsonKey(includeIfNull: true)
   final Category? category;
   final DateTime createdAt;
 

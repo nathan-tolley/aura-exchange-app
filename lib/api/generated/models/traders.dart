@@ -17,9 +17,11 @@ class Traders {
   
   factory Traders.fromJson(Map<String, Object?> json) => _$TradersFromJson(json);
   
+  @JsonKey(includeIfNull: false)
   final ListingRef? listing;
 
   /// Aura Bucks, decimal string, 2 dp
+  @JsonKey(includeIfNull: false)
   final String? netWorth;
 
   Map<String, Object?> toJson() => _$TradersToJson(this);

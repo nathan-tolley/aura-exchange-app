@@ -48,12 +48,15 @@ class Ruling {
   final String priceMovePct;
 
   /// Set when the market is closed: the shock waits for the open
+  @JsonKey(includeIfNull: true)
   final DateTime? landsAt;
 
   /// Price, decimal string, 2 dp
+  @JsonKey(includeIfNull: true)
   final String? indicatedPrice;
 
   /// Set after an overturned appeal
+  @JsonKey(includeIfNull: true)
   final String? correction;
 
   Map<String, Object?> toJson() => _$RulingToJson(this);

@@ -20,4 +20,7 @@ _$GetExchangesExchangeIdLeaderboardsResponseFromJson(
 
 Map<String, dynamic> _$GetExchangesExchangeIdLeaderboardsResponseToJson(
   GetExchangesExchangeIdLeaderboardsResponse instance,
-) => <String, dynamic>{'traders': instance.traders, 'stocks': instance.stocks};
+) => <String, dynamic>{
+  'traders': ?instance.traders,
+  'stocks': ?instance.stocks,
+};

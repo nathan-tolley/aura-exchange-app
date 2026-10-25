@@ -25,7 +25,9 @@ class Receipt {
 
   /// Signed, short-lived
   final String url;
+  @JsonKey(includeIfNull: false)
   final int? width;
+  @JsonKey(includeIfNull: false)
   final int? height;
 
   Map<String, Object?> toJson() => _$ReceiptToJson(this);

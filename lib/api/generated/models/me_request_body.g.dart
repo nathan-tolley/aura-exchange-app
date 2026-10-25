@@ -10,4 +10,4 @@ MeRequestBody _$MeRequestBodyFromJson(Map<String, dynamic> json) =>
     MeRequestBody(displayName: json['displayName'] as String?);
 
 Map<String, dynamic> _$MeRequestBodyToJson(MeRequestBody instance) =>
-    <String, dynamic>{'displayName': instance.displayName};
+    <String, dynamic>{'displayName': ?instance.displayName};

@@ -16,6 +16,7 @@ class AuthAppleRequestBody {
   factory AuthAppleRequestBody.fromJson(Map<String, Object?> json) => _$AuthAppleRequestBodyFromJson(json);
   
   final String identityToken;
+  @JsonKey(includeIfNull: false)
   final String? displayName;
 
   Map<String, Object?> toJson() => _$AuthAppleRequestBodyToJson(this);

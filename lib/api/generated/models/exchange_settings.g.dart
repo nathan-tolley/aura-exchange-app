@@ -17,7 +17,7 @@ ExchangeSettings _$ExchangeSettingsFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ExchangeSettingsToJson(ExchangeSettings instance) =>
     <String, dynamic>{
-      'name': instance.name,
-      'hours': instance.hours,
-      'quietDecay': instance.quietDecay,
+      'name': ?instance.name,
+      'hours': ?instance.hours,
+      'quietDecay': ?instance.quietDecay,
     };

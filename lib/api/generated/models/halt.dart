@@ -30,15 +30,19 @@ class Halt {
   
   final String id;
   final HaltScope scope;
+  @JsonKey(includeIfNull: true)
   final String? listingId;
   final HaltReason reason;
   final HaltStatus status;
   final DateTime startedAt;
   final DateTime endsAt;
+  @JsonKey(includeIfNull: true)
   final String? eventId;
+  @JsonKey(includeIfNull: true)
   final Vote? vote;
 
   /// Percent units, decimal string, 2 dp (−12.19 = −12.19%)
+  @JsonKey(includeIfNull: true)
   final String? ifConfirmedMovePct;
 
   Map<String, Object?> toJson() => _$HaltToJson(this);

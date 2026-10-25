@@ -18,7 +18,9 @@ class GetExchangesExchangeIdLeaderboardsResponse {
   
   factory GetExchangesExchangeIdLeaderboardsResponse.fromJson(Map<String, Object?> json) => _$GetExchangesExchangeIdLeaderboardsResponseFromJson(json);
   
+  @JsonKey(includeIfNull: false)
   final List<Traders>? traders;
+  @JsonKey(includeIfNull: false)
   final List<Stocks>? stocks;
 
   Map<String, Object?> toJson() => _$GetExchangesExchangeIdLeaderboardsResponseToJson(this);

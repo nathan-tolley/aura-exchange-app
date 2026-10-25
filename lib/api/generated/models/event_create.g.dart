@@ -23,6 +23,6 @@ Map<String, dynamic> _$EventCreateToJson(EventCreate instance) =>
       'exchangeId': instance.exchangeId,
       'subjectListingId': instance.subjectListingId,
       'text': instance.text,
-      'receiptIds': instance.receiptIds,
-      'happenedAt': instance.happenedAt?.toIso8601String(),
+      'receiptIds': ?instance.receiptIds,
+      'happenedAt': ?instance.happenedAt?.toIso8601String(),
     };

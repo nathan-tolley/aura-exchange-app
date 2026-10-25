@@ -18,6 +18,7 @@ class GetExchangesExchangeIdTapeResponse {
   
   factory GetExchangesExchangeIdTapeResponse.fromJson(Map<String, Object?> json) => _$GetExchangesExchangeIdTapeResponseFromJson(json);
   
+  @JsonKey(includeIfNull: true)
   final String? nextCursor;
   final List<TapeItem> items;
 

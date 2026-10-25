@@ -30,6 +30,7 @@ class OrderCreate {
   final String triggerPrice;
 
   /// Required for STOP_LOSS / TAKE_PROFIT
+  @JsonKey(includeIfNull: false)
   final String? positionId;
 
   Map<String, Object?> toJson() => _$OrderCreateToJson(this);

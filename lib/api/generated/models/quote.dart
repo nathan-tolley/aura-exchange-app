@@ -41,6 +41,7 @@ class Quote {
   final MarketState marketState;
 
   /// When marketState next changes
+  @JsonKey(includeIfNull: true)
   final DateTime? nextChangeAt;
   final String id;
   final String listingId;
@@ -72,7 +73,9 @@ class Quote {
 
   /// Quotes hold 15 s
   final DateTime expiresAt;
+  @JsonKey(includeIfNull: true)
   final Previous? previous;
+  @JsonKey(includeIfNull: true)
   final Short? short;
 
   /// Negative means the trade would be rejected

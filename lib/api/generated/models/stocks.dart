@@ -17,9 +17,11 @@ class Stocks {
   
   factory Stocks.fromJson(Map<String, Object?> json) => _$StocksFromJson(json);
   
+  @JsonKey(includeIfNull: false)
   final ListingRef? listing;
 
   /// Percent units, decimal string, 2 dp (−12.19 = −12.19%)
+  @JsonKey(includeIfNull: false)
   final String? seasonChangePct;
 
   Map<String, Object?> toJson() => _$StocksToJson(this);

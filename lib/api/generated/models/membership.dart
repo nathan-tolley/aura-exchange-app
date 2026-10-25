@@ -28,7 +28,9 @@ class Membership {
   final String id;
   final String exchangeId;
   final Role role;
+  @JsonKey(includeIfNull: true)
   final ListingRef? listing;
+  @JsonKey(includeIfNull: true)
   final DateTime? listingConsentAt;
   final DateTime joinedAt;
   final List<MembershipBadges> badges;

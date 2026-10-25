@@ -30,14 +30,20 @@ class TapeItem {
   final String id;
   final TapeItemType type;
   final DateTime at;
+  @JsonKey(includeIfNull: true)
   final ListingRef? listing;
   final String headline;
+  @JsonKey(includeIfNull: true)
   final String? body;
+  @JsonKey(includeIfNull: true)
   final int? impact;
 
   /// Percent units, decimal string, 2 dp (−12.19 = −12.19%)
+  @JsonKey(includeIfNull: true)
   final String? priceMovePct;
+  @JsonKey(includeIfNull: true)
   final String? eventId;
+  @JsonKey(includeIfNull: true)
   final String? haltId;
 
   Map<String, Object?> toJson() => _$TapeItemToJson(this);

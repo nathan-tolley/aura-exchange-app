@@ -15,7 +15,9 @@ class MeNotificationsReadRequestBody {
   
   factory MeNotificationsReadRequestBody.fromJson(Map<String, Object?> json) => _$MeNotificationsReadRequestBodyFromJson(json);
   
+  @JsonKey(includeIfNull: false)
   final List<String>? ids;
+  @JsonKey(includeIfNull: false)
   final DateTime? upTo;
 
   Map<String, Object?> toJson() => _$MeNotificationsReadRequestBodyToJson(this);

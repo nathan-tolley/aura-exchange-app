@@ -18,5 +18,5 @@ Map<String, dynamic> _$QuoteRequestToJson(QuoteRequest instance) =>
       'listingId': instance.listingId,
       'side': instance.side,
       'quantity': instance.quantity,
-      'previousQuoteId': instance.previousQuoteId,
+      'previousQuoteId': ?instance.previousQuoteId,
     };
