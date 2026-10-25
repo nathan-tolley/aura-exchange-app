@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
+import '../text.dart';
 import '../icons.dart';
 import '../surface.dart';
 import '../tokens.dart';
@@ -152,12 +153,14 @@ class AuraActionButton extends StatelessWidget {
               alignment: Alignment.center,
               child: AuraIcon(icon, size: 22, color: AuraColors.ink),
             ),
-            Text(
-              label,
-              style: AuraType.footnote.copyWith(
-                color: AuraColors.inkSecondary,
-                letterSpacing: 0,
-                fontFeatures: const [],
+            auraLiftFootnote(
+              Text(
+                label,
+                style: AuraType.footnote.copyWith(
+                  color: AuraColors.inkSecondary,
+                  letterSpacing: 0,
+                  fontFeatures: const [],
+                ),
               ),
             ),
           ],

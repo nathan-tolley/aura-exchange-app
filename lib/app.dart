@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
 import 'design/gallery/gallery_screen.dart';
+import 'design/gallery/screen_states.dart';
 import 'design/text.dart';
 import 'design/tokens.dart';
 
@@ -36,7 +37,22 @@ final GoRouter _router = GoRouter(
     if (kDebugMode)
       GoRoute(
         path: '/gallery',
-        builder: (context, state) => const AuraGalleryScreen(),
+        builder: (context, state) => AuraGalleryScreen(
+          onOpenScreen: (id) => context.push('/gallery/screens/$id'),
+        ),
+        routes: [
+          // A screen state full size: swipe back to the gallery.
+          GoRoute(
+            path: 'screens/:id',
+            builder: (context, state) {
+              final id = state.pathParameters['id'];
+              final screen = screenStates.where((s) => s.id == id).firstOrNull;
+              return screen == null
+                  ? const _BlankScreen()
+                  : Builder(builder: screen.build);
+            },
+          ),
+        ],
       ),
   ],
 );

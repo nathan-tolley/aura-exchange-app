@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../text.dart';
 import '../surface.dart';
 import '../tokens.dart';
 import '../tone.dart';
@@ -53,23 +54,25 @@ class AuraStatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 3,
         children: [
-          Row(
-            spacing: 8,
-            children: [
-              Expanded(
-                child: Text(
-                  label,
-                  style: _small.copyWith(color: AuraColors.inkTertiary),
-                ),
-              ),
-              if (trailing != null)
-                Text(
-                  trailing!,
-                  style: _small.copyWith(
-                    color: trailingTone.colorOr(AuraColors.inkTertiary),
+          auraLiftFootnote(
+            Row(
+              spacing: 8,
+              children: [
+                Expanded(
+                  child: Text(
+                    label,
+                    style: _small.copyWith(color: AuraColors.inkTertiary),
                   ),
                 ),
-            ],
+                if (trailing != null)
+                  Text(
+                    trailing!,
+                    style: _small.copyWith(
+                      color: trailingTone.colorOr(AuraColors.inkTertiary),
+                    ),
+                  ),
+              ],
+            ),
           ),
           valueChild ??
               Text(

@@ -4,21 +4,17 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A2 done (branch `a2-api-layer`, merged into `main` locally as `e8690b7`). A3 next.
-- State: done; A3 not started
-- Next action: A3 on a new branch `a3-worst-moments` off `main`, in this order (each one: fixtures with the reference's exact data → screen → 390×844 @2x golden → diff against `design/reference/screens/W##-*.png` and look at both → gallery entry → commit):
-  1. Screen scaffold: a full-screen golden harness (780×1688 px like the references), the shared layout (16 pt gutters, top bar with back glyph and status chip, bottom action area, tab bar), and a "Screens" section in the State Gallery.
-  2. Home family through `LiveMarket` + `liveness()` + strings: W09 closed, W11 offline, W12 IPO day.
-  3. Trade sheet over the dimmed stock page: W05 rejected, W06 requote (fixtures through `errorCopy`).
+- Step: A3 → step 3: W05 trade rejected and W06 requote (branch `a3-worst-moments`)
+- State: next (steps 1–2 committed: scaffold and W09, W11, W12)
+- Next action: the trade sheet over the dimmed stock page. Measure W05/W06 with `python tool/golden_diff.py bands`, build `lib/features/trade/` (view + presenter from `Quote` and `ApiError` through `errorCopy`), add both to `screen_states.dart` with references, then diff and tune. Remaining after that:
   4. W10 halted (stock page + halt vote).
   5. W07 margin warning sheet, W08 liquidated receipt.
   6. W04 Chapter 7.
   7. W01 rumor about you, W02 ruling on you, W03 SEC charge.
   8. W13 exchange down, once Nathan answers the footnote question.
-  Recheck the 12.5 pt quirk (`NOTES.md`) on the first screen with chips or tags.
-- How to compare: goldens are 840 px wide at 2× like the references. Diff each golden against `design/reference/components/<Name>.png` and look at both. All 30 reference goldens are within 0.03–4.5% differing pixels (antialiasing). See `docs/aura/NOTES.md` for what was matched and the 12.5 pt quirk to recheck in A3.
-- Lessons: `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format` the generated token files.
 - Uncommitted work: none
+- How to compare: `python tool/golden_diff.py diff GOLDEN REFERENCE` gives the share of differing pixels and a side-by-side image (look at it); `bands` lists where content sits, in points, for measuring the drawn screens. Component goldens are 840 px wide and now 0.03–2.81% from their references; screens are 780×1688 (`expectScreen`), Home at about 2%.
+- Lessons: 12.5 pt text goes through `auraLiftFootnote()`. Build screens as a view over a view-model plus a presenter from API payloads; fixtures are API-shaped JSON. `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format` the generated token files.
 - Waiting on Nathan:
   - **First iOS release run.** The GitHub repo exists (public, `origin/main` at `39234c4`, created by Nathan on 2026-10-24). Later pushes and the A0 check's one manual run of iOS release still need your OK.
   - **Contract request #2** (`docs/aura/CONTRACT-REQUESTS.md`): `nextStimulusAt` on `INSUFFICIENT_CASH`, so W05 can say "tomorrow's stimulus check" without the app copying the schedule. Not blocking; the copy falls back to "the next stimulus check".
@@ -58,3 +54,4 @@ One line per finished step: date · step · what · commit.
 - 2026-10-25 · A2 · Data layer: `Freshness` + `liveness()`, the live market (REST + ticks, refetch on reconnect and `PollDue`), system/auth/market/trading repositories, the stream following sign-in, Riverpod retry off; contract requests #3 and #4 · (this commit)
 - 2026-10-25 · A2 · A2 check: `test/prism/` (opt-in tag) passes against Prism, 36 tests including all 31 forced codes; only connection errors read as offline (`APP_UNEXPECTED` otherwise); errors unit tests; contract request #5. 270 tests, analyze clean · (this commit)
 - 2026-10-25 · A2 · Merged `a2-api-layer` into `main` (`e8690b7`); A3 plan written into Now · (this commit)
+- 2026-10-25 · A3 · Screen scaffold (`expectScreen`, `tool/golden_diff.py`, Screens in the State Gallery) and Home: W09 2.17%, W11 2.01%, W12 2.00%; 12.5 pt text lifted 2 pt and the banner fixed in the components (all touched component goldens closer); 277 tests · (this commit)

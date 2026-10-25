@@ -95,11 +95,13 @@ class AuraNavRow extends StatelessWidget {
                       ),
                     ),
                     if (subtitle != null)
-                      Text(
-                        subtitle!,
-                        style: auraControlText(
-                          AuraType.footnote.copyWith(
-                            color: AuraColors.inkTertiary,
+                      auraLiftFootnote(
+                        Text(
+                          subtitle!,
+                          style: auraControlText(
+                            AuraType.footnote.copyWith(
+                              color: AuraColors.inkTertiary,
+                            ),
                           ),
                         ),
                       ),

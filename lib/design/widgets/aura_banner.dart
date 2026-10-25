@@ -71,76 +71,89 @@ class AuraBanner extends StatelessWidget {
       liveRegion: urgent,
       container: true,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        // The text starts 11 pt down and ends 13 pt up, as in the reference.
+        padding: const EdgeInsets.fromLTRB(14, 11, 14, 12),
         decoration: BoxDecoration(
           color: AuraSheetScope.raised(context),
           borderRadius: BorderRadius.circular(AuraRadius.md),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 12,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 1),
-              child: AuraIcon(icon ?? tone.icon, size: 18, color: tone.color),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 2,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      height: 19 / 14,
-                      fontWeight: FontWeight.w600,
-                      color: AuraColors.ink,
-                    ),
-                  ),
-                  if (body != null)
-                    Text(
-                      body!,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        height: 18 / 13,
-                        color: AuraColors.inkSecondary,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            if (action != null)
+        // The icon and text start at the top; the action sits in the middle
+        // of the banner's height (W05, W11).
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 12,
+            children: [
               Align(
-                alignment: Alignment.center,
-                heightFactor: 1,
-                child: Semantics(
-                  button: true,
-                  label: action,
-                  onTap: onAction,
-                  excludeSemantics: true,
-                  child: AuraPressable(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: AuraIcon(
+                    icon ?? tone.icon,
+                    size: 18,
+                    color: tone.color,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 1),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 2,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          height: 19 / 14,
+                          fontWeight: FontWeight.w600,
+                          color: AuraColors.ink,
+                        ),
+                      ),
+                      if (body != null)
+                        Text(
+                          body!,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            height: 18 / 13,
+                            color: AuraColors.inkSecondary,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              if (action != null)
+                Align(
+                  child: Semantics(
+                    button: true,
+                    label: action,
                     onTap: onAction,
-                    child: Container(
-                      constraints: const BoxConstraints(minHeight: 36),
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      alignment: Alignment.center,
-                      child: Text(
-                        action!,
-                        style: auraControlText(
-                          const TextStyle(
-                            fontSize: 14,
-                            height: 19 / 14,
-                            fontWeight: FontWeight.w600,
-                            color: AuraColors.ink,
+                    excludeSemantics: true,
+                    child: AuraPressable(
+                      onTap: onAction,
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 36),
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        alignment: Alignment.center,
+                        child: Text(
+                          action!,
+                          style: auraControlText(
+                            const TextStyle(
+                              fontSize: 14,
+                              height: 19 / 14,
+                              fontWeight: FontWeight.w600,
+                              color: AuraColors.ink,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

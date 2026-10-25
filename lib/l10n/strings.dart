@@ -527,3 +527,82 @@ ErrorCopy offlineBanner(
       "Trading and filing wait until you're back.",
   action: 'Retry',
 );
+
+// ---------------------------------------------------------------------------
+// Home (W09, W11, W12)
+// ---------------------------------------------------------------------------
+
+const fileAnEvent = 'File an event';
+const trade = 'Trade';
+
+/// Trading while the market is closed means setting orders (W09).
+const setAnOrder = 'Set an order';
+const watchlistTitle = 'Watchlist';
+const searchFriends = 'Search friends or tickers…';
+
+/// IPO day (W12): nobody else is listed yet.
+const nobodyToSearch = 'Nobody to search yet';
+
+/// The tag after a name in a row: a ruling waiting for the open, then your
+/// own position.
+const tagRuled = 'Ruled';
+const tagHolding = 'Holding';
+const tagShort = 'Short';
+
+/// "Net worth · Season 1", "Net worth · at the close",
+/// "Net worth · as of 9:41 pm".
+String netWorthLabel({
+  required bool closed,
+  required bool delayed,
+  required int season,
+  required DateTime asOf,
+  required tz.Location zone,
+  required DateTime now,
+}) {
+  if (delayed) return 'Net worth · ${asOfLabel(asOf, zone, now: now)}';
+  if (closed) return 'Net worth · at the close';
+  return 'Net worth · Season $season';
+}
+
+/// "As of 9:41 pm", next to a list whose prices aren't live (W11).
+String asOfStatus(DateTime asOf, tz.Location zone, {required DateTime now}) =>
+    'As of ${formatMoment(asOf, zone, now: now)}';
+
+/// The closed banner (W09): when it opens, what lands then, and what orders
+/// do meanwhile. [queued] are the tickers with a ruling waiting for the open.
+ErrorCopy closedBanner({
+  required DateTime? opensAt,
+  required List<String> queued,
+  required tz.Location zone,
+  required DateTime now,
+}) {
+  const orders = 'Orders you set now fill at the opening price.';
+  return ErrorCopy(
+    title: opensAt == null
+        ? 'The market is closed'
+        : 'Closed until ${formatMoment(opensAt, zone, now: now)}',
+    body: switch (queued) {
+      [] => orders,
+      [final one] =>
+        'A ruling on $one lands at the open, so it will gap. $orders',
+      [...final some, final last] =>
+        'Rulings on ${some.join(', ')} and $last land at the open, so they '
+            'will gap. $orders',
+    },
+  );
+}
+
+/// IPO day (W12).
+String ipoHeroNote(int minListings) =>
+    'Your starting cash. The market opens at $minListings listings.';
+String listedOf(int listed, int minListings) =>
+    '$listed of $minListings listed';
+const cantTradeYourself = "You can't trade yourself";
+const memberPickingTicker = 'Joined · picking a ticker';
+String invitedNotOpened(String ago) => "Invited $ago · hasn't opened it";
+const almost = 'Almost';
+const nudge = 'Nudge';
+const inviteSomeone = 'Invite someone';
+const inviteSomeoneNote = 'Anyone with the link can list';
+const firstOnTheTape = 'First thing on the tape';
+const analystAtTheOpen = 'The Analyst · when the market opens';

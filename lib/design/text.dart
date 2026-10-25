@@ -31,3 +31,10 @@ TextStyle auraBaseTextStyle({bool? systemSans}) {
     decoration: TextDecoration.none,
   );
 }
+
+/// The references draw 12.5 pt text (footnotes, tags, chips, row and nav
+/// subtitles, stat labels) 2 pt higher than its line box puts it, and every
+/// drawn screen agrees (docs/aura/NOTES.md, 2026-10-25). Wrap 12.5 pt text
+/// in this to match: the ink moves up, the layout doesn't.
+Widget auraLiftFootnote(Widget text) =>
+    Transform.translate(offset: const Offset(0, -2), child: text);
