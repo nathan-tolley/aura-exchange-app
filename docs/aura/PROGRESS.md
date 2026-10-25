@@ -4,9 +4,9 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A2 → `stream.dart` (branch `a2-api-layer`)
-- State: in progress (client, errors + copy and time formats are committed)
-- Next action: `lib/api/stream.dart`: WebSocket at `ApiConfig.streamUri?access_token=`, subscribe per exchange, ping every 25 s, exponential-backoff reconnect, close code 4401 → `session.refreshAfter` and reconnect, polling fallback every 15 s, `connected` for the Delayed state; tests with a fake channel and fake_async. Then the Freshness provider, repositories + Prism tests.
+- Step: A2 → Freshness + repositories (branch `a2-api-layer`)
+- State: in progress (client, errors + copy, time formats and the stream are committed; contract at draft.6)
+- Next action: `lib/data/`: the Freshness model and `liveness()` (Delayed when the socket is down or `asOf` is over 60 s old; CLOSED reads "at the close"), a `MarketRepository` that merges REST and ticks and polls while the socket is down, Trading/Auth/System repositories through `guardApi`, Riverpod providers, then the Prism tests (tagged `prism`, skipped by default) for the A2 check.
 - How to compare: goldens are 840 px wide at 2× like the references. Diff each golden against `design/reference/components/<Name>.png` and look at both. All 30 reference goldens are within 0.03–4.5% differing pixels (antialiasing). See `docs/aura/NOTES.md` for what was matched and the 12.5 pt quirk to recheck in A3.
 - Lessons: `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format` the generated token files.
 - Uncommitted work: none
@@ -43,3 +43,4 @@ One line per finished step: date · step · what · commit.
 - 2026-10-25 · A2 · `format/time.dart`: exchange zone, clock, moment, relative (`formatWhen`, `formatAgo`) and day words, 8 tests · (this commit)
 - 2026-10-25 · A2 · `l10n/strings.dart`: copy for all 31 error codes (exhaustive over `ErrorCode`), local and unknown codes, freshness labels; doc/spec parity test; contract request #2 (`nextStimulusAt`) · (this commit)
 - 2026-10-25 · Sync · Contract → `1.0.0-draft.6` (named error examples; contract request #1 done). Client regenerated (version only) · (this commit)
+- 2026-10-25 · A2 · `stream.dart`: subscribe per exchange, 25 s ping with dead-socket detection, backoff reconnect, 4401 refresh, 15 s polling fallback, `connected`, message parsing; 13 fake-time tests · (this commit)

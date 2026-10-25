@@ -67,13 +67,14 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
 - [x] `format/`: money, change, percent, ticker, exchange-local time, relative time and countdown, with unit tests using the examples in `DESIGN.md` → Numbers.
   - *2026-10-24: money, change, percent, impact, tape change, quantity, ticker and countdown were pulled forward into A1 (the components need them), with tests in `test/format/`.*
   - *2026-10-25: `lib/format/time.dart`: the exchange's IANA zone (UTC if unknown), `9:41 pm` clock, `formatMoment` (time alone within 12 h, then weekday, then date), `formatWhen` (relative under an hour, the contract's rule), `formatAgo` (`2 h ago`, W12) and `formatDay` (`tomorrow`, from the exchange's calendar). 8 tests, including daylight saving.*
-- [ ] `stream.dart`:
+- [x] `stream.dart`:
   - subscribe per exchange
   - ping every 25 s
   - exponential-backoff reconnect
   - on close code 4401, refresh and reconnect
   - polling fallback every 15 s
   - exposes `connected` for the Delayed state
+  - *2026-10-25: `AuraStream` (`lib/api/stream.dart`) behind a small `SocketConnection` seam. A socket that answers nothing for a whole ping interval is replaced; backoff is 1 s doubling to 30 s with ±20% jitter, reset by a good connection; 4401 refreshes through `AuthSession` and reconnects at once (or stays down if that signs out); `StreamReconnected` tells screens to refetch. Messages are parsed from API-CONTRACT.md (the spec has no socket schemas). 13 tests in fake time.*
 - [ ] A Freshness provider: Delayed when `asOf` is more than 60 s old or the socket is down.
 - **Check:** the repository tests pass against Prism, including forced `Prefer: code=409/422/426/500` responses mapping to the right `ApiError.action`.
 
