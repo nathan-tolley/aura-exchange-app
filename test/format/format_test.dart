@@ -54,13 +54,20 @@ void main() {
         formatChange(abs: d('7.79'), pct: d('6.70'), period: 'today'),
         '↑ +7.79 (+6.70%) today',
       );
-      expect(formatChange(abs: d('-10.50'), pct: d('-9.34')), '↓ −10.50 (−9.34%)');
+      expect(
+        formatChange(abs: d('-10.50'), pct: d('-9.34')),
+        '↓ −10.50 (−9.34%)',
+      );
       expect(
         formatChange(abs: d('2486.20'), pct: d('24.86'), period: 'this season'),
         '↑ +2,486.20 (+24.86%) this season',
       );
       expect(
-        formatChange(abs: d('-9935.88'), pct: d('-99.36'), period: 'this season'),
+        formatChange(
+          abs: d('-9935.88'),
+          pct: d('-99.36'),
+          period: 'this season',
+        ),
         '↓ −9,935.88 (−99.36%) this season',
       );
     });

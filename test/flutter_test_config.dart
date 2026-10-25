@@ -20,7 +20,9 @@ Future<void> _loadFont(String family, List<String> files) async {
   final loader = FontLoader(family);
   for (final file in files) {
     final bytes = File('assets/fonts/$file').readAsBytesSync();
-    loader.addFont(Future.value(ByteData.sublistView(Uint8List.fromList(bytes))));
+    loader.addFont(
+      Future.value(ByteData.sublistView(Uint8List.fromList(bytes))),
+    );
   }
   await loader.load();
 }

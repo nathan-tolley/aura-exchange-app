@@ -12,8 +12,16 @@ void main() {
       expect(bounds.width + bounds.height, greaterThan(0), reason: icon.name);
       expect(bounds.left, greaterThanOrEqualTo(0), reason: icon.name);
       expect(bounds.top, greaterThanOrEqualTo(0), reason: icon.name);
-      expect(bounds.right, lessThanOrEqualTo(AuraIcons.viewBox), reason: icon.name);
-      expect(bounds.bottom, lessThanOrEqualTo(AuraIcons.viewBox), reason: icon.name);
+      expect(
+        bounds.right,
+        lessThanOrEqualTo(AuraIcons.viewBox),
+        reason: icon.name,
+      );
+      expect(
+        bounds.bottom,
+        lessThanOrEqualTo(AuraIcons.viewBox),
+        reason: icon.name,
+      );
     }
   });
 

@@ -84,9 +84,9 @@ abstract final class AuraType {
   static const TextStyle impact = TextStyle(fontFamily: AuraFonts.display, fontFamilyFallback: AuraFonts.fallback, fontSize: 32.0, height: 1.0625, fontWeight: FontWeight.w400, letterSpacing: -0.64, color: AuraColors.ink, fontFeatures: _tabular);
   // Analyst: Apple's New York on iPhone (Newsreader stands in on the web). Only the Analyst speaks in the serif: headlines, notes, Fed statements, company profiles.
   /// A headline that is the point of the screen. Sample: Jake indicated sharply lower after overnight “who is this” incident
-  static const TextStyle headline = TextStyle(fontFamily: AuraFonts.serif, fontFamilyFallback: AuraFonts.fallback, fontSize: 25.0, height: 1.24, fontWeight: FontWeight.w400, letterSpacing: -0.25, color: AuraColors.ink, fontFeatures: _tabular);
+  static const TextStyle headline = TextStyle(fontFamily: AuraFonts.serif, fontFamilyFallback: AuraFonts.fallback, fontSize: 25.0, height: 1.24, fontWeight: FontWeight.w400, letterSpacing: -0.25, color: AuraColors.ink, fontFeatures: _tabular, fontVariations: [FontVariation('opsz', 16)]);
   /// Analyst notes, in ink-secondary, never boxed. Sample: “We are moving to Underweight.”
-  static const TextStyle quote = TextStyle(fontFamily: AuraFonts.serif, fontFamilyFallback: AuraFonts.fallback, fontSize: 17.0, height: 1.4706, fontWeight: FontWeight.w400, color: AuraColors.ink, fontFeatures: _tabular);
+  static const TextStyle quote = TextStyle(fontFamily: AuraFonts.serif, fontFamilyFallback: AuraFonts.fallback, fontSize: 17.0, height: 1.4706, fontWeight: FontWeight.w400, color: AuraColors.ink, fontFeatures: _tabular, fontVariations: [FontVariation('opsz', 16)]);
   // Interface: SF Pro Text. Hierarchy comes from size and color, rarely from weight.
   /// Stock headers and sheet titles. Sample: $ANNA
   static const TextStyle title = TextStyle(fontFamily: AuraFonts.sans, fontFamilyFallback: AuraFonts.fallback, fontSize: 17.0, height: 1.2941, fontWeight: FontWeight.w600, color: AuraColors.ink, fontFeatures: _tabular);

@@ -9,6 +9,12 @@ import 'tokens.dart';
 bool get auraUsesSystemSans =>
     !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
 
+/// Text inside a control (button and link labels, tabs, segments, nav rows)
+/// has no tracking and proportional figures, as the references' `<button>`
+/// elements do. Inter's tabular setting would also widen hyphens there.
+TextStyle auraControlText(TextStyle style) =>
+    style.copyWith(letterSpacing: 0, fontFeatures: const []);
+
 /// The text style every Aura widget starts from: the app's `body` style with
 /// the right sans for the platform. The app installs it as the default text
 /// style, so `AuraType` styles (whose sans family is null) inherit it, and no

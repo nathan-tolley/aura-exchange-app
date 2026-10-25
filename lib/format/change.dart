@@ -38,7 +38,8 @@ String formatChange({Decimal? abs, Decimal? pct, String? period}) {
   assert(abs != null || pct != null, 'Give abs, pct or both');
   final parts = [
     if (abs != null) formatSigned(abs),
-    if (pct != null) abs != null ? '(${formatPercent(pct)})' : formatPercent(pct),
+    if (pct != null)
+      abs != null ? '(${formatPercent(pct)})' : formatPercent(pct),
   ];
   final arrow = switch (Trend.of((pct ?? abs)!.round(scale: 2))) {
     Trend.up => '↑ ',

@@ -50,7 +50,8 @@ class AuraIcon extends StatelessWidget {
       size: Size.square(size),
       painter: _AuraIconPainter(
         path: pathOf(icon),
-        color: color ?? DefaultTextStyle.of(context).style.color ?? AuraColors.ink,
+        color:
+            color ?? DefaultTextStyle.of(context).style.color ?? AuraColors.ink,
         weight: weight,
         filled: filled,
       ),

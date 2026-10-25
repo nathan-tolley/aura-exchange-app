@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import '../text.dart';
 import '../tokens.dart';
 import 'aura_pressable.dart';
 
@@ -55,13 +56,15 @@ class AuraSegmentedControl extends StatelessWidget {
                       child: Text(
                         option,
                         maxLines: 1,
-                        style: TextStyle(
-                          fontSize: 13,
-                          height: 16 / 13,
-                          fontWeight: FontWeight.w500,
-                          color: option == value
-                              ? AuraColors.ink
-                              : AuraColors.inkTertiary,
+                        style: auraControlText(
+                          TextStyle(
+                            fontSize: 13,
+                            height: 16 / 13,
+                            fontWeight: FontWeight.w500,
+                            color: option == value
+                                ? AuraColors.ink
+                                : AuraColors.inkTertiary,
+                          ),
                         ),
                       ),
                     ),

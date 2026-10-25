@@ -12,7 +12,9 @@ void main() {
     final app = tester.widget<CupertinoApp>(find.byType(CupertinoApp));
     expect(app.theme?.brightness, Brightness.dark);
     expect(
-      find.byWidgetPredicate((w) => w is ColoredBox && w.color == AuraColors.bg),
+      find.byWidgetPredicate(
+        (w) => w is ColoredBox && w.color == AuraColors.bg,
+      ),
       findsOneWidget,
     );
   });

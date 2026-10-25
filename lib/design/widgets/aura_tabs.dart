@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../surface.dart';
+import '../text.dart';
 import '../tokens.dart';
 import 'aura_pressable.dart';
 
@@ -33,7 +34,7 @@ class AuraTabs extends StatelessWidget {
       label: label,
       child: Container(
         height: 40,
-        decoration: BoxDecoration(
+        foregroundDecoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(color: AuraSheetScope.line(context)),
           ),
@@ -60,13 +61,15 @@ class AuraTabs extends StatelessWidget {
                           child: Text(
                             item,
                             maxLines: 1,
-                            style: TextStyle(
-                              fontSize: 14,
-                              height: 18 / 14,
-                              fontWeight: FontWeight.w500,
-                              color: item == value
-                                  ? AuraColors.ink
-                                  : AuraColors.inkTertiary,
+                            style: auraControlText(
+                              TextStyle(
+                                fontSize: 14,
+                                height: 18 / 14,
+                                fontWeight: FontWeight.w500,
+                                color: item == value
+                                    ? AuraColors.ink
+                                    : AuraColors.inkTertiary,
+                              ),
                             ),
                           ),
                         ),

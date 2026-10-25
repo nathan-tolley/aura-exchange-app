@@ -1,34 +1,23 @@
 import 'package:flutter/widgets.dart';
 
 import '../tokens.dart';
-
-enum AuraTagTone {
-  /// `inkTertiary`: Holding, Short, Rumor, You.
-  neutral,
-
-  /// SEC.
-  down,
-
-  /// Halted, Indicated, Ruled.
-  warn,
-}
+import '../tone.dart';
 
 /// One or two words of context after a name in a row, as quiet text after a
 /// middle dot: "Anna · Holding". Never a pill, never a number. One per row;
-/// the strongest wins: SEC > Halted > Rumor > Short > Holding.
+/// the strongest wins: SEC > Halted > Rumor > Short > Holding. Only `down`
+/// (SEC) and `warn` (Halted, Indicated, Ruled) color it; neutral tags
+/// (Holding, Short, Rumor, You) are `inkTertiary`.
 class AuraTag extends StatelessWidget {
-  const AuraTag(this.text, {super.key, this.tone = AuraTagTone.neutral});
+  const AuraTag(this.text, {super.key, this.tone = AuraTone.neutral});
 
   final String text;
-  final AuraTagTone tone;
+  final AuraTone tone;
 
   @override
   Widget build(BuildContext context) {
-    final color = switch (tone) {
-      AuraTagTone.neutral => AuraColors.inkTertiary,
-      AuraTagTone.down => AuraColors.down,
-      AuraTagTone.warn => AuraColors.warn,
-    };
+    assert(tone != AuraTone.up, 'Tags are never up-colored');
+    final color = tone.colorOr(AuraColors.inkTertiary);
     return Text.rich(
       TextSpan(
         children: [

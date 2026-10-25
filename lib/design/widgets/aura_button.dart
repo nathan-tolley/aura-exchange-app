@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../icons.dart';
 import '../surface.dart';
+import '../text.dart';
 import '../tokens.dart';
 import 'aura_pressable.dart';
 
@@ -82,9 +83,11 @@ class AuraButton extends StatelessWidget {
             ),
           };
     final lg = size == AuraButtonSize.lg;
-    final text = lg
-        ? AuraType.button.copyWith(color: ink)
-        : AuraType.body.copyWith(fontWeight: FontWeight.w500, color: ink);
+    final text = auraControlText(
+      lg
+          ? AuraType.button.copyWith(color: ink)
+          : AuraType.body.copyWith(fontWeight: FontWeight.w500, color: ink),
+    );
 
     return Semantics(
       button: true,

@@ -2,6 +2,7 @@
 library;
 
 import 'package:aura_exchange/design/icons.dart';
+import 'package:aura_exchange/design/tone.dart';
 import 'package:aura_exchange/design/widgets/aura_avatar.dart';
 import 'package:aura_exchange/design/widgets/aura_button.dart';
 import 'package:aura_exchange/design/widgets/aura_countdown.dart';
@@ -105,8 +106,8 @@ void main() {
         AuraTag('Holding'),
         AuraTag('You'),
         AuraTag('Rumor'),
-        AuraTag('SEC', tone: AuraTagTone.down),
-        AuraTag('Halted', tone: AuraTagTone.warn),
+        AuraTag('SEC', tone: AuraTone.down),
+        AuraTag('Halted', tone: AuraTone.warn),
       ]),
     ]);
   });
@@ -147,7 +148,11 @@ void main() {
       previewRow([
         AuraIconButton(icon: AuraIcons.back, label: 'Back', onPressed: () {}),
         AuraIconButton(icon: AuraIcons.close, label: 'Close', onPressed: () {}),
-        AuraIconButton(icon: AuraIcons.alarm, label: 'Alerts', onPressed: () {}),
+        AuraIconButton(
+          icon: AuraIcons.alarm,
+          label: 'Alerts',
+          onPressed: () {},
+        ),
         AuraIconButton(
           icon: AuraIcons.star,
           label: 'Remove from watchlist',

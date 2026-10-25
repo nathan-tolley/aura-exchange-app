@@ -107,6 +107,9 @@ String generateTokens(Map<String, dynamic> json) {
           'letterSpacing: ${_round(_em(s['letterSpacing']) * size)}',
         'color: AuraColors.ink',
         'fontFeatures: _tabular',
+        // A fixed optical size for a variable font (the serif's 16 pt cut).
+        if (group['opticalSize'] != null)
+          "fontVariations: [FontVariation('opsz', ${group['opticalSize']})]",
       ];
       out
         ..writeln('  /// ${s['usage']} Sample: ${s['sample']}')
