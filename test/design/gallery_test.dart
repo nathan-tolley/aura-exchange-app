@@ -9,9 +9,9 @@ import '../support/golden.dart';
 /// Every state in the State Gallery builds, on its own, without errors or
 /// overflow. A state that breaks fails here, not halfway down the gallery.
 void main() {
-  test('the gallery covers all 34 components', () {
+  test('the gallery covers all 35 components', () {
     final names = componentStates.map((s) => s.name).toSet();
-    expect(names, hasLength(34));
+    expect(names, hasLength(35));
     expect(componentStates.every((s) => s.states.isNotEmpty), isTrue);
   });
 
@@ -52,8 +52,9 @@ void main() {
         child: AuraGalleryScreen(onOpenScreen: (id) => opened = id),
       ),
     );
-    await tester.tap(find.text('W09 · Home, closed'));
-    expect(opened, 'W09');
+    final first = screenStates.first;
+    await tester.tap(find.text('${first.id} · ${first.label}'));
+    expect(opened, first.id);
   });
 
   testWidgets('the gallery screen opens on its first sections', (tester) async {

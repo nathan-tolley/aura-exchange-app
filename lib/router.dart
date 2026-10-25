@@ -9,6 +9,7 @@ import 'design/gallery/gallery_screen.dart';
 import 'design/gallery/screen_states.dart';
 import 'design/tokens.dart';
 import 'design/widgets/aura_tab_bar.dart';
+import 'features/onboarding/create_exchange_screen.dart';
 import 'features/onboarding/sign_in_screen.dart';
 import 'features/system/boot_screen.dart';
 
@@ -43,6 +44,8 @@ abstract final class Routes {
   static const boot = '/boot';
   static const signIn = '/sign-in';
   static const createExchange = '/exchanges/new';
+  static const createInvite = '/exchanges/new/invite';
+  static const createWaiting = '/exchanges/new/waiting';
   static const ipo = '/ipo';
   static const home = '/home';
   static const market = '/market';
@@ -137,7 +140,14 @@ final List<RouteBase> _routes = [
   GoRoute(path: '/', redirect: (_, _) => Routes.home),
   GoRoute(path: Routes.boot, builder: (_, _) => const BootScreen()),
   GoRoute(path: Routes.signIn, builder: (_, _) => const SignInScreen()),
-  GoRoute(path: Routes.createExchange, builder: (_, _) => const _Pending()),
+  GoRoute(
+    path: Routes.createExchange,
+    builder: (_, _) => const CreateExchangeScreen(),
+    routes: [
+      GoRoute(path: 'invite', builder: (_, _) => const InviteScreen()),
+      GoRoute(path: 'waiting', builder: (_, _) => const WaitingScreen()),
+    ],
+  ),
   GoRoute(path: Routes.ipo, builder: (_, _) => const _Pending()),
   GoRoute(path: '/invite/:code', builder: (_, _) => const _Pending()),
   StatefulShellRoute.indexedStack(

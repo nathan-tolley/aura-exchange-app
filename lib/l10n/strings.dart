@@ -562,6 +562,78 @@ const signInOffline = ErrorCopy(
 String noteFrom(ErrorCopy copy) => ['${copy.title}.', ?copy.body].join(' ');
 
 // ---------------------------------------------------------------------------
+// Create an exchange (SCREENS.md #4)
+// ---------------------------------------------------------------------------
+
+const createTitle = 'Start an exchange';
+const createBody =
+    "An exchange is one friend group's market. Everyone in it can be "
+    'listed, and nothing in it leaves it.';
+const exchangeNameLabel = 'Name';
+const exchangeNamePlaceholder = 'The Group Chat';
+const exchangeNameHelp = 'Everyone in it sees this name.';
+const exchangeNameLength = 'Use 2 to 40 characters.';
+const continueLabel = 'Continue';
+const nameItFirst = 'Name it to continue.';
+const gotAnInvite = 'Got an invite? Open the link your friend sent.';
+const whenItTradesTitle = 'When it trades';
+const whenItTradesBody =
+    'Every time on the exchange is on its clock, so everyone sees the same '
+    'open and close.';
+const timezoneLabel = 'Timezone';
+
+/// "Australia/Sydney · 9:41 pm there".
+String zoneSubtitle(String iana, String clock) => '$iana · $clock there';
+const change = 'Change';
+const selected = 'Selected';
+const tradingHoursLabel = 'Trading hours';
+const standardHours =
+    'Pre-market, regular and after-hours sessions start at the standard '
+    'times. The admin can change them later.';
+const createExchange = 'Create exchange';
+const creatingExchange = 'Creating…';
+const youllBeAdmin = "You'll be its admin.";
+
+/// Creating while offline: the W11 banner, worded for this step.
+const createOffline = ErrorCopy(
+  title: "You're offline",
+  body: 'Creating an exchange needs a connection. Retry when you have one.',
+  action: 'Retry',
+);
+const inviteTitle = 'Invite your friends';
+
+/// The market opens at the server's `minListingsToOpen`.
+String inviteBody(int minListings) =>
+    'The market opens when $minListings people are listed. Anyone with this '
+    'link can join and list.';
+const inviteLinkLabel = 'Invite link';
+const inviteCodeLabel = 'Code';
+const inviteExpiresLabel = 'Expires';
+const copyLink = 'Copy link';
+const linkCopied = 'Link copied';
+const makingTheLink = 'The link is still being made.';
+const noLinkYet = 'No link yet. Retry above.';
+
+/// Making a link while offline.
+const inviteOffline = ErrorCopy(
+  title: "You're offline",
+  body: 'The invite link needs a connection. Retry when you have one.',
+  action: 'Retry',
+);
+const waitingTitle = 'Waiting for friends';
+
+/// "The Group Chat opens when 3 people are listed. 0 of 3 so far."
+String waitingBody(String name, int listed, int minListings) =>
+    '$name opens when $minListings people are listed. '
+    '$listed of $minListings so far.';
+const statMembers = 'Members';
+const statListed = 'Listed';
+const statOpens = 'Opens';
+const statCloses = 'Closes';
+const listYourself = 'List yourself';
+const youPickTickerNext = 'You pick your ticker next.';
+
+// ---------------------------------------------------------------------------
 // Launch problems (SCREENS.md #24)
 // ---------------------------------------------------------------------------
 

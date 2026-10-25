@@ -11,8 +11,8 @@ import '../../features/stock/stock_header.dart';
 import '../../features/system/exchange_down_view.dart';
 import '../../features/trade/trade_sheet_view.dart';
 import '../../l10n/strings.dart';
-import '../tokens.dart';
 import '../widgets/aura_status_chip.dart';
+import 'fixtures/frames.dart';
 import 'fixtures/onboarding.dart';
 import 'screen_fixtures.dart';
 
@@ -52,6 +52,31 @@ final List<GalleryScreen> screenStates = [
   GalleryScreen('S01c', 'Sign in, wrong code', (_) => signInWrongCode()),
   GalleryScreen('S01d', 'Sign in, code expired', (_) => signInCodeExpired()),
   GalleryScreen('S01e', 'Sign in, offline', (_) => signInNoNetwork()),
+  GalleryScreen('S04a', 'Create an exchange, name', (_) => createName()),
+  GalleryScreen(
+    'S04b',
+    'Create an exchange, timezone and hours',
+    (_) => createHours(),
+  ),
+  GalleryScreen(
+    'S04c',
+    'Create an exchange, picking a timezone',
+    (_) => createZoneSheet(),
+  ),
+  GalleryScreen('S04d', 'Create an exchange, offline', (_) => createNoNetwork()),
+  GalleryScreen(
+    'S04e',
+    'Invite friends, making the link',
+    (_) => inviteLoading(),
+  ),
+  GalleryScreen('S04f', 'Invite friends, link copied', (_) => inviteReady()),
+  GalleryScreen('S04g', 'Invite friends, offline', (_) => inviteOfflineState()),
+  GalleryScreen('S04h', 'Waiting for friends', (_) => waiting()),
+  GalleryScreen(
+    'S04i',
+    'Waiting for friends, loading',
+    (_) => waitingLoading(),
+  ),
   GalleryScreen('S24a', 'Launch, offline', (_) => launchOffline()),
   GalleryScreen(
     'S24b',
@@ -186,21 +211,14 @@ Widget _annaPage(String price) => StockHeader(
   onBack: _noop,
 );
 
-/// A sheet presented over a screen, as the app's modal route draws it: the
-/// screen on `bg` under the scrim, the sheet at the bottom.
+/// A sheet over a screen, the screen below the status bar as in W05.
 Widget _sheetOver(Widget page, Widget sheet) => Builder(
-  builder: (context) => ColoredBox(
-    color: AuraColors.bg,
-    child: Stack(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
-          child: page,
-        ),
-        const Positioned.fill(child: ColoredBox(color: AuraColors.scrim)),
-        Align(alignment: Alignment.bottomCenter, child: sheet),
-      ],
+  builder: (context) => sheetOver(
+    Padding(
+      padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
+      child: page,
     ),
+    sheet,
   ),
 );
 

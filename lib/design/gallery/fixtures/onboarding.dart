@@ -1,12 +1,16 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../api/errors.dart';
+import '../../../api/generated/export.dart';
+import '../../../features/onboarding/create_exchange_model.dart';
+import '../../../features/onboarding/create_exchange_view.dart';
 import '../../../features/onboarding/sign_in_model.dart';
 import '../../../features/onboarding/sign_in_view.dart';
 import '../../../features/system/exchange_down_model.dart';
 import '../../../features/system/exchange_down_view.dart';
 import '../../../features/system/problem_view.dart';
 import '../../../format/time.dart';
+import 'frames.dart';
 
 // Onboarding's states (SCREENS.md #1–#4) as the app reaches them: each is
 // the screen's own state object run through its presenter, with errors in
@@ -126,32 +130,135 @@ Widget _code(SignInState state) => Controlled(
   ),
 );
 
-/// Text controllers for a fixture, made and disposed with it.
-class Controlled extends StatefulWidget {
-  const Controlled({super.key, required this.texts, required this.builder});
+// Create an exchange (S04). "9:41 pm" in Sydney, as in the drawn screens.
 
-  final List<String> texts;
-  final Widget Function(BuildContext, List<TextEditingController>) builder;
+final _now = DateTime.utc(2026, 10, 24, 10, 41);
+const _exchangeId = '7c1d2e3f-0a1b-4c5d-8e9f-a0b1c2d3e4f5';
 
-  @override
-  State<Controlled> createState() => _ControlledState();
-}
+Exchange _exchange({int listed = 0, int members = 1}) => Exchange.fromJson({
+  'id': _exchangeId,
+  'name': 'The Group Chat',
+  'timezone': 'Australia/Sydney',
+  'hours': {
+    'preOpen': '07:00',
+    'open': '09:00',
+    'close': '22:00',
+    'afterClose': '02:00',
+  },
+  'feeRate': '0.50',
+  'extendedFeeRate': '1.50',
+  'listedCount': listed,
+  'memberCount': members,
+  'minListingsToOpen': 3,
+  'season': {
+    'id': '33333333-0000-4000-8000-000000000001',
+    'number': 1,
+    'startsAt': '2026-10-24T10:30:00Z',
+    'endsAt': '2026-12-19T10:30:00Z',
+  },
+  'me': {
+    'id': '22222222-0000-4000-8000-000000000001',
+    'exchangeId': _exchangeId,
+    'role': 'ADMIN',
+    'listing': null,
+    'listingConsentAt': null,
+    'joinedAt': '2026-10-24T10:40:00Z',
+    'badges': <String>[],
+    'superInjunctionsLeft': 3,
+  },
+});
 
-class _ControlledState extends State<Controlled> {
-  late final _controllers = [
-    for (final t in widget.texts) TextEditingController(text: t),
-  ];
+final _invite = Invite.fromJson({
+  'code': 'NATE-7F2K',
+  'url': 'https://tae.app.elicit-marketing.com/i/NATE-7F2K',
+  'expiresAt': '2026-10-31T10:41:00Z',
+});
 
-  @override
-  void dispose() {
-    for (final c in _controllers) {
-      c.dispose();
-    }
-    super.dispose();
-  }
+/// S04a: naming it, the name typed.
+Widget createName() => Controlled(
+  texts: const ['The Group Chat'],
+  builder: (context, c) => CreateNameView(
+    model: createNameModel(
+      const CreateExchangeState(zone: 'Australia/Sydney'),
+      hasName: true,
+    ),
+    name: c[0],
+    onContinue: _noop,
+  ),
+);
 
-  @override
-  Widget build(BuildContext context) => widget.builder(context, _controllers);
-}
+const _named = CreateExchangeState(
+  zone: 'Australia/Sydney',
+  step: CreateStep.hours,
+  name: 'The Group Chat',
+);
+
+/// S04b: the timezone, and what the hours start as.
+Widget createHours() => CreateHoursView(
+  model: createHoursModel(_named, now: _now),
+  onBack: _noop,
+  onZone: _noop,
+  onCreate: _noop,
+);
+
+/// S04c: picking the timezone.
+Widget createZoneSheet() => sheetOver(
+  createHours(),
+  ZoneSheet(
+    options: zoneOptions('Australia/Sydney', now: _now),
+    onPick: (_) {},
+    onClose: _noop,
+  ),
+);
+
+/// S04d: creating it with no connection.
+Widget createNoNetwork() => CreateHoursView(
+  model: createHoursModel(
+    _named.copyWith(problem: () => const ApiError.offline()),
+    now: _now,
+  ),
+  onBack: _noop,
+  onZone: _noop,
+  onCreate: _noop,
+);
+
+/// S04e: the invite link being made.
+Widget inviteLoading() => _inviteView(null, null);
+
+/// S04f: the invite link, ready to copy, just copied.
+Widget inviteReady() => _inviteView(_invite, null, copied: true);
+
+/// S04g: the link couldn't be made, offline.
+Widget inviteOfflineState() => _inviteView(null, const ApiError.offline());
+
+Widget _inviteView(Invite? invite, ApiError? problem, {bool copied = false}) =>
+    Controlled(
+      texts: [invite?.url ?? ''],
+      builder: (context, c) => InviteView(
+        model: inviteModel(
+          exchange: _exchange(),
+          invite: invite,
+          problem: problem,
+          now: _now,
+        ),
+        link: c[0],
+        copied: copied,
+        onBack: _noop,
+        onRetry: _noop,
+        onCopy: _noop,
+        onContinue: _noop,
+      ),
+    );
+
+/// S04h: waiting for friends, one of them joined.
+Widget waiting() => WaitingView(
+  model: waitingModel(_exchange(members: 2)),
+  onInvite: _noop,
+  onList: _noop,
+);
+
+/// S04i: waiting, while the exchange loads.
+Widget waitingLoading() =>
+    const WaitingView(model: null, onInvite: _noop, onList: _noop);
 
 void _noop() {}

@@ -292,7 +292,7 @@ Added in A3 (2026-10-25), extracted from `AuraEmptyState`; no separate preview.
 
 A labelled single-line field for the few things the app asks you to type: an email, an exchange's name, a ticker.
 
-- Provide `label` (above the field, and its VoiceOver name); optional `placeholder`, `prefix` (`$` for a ticker, in `ink-tertiary`), `note` and `noteTone`.
+- Provide `label` (above the field, and its VoiceOver name); optional `placeholder`, `prefix` (`$` for a ticker, in `ink-tertiary`), `note` and `noteTone`, `readOnly` (an invite link: full ink and selectable).
 - The search field's shape at form height (48pt): `raised` (`raised-2` inside sheets), `md` corners, body text with no tracking.
 - The note under it is help in `ink-tertiary`, or a problem: `noteTone: 'down'` or `'warn'` colors only its glyph, and the words stay `ink-secondary` (color is information). A field never gets a colored outline.
 
@@ -307,6 +307,16 @@ The 6-digit sign-in code: one `raised` cell per digit, the digit in the `price` 
 - VoiceOver hears "Sign-in code, 6 digits" and the note.
 
 Added in A4 (2026-10-25) for sign-in; no separate preview.
+
+## AuraSkeleton
+
+Where content is loading, at the content's real size: `raised` blocks (`raised-2` inside sheets) that breathe slowly, and hold still with Reduce Motion. Never a full-screen spinner.
+
+- Provide `height`, optional `width` (fills by default) and `radius` (6; `md` for a field or banner, `full` for an avatar).
+- `AuraSkeletonText` stands in for lines of text: a block at the style's cap height on its line height, the last line shorter.
+- Decorative for VoiceOver; the screen says it's loading.
+
+Added in A4 (2026-10-25) for loading states; no separate preview.
 
 ## AuraToast
 

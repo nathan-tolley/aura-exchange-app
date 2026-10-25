@@ -116,3 +116,17 @@ String formatDay(DateTime at, tz.Location zone, {required DateTime now}) {
     _ => '${day.day} ${_months[day.month - 1]}',
   };
 }
+
+/// A local wall-clock time from the API (`MarketHours`: `"09:00"`, `"22:00"`)
+/// as `9:00 am`, `10:00 pm`. Anything that isn't `HH:mm` is shown as sent.
+String formatWallClock(String hhmm) {
+  final match = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(hhmm);
+  if (match == null) return hhmm;
+  final h = int.parse(match[1]!);
+  final hour = h % 12 == 0 ? 12 : h % 12;
+  return '$hour:${match[2]} ${h < 12 || h == 24 ? 'am' : 'pm'}';
+}
+
+/// The place an IANA zone is named after: `Australia/Sydney` → `Sydney`,
+/// `America/Los_Angeles` → `Los Angeles`.
+String zoneCity(String iana) => iana.split('/').last.replaceAll('_', ' ');

@@ -25,6 +25,7 @@ import '../widgets/aura_search_field.dart';
 import '../widgets/aura_section_header.dart';
 import '../widgets/aura_segmented_control.dart';
 import '../widgets/aura_sheet.dart';
+import '../widgets/aura_skeleton.dart';
 import '../widgets/aura_slide_to_confirm.dart';
 import '../widgets/aura_sparkline.dart';
 import '../widgets/aura_stat_card.dart';
@@ -417,6 +418,14 @@ final List<GallerySection> componentStates = [
       ),
     ),
     GalleryState(
+      'Read-only (an invite link)',
+      (_) => const _LiveTextField(
+        label: 'Invite link',
+        text: 'https://aura.example/i/JAKE-7F2K',
+        readOnly: true,
+      ),
+    ),
+    GalleryState(
       'Inside a sheet',
       (_) => const AuraSheet(
         title: 'Name your exchange',
@@ -769,6 +778,27 @@ final List<GallerySection> componentStates = [
       (_) => const AuraIconTile(AuraIcons.alert, size: 52, tone: AuraTone.warn),
     ),
   ]),
+  GallerySection('Skeleton', [
+    GalleryState(
+      'A row, a title and a paragraph (still with Reduce Motion)',
+      (_) => const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 16,
+        children: [
+          AuraSkeletonText(style: AuraType.title, width: 180),
+          AuraSkeletonText(style: AuraType.body, lines: 3),
+          AuraSkeleton(height: 48, radius: AuraRadius.md),
+        ],
+      ),
+    ),
+    GalleryState(
+      'Inside a sheet',
+      (_) => const AuraSheet(
+        title: 'Loading',
+        children: [AuraSkeleton(height: 48, radius: AuraRadius.md)],
+      ),
+    ),
+  ]),
   GallerySection('EmptyState', [
     GalleryState(
       'No positions',
@@ -998,6 +1028,7 @@ class _LiveTextField extends StatefulWidget {
     this.note,
     this.noteTone = AuraTone.neutral,
     this.enabled = true,
+    this.readOnly = false,
   });
 
   final String label;
@@ -1007,6 +1038,7 @@ class _LiveTextField extends StatefulWidget {
   final String? note;
   final AuraTone noteTone;
   final bool enabled;
+  final bool readOnly;
 
   @override
   State<_LiveTextField> createState() => _LiveTextFieldState();
@@ -1030,6 +1062,7 @@ class _LiveTextFieldState extends State<_LiveTextField> {
     note: widget.note,
     noteTone: widget.noteTone,
     enabled: widget.enabled,
+    readOnly: widget.readOnly,
   );
 }
 

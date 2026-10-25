@@ -27,6 +27,7 @@ class AuraTextField extends StatelessWidget {
     this.onChanged,
     this.onSubmitted,
     this.enabled = true,
+    this.readOnly = false,
     this.autofocus = false,
     this.keyboardType,
     this.textInputAction,
@@ -53,6 +54,9 @@ class AuraTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
   final bool enabled;
+
+  /// Shown in full ink and selectable, but not editable: an invite link.
+  final bool readOnly;
   final bool autofocus;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
@@ -113,6 +117,7 @@ class AuraTextField extends StatelessWidget {
                     onChanged: onChanged,
                     onSubmitted: onSubmitted,
                     enabled: enabled,
+                    readOnly: readOnly,
                     autofocus: autofocus,
                     placeholder: placeholder,
                     placeholderStyle: text.copyWith(
