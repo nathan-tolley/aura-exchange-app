@@ -93,3 +93,29 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** The presenters take these as inputs (`lib/features/events/about_you_models.dart`; `SecCharge` is the W03 record) and the fixtures fill them.
 
+
+## 10. CORS for the web preview (2026-10-25 · open)
+
+**What's wrong.** The app is previewed in Chrome on Windows (`flutter run -d chrome --web-port 5555`, CLAUDE.md → Previewing on Windows), so its requests to the live API are cross-origin. The live server at `https://tae.app.elicit-marketing.com/v1` doesn't allow that:
+
+```
+OPTIONS /v1/auth/email/start   Origin: http://localhost:5555
+                               Access-Control-Request-Method: POST
+→ 404 Not Found, no Access-Control-Allow-* headers
+
+GET /v1/health                 Origin: http://localhost:5555
+→ 200, but no Access-Control-Allow-Origin, and Cross-Origin-Resource-Policy: same-origin
+```
+
+So the browser blocks every call, and the preview can't sign in against the real API. The phone build isn't affected (native requests have no CORS), and Prism allows any origin, which is why it works there.
+
+**Ask.** Allow the dev preview's origin on `/v1`:
+- Answer preflights (`OPTIONS`) with `204` and `Access-Control-Allow-Origin: http://localhost:5555` (or a list from an env var such as `CORS_ORIGINS`; not `*`, since requests carry a bearer token), `Access-Control-Allow-Methods: GET, POST, PATCH, DELETE`, `Access-Control-Allow-Headers: Authorization, Content-Type, Idempotency-Key, X-App-Version, X-App-Build`, and `Access-Control-Max-Age: 600`.
+- Send `Access-Control-Allow-Origin` (and `Vary: Origin`) on the actual responses, including errors, so the app can read the error shape.
+- Expose `Retry-After` and the `X-RateLimit-*` headers (`Access-Control-Expose-Headers`) if the app should read them.
+- `Cross-Origin-Resource-Policy: cross-origin` (or none) on `/v1` responses for allowed origins.
+- The WebSocket (`/v1/stream`) checks `Origin` the same way, if it checks at all.
+
+This changes no shapes; it's a server setting, but it decides whether the preview can reach the API, so it's written here.
+
+**Meanwhile.** The preview runs against Prism. Against the live API, sign-in is checked from a script (same requests, no browser) and on the phone once Nathan runs iOS release.
