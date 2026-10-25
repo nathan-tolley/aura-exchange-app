@@ -4,6 +4,8 @@ import '../../data/freshness.dart';
 import '../../data/live_market.dart';
 import '../../features/home/home_model.dart';
 import '../../features/home/home_view.dart';
+import '../../features/stock/halted_model.dart';
+import '../../features/stock/halted_view.dart';
 import '../../features/trade/trade_model.dart';
 import '../../features/trade/trade_sheet_view.dart';
 import '../../format/time.dart';
@@ -385,3 +387,89 @@ RequoteModel requote() => requoteModel(
   ticker: r'$ANNA',
   now: fixtureNow,
 );
+
+const _mia = '11111111-0000-4000-8000-000000000005';
+const _miaEvent = '33333333-0000-4000-8000-000000000001';
+
+/// W10: $MIA halted at 4:51 pm for a +22 merger ruling; 4 of 6 have voted
+/// and the vote closes in 24:10.
+(ListingDetail, EventSummary) haltedMia() {
+  final event = <String, Object?>{
+    'id': _miaEvent,
+    'subject': {
+      'id': _mia,
+      'ticker': r'$MIA',
+      'displayName': 'Mia',
+      'avatarUrl': null,
+    },
+    'status': 'HALTED',
+    'teaser': 'Something big about Mia is under review.',
+    'headline': 'Mia announces merger; regulators reviewing',
+    'impactFinal': 22,
+    'category': 'MERGER',
+    'createdAt': '2026-10-24T05:50:00Z',
+  };
+  final listing = ListingDetail.fromJson({
+    'asOf': fixtureNow.toIso8601String(),
+    'marketState': 'OPEN',
+    'nextChangeAt': null,
+    'id': _mia,
+    'ticker': r'$MIA',
+    'displayName': 'Mia',
+    'avatarUrl': null,
+    'price': '96.20',
+    'changeAbs': '0.00',
+    'changePct': '0.00',
+    'state': 'HALTED',
+    'badges': <Object?>[],
+    'sparkline': <Object?>[],
+    'isMine': false,
+    'myPosition': null,
+    'prevClose': '96.20',
+    'open': '96.20',
+    'dayHigh': '96.20',
+    'dayLow': '96.20',
+    'seasonHigh': '104.00',
+    'seasonLow': '91.30',
+    'volume': '412',
+    'shortInterestPct': '3.10',
+    'borrowFeeDailyPct': '0.05',
+    'indicatedPrice': null,
+    'indicatedChangePct': null,
+    'halt': {
+      'id': '44444444-0000-4000-8000-000000000001',
+      'scope': 'LISTING',
+      'listingId': _mia,
+      'reason': 'NEWS_PENDING',
+      'status': 'VOTING',
+      'startedAt': '2026-10-24T05:51:00Z',
+      'endsAt': fixtureNow
+          .add(const Duration(minutes: 24, seconds: 10))
+          .toIso8601String(),
+      'eventId': _miaEvent,
+      'vote': {
+        'confirm': 2,
+        'decline': 1,
+        'reconsider': 1,
+        'eligible': 6,
+        'mine': null,
+        'reward': '100.00',
+      },
+      'ifConfirmedMovePct': '16.20',
+    },
+    'lastTradeAt': '2026-10-24T05:51:00Z',
+    'events': [event],
+    'analyst': null,
+  });
+  return (listing, EventSummary.fromJson(event));
+}
+
+HaltedStockModel halted() {
+  final (listing, event) = haltedMia();
+  return haltedStockModel(
+    listing: listing,
+    event: event,
+    zone: sydney,
+    now: fixtureNow,
+  );
+}

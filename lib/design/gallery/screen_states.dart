@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../features/home/home_view.dart';
+import '../../features/stock/halted_view.dart';
 import '../../features/stock/stock_header.dart';
 import '../../features/trade/trade_sheet_view.dart';
 import '../../l10n/strings.dart';
@@ -77,6 +78,12 @@ final List<GalleryScreen> screenStates = [
       ),
     ),
     reference: 'W06-Requote',
+  ),
+  GalleryScreen(
+    'W10',
+    'Stock page, halted for a vote',
+    (_) => HaltedStockView(model: halted(), onBack: _noop, onVote: (_) {}),
+    reference: 'W10-Halted',
   ),
 ];
 

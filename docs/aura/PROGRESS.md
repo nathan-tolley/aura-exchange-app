@@ -4,16 +4,15 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A3 → step 4: W10 halted (branch `a3-worst-moments`)
-- State: next (steps 1–3 committed: scaffold, Home W09/W11/W12, trade sheet W05/W06)
-- Next action: W10, the stock page while halted with the news-halt vote. Measure with `python tool/golden_diff.py bands design/reference/screens/W10-Halted.png`; reuse `StockHeader`; build `lib/features/stock/` (halt status, vote countdown, serif headline with impact, vote rows as `AuraNavRow`s, the disabled Sell/Buy bar with its reason). Remaining after that:
-  5. W07 margin warning sheet, W08 liquidated receipt.
+- Step: A3 → step 5: W07 margin warning and W08 liquidated (branch `a3-worst-moments`)
+- State: next (steps 1–4 committed: scaffold, Home W09/W11/W12, trade sheet W05/W06, W10 halted)
+- Next action: measure W07 and W08 with `tool/golden_diff.py bands` (use `--bg-at` inside sheets), check the `Position`/`ShortDetail` models for the margin numbers, then build `lib/features/portfolio/` views and presenters with API-shaped fixtures. Remaining after that:
   6. W04 Chapter 7.
   7. W01 rumor about you, W02 ruling on you, W03 SEC charge.
   8. W13 exchange down, once Nathan answers the footnote question.
 - Uncommitted work: none
 - How to compare: `python tool/golden_diff.py diff GOLDEN REFERENCE` gives the share of differing pixels and a side-by-side image (look at it); `bands` lists where content sits, in points, for measuring the drawn screens. Component goldens are 840 px wide and now 0.03–2.81% from their references; screens are 780×1688 (`expectScreen`), Home at about 2%.
-- Lessons: 12.5 pt text goes through `auraLiftFootnote()`. Build screens as a view over a view-model plus a presenter from API payloads; fixtures are API-shaped JSON. `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format` the generated token files.
+- Lessons: 12.5 pt text goes through `auraLiftFootnote()`. Build screens as a view over a view-model plus a presenter from API payloads; fixtures are API-shaped JSON. `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format lib` or `dart format .`: name your own files. It reformats the generated token files (the drift test fails) and `lib/api/generated` (123 files); if it happens, rerun `dart run tool/gen_tokens.dart` and `git checkout -- lib/api/generated`.
 - Waiting on Nathan:
   - **First iOS release run.** The GitHub repo exists (public, `origin/main` at `39234c4`, created by Nathan on 2026-10-24). Later pushes and the A0 check's one manual run of iOS release still need your OK.
   - **Contract request #2** (`docs/aura/CONTRACT-REQUESTS.md`): `nextStimulusAt` on `INSUFFICIENT_CASH`, so W05 can say "tomorrow's stimulus check" without the app copying the schedule. Not blocking; the copy falls back to "the next stimulus check".
@@ -56,3 +55,4 @@ One line per finished step: date · step · what · commit.
 - 2026-10-25 · A2 · Merged `a2-api-layer` into `main` (`e8690b7`); A3 plan written into Now · (this commit)
 - 2026-10-25 · A3 · Screen scaffold (`expectScreen`, `tool/golden_diff.py`, Screens in the State Gallery) and Home: W09 2.17%, W11 2.01%, W12 2.00%; 12.5 pt text lifted 2 pt and the banner fixed in the components (all touched component goldens closer); 277 tests · (this commit)
 - 2026-10-25 · A3 · Trade sheet: W05 1.08%, W06 1.21% (ticket and requote from `Quote` + `ApiError`); `scrim` token (generator reads `#rrggbbaa`); receipt text 1 pt up with a line under the total, sheet title 11/13 pt; contract request #6 · (this commit)
+- 2026-10-25 · A3 · W10 halted: 1.90% (stock page from `ListingDetail` + `Halt` + `EventSummary`); `StockHeader` chip 3 pt lower and price 2 pt lower, as W05 and W10 draw them · (this commit)

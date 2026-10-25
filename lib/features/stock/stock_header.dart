@@ -47,7 +47,12 @@ class StockHeader extends StatelessWidget {
                 onPressed: onBack,
               ),
               const Spacer(),
-              AuraStatusChip(status, label: statusLabel),
+              // The references set the chip 3 pt below the row's centre, so
+              // its words line up with the back glyph (W05, W10).
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: AuraStatusChip(status, label: statusLabel),
+              ),
             ],
           ),
         ),
@@ -56,7 +61,7 @@ class StockHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 10),
+              const SizedBox(height: 11),
               Text(
                 line,
                 style: const TextStyle(
@@ -65,7 +70,7 @@ class StockHeader extends StatelessWidget {
                   color: AuraColors.inkTertiary,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 5),
               AuraMoney(price, size: AuraMoneySize.display),
             ],
           ),

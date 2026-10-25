@@ -4,6 +4,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../api/errors.dart';
 import '../api/generated/models/error_code.dart';
+import '../api/generated/models/halt_reason.dart';
 import '../api/generated/models/side.dart';
 import '../format/change.dart';
 import '../format/money.dart';
@@ -175,7 +176,7 @@ ErrorCopy errorCopy(
       title: 'Trading is halted',
       body: p.has('resumesAt')
           ? 'Trading resumes at ${p.moment('resumesAt')}.'
-          : 'Trading resumes when the vote closes.',
+          : tradingResumesAfterVote,
     ),
     // W09: "Closed until 7:00 am".
     ErrorCode.marketClosed => ErrorCopy(
@@ -664,3 +665,50 @@ String stockLine(String ticker, String name, {String? lastTrade}) => [
   name,
   if (lastTrade != null) 'last trade $lastTrade',
 ].join(' · ');
+
+/// The status chip on a halted stock page (W10).
+String haltStatus(HaltReason reason) => switch (reason) {
+  HaltReason.newsPending => 'Halted · news pending',
+  HaltReason.volatility => 'Halted · big move',
+  HaltReason.circuitBreaker => 'Halted · circuit breaker',
+  HaltReason.$unknown => 'Halted',
+};
+
+const voteClosesIn = 'Vote closes in';
+
+/// "4 of 6 voted".
+String votedOf(int voted, int eligible) => '$voted of $eligible voted';
+
+/// The word under an impact score.
+String impactWord(int impact) => switch (impact.sign) {
+  > 0 => 'Gain',
+  < 0 => 'Loss',
+  _ => 'Lore',
+};
+
+/// Why a news halt needs a vote, and what confirming it does (W10).
+String haltExplainer(String ticker, Decimal movePct) {
+  final size = movePct.abs().toString();
+  final way = movePct.sign < 0 ? 'lower' : 'higher';
+  return "A ruling this big needs the group's vote. If it's confirmed, "
+      '${formatTicker(ticker)} reopens about $size% $way.';
+}
+
+const yourVote = 'Your vote';
+const voteConfirm = 'Confirm';
+String voteConfirmNote(int impact) =>
+    'The ruling stands at ${formatImpact(impact)}';
+const voteDecline = 'Decline';
+const voteDeclineNote = 'The ruling is voided';
+const voteReconsider = 'Reconsider';
+const voteReconsiderNote = "The Analyst rules once more, and that's final";
+
+/// "Voting pays A$100.00. Nobody sees how you voted."
+String votingPays(Decimal reward) =>
+    'Voting pays ${formatMoney(reward)}. Nobody sees how you voted.';
+
+const sell = 'Sell';
+const buy = 'Buy';
+
+/// Under disabled Sell and Buy while a news vote runs (W10).
+const tradingResumesAfterVote = 'Trading resumes when the vote closes.';
