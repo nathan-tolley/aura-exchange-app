@@ -100,7 +100,9 @@ String? _onboarding(Uri location, Me me) {
   // An invite can always be followed: it's how you join.
   if (path.startsWith('/invite/')) return null;
   if (me.memberships.isEmpty) {
-    return path.startsWith(Routes.createExchange) ? null : Routes.createExchange;
+    return path.startsWith(Routes.createExchange)
+        ? null
+        : Routes.createExchange;
   }
   if (me.memberships.first.listing == null) {
     // Creating an exchange ends on inviting friends, before your IPO.

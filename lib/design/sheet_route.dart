@@ -36,7 +36,10 @@ class AuraSheetRoute<T> extends PopupRoute<T> {
   ) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: _DragToClose(route: this, child: Builder(builder: builder)),
+      child: _DragToClose(
+        route: this,
+        child: Builder(builder: builder),
+      ),
     );
   }
 
@@ -57,8 +60,10 @@ class AuraSheetRoute<T> extends PopupRoute<T> {
       reverseCurve: Curves.easeInCubic,
     );
     return SlideTransition(
-      position: Tween(begin: const Offset(0, 1), end: Offset.zero)
-          .animate(curved),
+      position: Tween(
+        begin: const Offset(0, 1),
+        end: Offset.zero,
+      ).animate(curved),
       child: child,
     );
   }

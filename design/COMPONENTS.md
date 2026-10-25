@@ -288,6 +288,26 @@ A glyph on a `raised` rounded square (`md` radius). It heads an empty state (44p
 
 Added in A3 (2026-10-25), extracted from `AuraEmptyState`; no separate preview.
 
+## AuraTextField
+
+A labelled single-line field for the few things the app asks you to type: an email, an exchange's name, a ticker.
+
+- Provide `label` (above the field, and its VoiceOver name); optional `placeholder`, `prefix` (`$` for a ticker, in `ink-tertiary`), `note` and `noteTone`.
+- The search field's shape at form height (48pt): `raised` (`raised-2` inside sheets), `md` corners, body text with no tracking.
+- The note under it is help in `ink-tertiary`, or a problem: `noteTone: 'down'` or `'warn'` colors only its glyph, and the words stay `ink-secondary` (color is information). A field never gets a colored outline.
+
+Added in A4 (2026-10-25) for sign-in and onboarding; no separate preview.
+
+## AuraCodeField
+
+The 6-digit sign-in code: one `raised` cell per digit, the digit in the `price` style (big numbers are light), a short `ink` bar in the next empty cell.
+
+- Provide `controller`; optional `onCompleted` (fires when the last digit lands, so there's no Submit), `note` and `noteTone` (as in `TextField`), `enabled`.
+- Typing, pasting and iOS's one-time-code autofill go into one hidden field, so a pasted code fills every cell.
+- VoiceOver hears "Sign-in code, 6 digits" and the note.
+
+Added in A4 (2026-10-25) for sign-in; no separate preview.
+
 ## AuraToast
 
 Brief confirmation after an action, with one undo or follow-up.

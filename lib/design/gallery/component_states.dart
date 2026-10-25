@@ -8,6 +8,7 @@ import '../widgets/aura_avatar.dart';
 import '../widgets/aura_banner.dart';
 import '../widgets/aura_button.dart';
 import '../widgets/aura_chart_tooltip.dart';
+import '../widgets/aura_code_field.dart';
 import '../widgets/aura_countdown.dart';
 import '../widgets/aura_empty_state.dart';
 import '../widgets/aura_hero_card.dart';
@@ -34,6 +35,7 @@ import '../widgets/aura_tab_bar.dart';
 import '../widgets/aura_tabs.dart';
 import '../widgets/aura_tag.dart';
 import '../widgets/aura_tape.dart';
+import '../widgets/aura_text_field.dart';
 import '../widgets/aura_toast.dart';
 import 'gallery_screen.dart';
 
@@ -373,6 +375,75 @@ final List<GallerySection> componentStates = [
         placeholder: 'Nobody to search yet',
         enabled: false,
       ),
+    ),
+  ]),
+  GallerySection('TextField', [
+    GalleryState(
+      'Empty, with help',
+      (_) => const _LiveTextField(
+        label: 'Email',
+        placeholder: 'you@example.com',
+        note: "We'll email you a 6-digit code. No password.",
+      ),
+    ),
+    GalleryState(
+      'Filled',
+      (_) => const _LiveTextField(label: 'Email', text: 'nathan@example.com'),
+    ),
+    GalleryState(
+      'A problem (glyph in down)',
+      (_) => const _LiveTextField(
+        label: 'Email',
+        text: 'nathan@example',
+        note: "That email address doesn't look right. Check it and try again.",
+        noteTone: AuraTone.down,
+      ),
+    ),
+    GalleryState(
+      'Ticker, with a prefix',
+      (_) => const _LiveTextField(
+        label: 'Ticker',
+        prefix: r'$',
+        text: 'NATE',
+        note: '3 to 5 letters. This is how the tape will name you.',
+      ),
+    ),
+    GalleryState(
+      'Disabled',
+      (_) => const _LiveTextField(
+        label: 'Email',
+        text: 'nathan@example.com',
+        enabled: false,
+      ),
+    ),
+    GalleryState(
+      'Inside a sheet',
+      (_) => const AuraSheet(
+        title: 'Name your exchange',
+        children: [
+          _LiveTextField(label: 'Name', placeholder: 'The Group Chat'),
+        ],
+      ),
+    ),
+  ]),
+  GallerySection('CodeField', [
+    GalleryState(
+      'Empty, the first cell marked',
+      (_) => const _LiveCodeField(note: 'We sent it to nathan@example.com.'),
+    ),
+    GalleryState('Part-way', (_) => const _LiveCodeField(text: '482')),
+    GalleryState('Complete', (_) => const _LiveCodeField(text: '482913')),
+    GalleryState(
+      'Wrong code (glyph in down)',
+      (_) => const _LiveCodeField(
+        text: '482914',
+        note: "That code isn't right. You have 2 more tries.",
+        noteTone: AuraTone.down,
+      ),
+    ),
+    GalleryState(
+      'Checking (disabled)',
+      (_) => const _LiveCodeField(text: '482913', enabled: false),
     ),
   ]),
   GallerySection('SectionHeader', [
@@ -914,5 +985,86 @@ class _LiveTabBarState extends State<_LiveTabBar> {
     active: _active,
     tapeBadge: _active != AuraTab.tape,
     onSelect: (t) => setState(() => _active = t),
+  );
+}
+
+/// A text field that keeps what's typed into it, for the gallery.
+class _LiveTextField extends StatefulWidget {
+  const _LiveTextField({
+    required this.label,
+    this.text,
+    this.placeholder,
+    this.prefix,
+    this.note,
+    this.noteTone = AuraTone.neutral,
+    this.enabled = true,
+  });
+
+  final String label;
+  final String? text;
+  final String? placeholder;
+  final String? prefix;
+  final String? note;
+  final AuraTone noteTone;
+  final bool enabled;
+
+  @override
+  State<_LiveTextField> createState() => _LiveTextFieldState();
+}
+
+class _LiveTextFieldState extends State<_LiveTextField> {
+  late final _controller = TextEditingController(text: widget.text);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AuraTextField(
+    label: widget.label,
+    controller: _controller,
+    placeholder: widget.placeholder,
+    prefix: widget.prefix,
+    note: widget.note,
+    noteTone: widget.noteTone,
+    enabled: widget.enabled,
+  );
+}
+
+/// A code field that keeps what's typed into it, for the gallery.
+class _LiveCodeField extends StatefulWidget {
+  const _LiveCodeField({
+    this.text = '',
+    this.note,
+    this.noteTone = AuraTone.neutral,
+    this.enabled = true,
+  });
+
+  final String text;
+  final String? note;
+  final AuraTone noteTone;
+  final bool enabled;
+
+  @override
+  State<_LiveCodeField> createState() => _LiveCodeFieldState();
+}
+
+class _LiveCodeFieldState extends State<_LiveCodeField> {
+  late final _controller = TextEditingController(text: widget.text);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AuraCodeField(
+    controller: _controller,
+    note: widget.note,
+    noteTone: widget.noteTone,
+    enabled: widget.enabled,
   );
 }

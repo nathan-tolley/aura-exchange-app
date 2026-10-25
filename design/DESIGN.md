@@ -1,4 +1,4 @@
-# Aura Exchange design system: Graphite (for Flutter)
+﻿# Aura Exchange design system: Graphite (for Flutter)
 
 Aura Exchange is a play-money stock market for one friend group: every member is a listed stock, and prices move on the dumb things that happen to them. The joke only works if the app looks like a serious trading app. So the interface is quiet, exact and expensive-looking, and the comedy lives in the words.
 
@@ -9,15 +9,15 @@ What's in this folder:
 | File | What it is |
 | --- | --- |
 | `DESIGN.md` | This file: the rules. Read it before building any UI. |
-| `COMPONENTS.md` | The 31 documented components (plus `AuraNavRow` and `AuraActionButton`, covered under NavCard and HeroCard), one Flutter widget each (`Aura<Name>`) |
+| `COMPONENTS.md` | The 34 documented components (plus `AuraNavRow` and `AuraActionButton`, covered under NavCard and HeroCard), one Flutter widget each (`Aura<Name>`) |
 | `aura_tokens.dart` | Colors, spacing, radii, sizes and type styles, generated from `tokens.json`. Copy it to `lib/design/tokens.dart`. |
 | `tokens.json` | The source of truth for tokens |
 | `icons.json` | The 34 line icons as 24-unit SVG paths, which are the exact icons in the references |
-| `reference/screens/` | The 13 drawn worst-moment screens (390×844 @2x) plus a contact sheet. **Match these.** |
+| `reference/screens/` | The 13 drawn worst-moment screens (390Ã—844 @2x) plus a contact sheet. **Match these.** |
 | `reference/components/` | A rendered preview of each component |
 | `reference/web/` | The web implementation the references were drawn with. Use it for exact values. |
 
-Live versions (Nathan can open them): design system https://claude.ai/artifact/HTvUeLfUk5wZrkDwLrCTNt · screens https://claude.ai/artifact/LfP7JBH1MaZMu2g3vJbttL
+Live versions (Nathan can open them): design system https://claude.ai/artifact/HTvUeLfUk5wZrkDwLrCTNt Â· screens https://claude.ai/artifact/LfP7JBH1MaZMu2g3vJbttL
 
 ## The seven rules
 
@@ -52,10 +52,10 @@ Every screen follows these. They exist because the first version broke all of th
   - `JetBrainsMono`: Regular 400 and Medium 500. OFL.
   - The sans is left as the platform default (null `fontFamily`), which is San Francisco on iOS. In the web or desktop preview it falls back to Inter (bundle Inter too, or accept Roboto).
 - **Tabular figures** on every number: `fontFeatures: [FontFeature.tabularFigures()]`. They are already in every `AuraType` style.
-- **Minus sign.** Negative numbers use U+2212 `−`, never a hyphen.
+- **Minus sign.** Negative numbers use U+2212 `âˆ’`, never a hyphen.
 - **Dynamic Type.** Use `MediaQuery.textScalerOf(context)`. Layouts reflow rather than truncate numbers. Test at 1.0, 1.3 and 2.0.
 - **Hairlines** are 1 logical pixel: a `Container` with a `Border(top: BorderSide(color: AuraColors.line))`, or a `DecoratedBox`. Inside sheets, use `lineStrong`.
-- **Corners** use `BorderRadius.circular`. A continuous-corner shape (`ContinuousRectangleBorder`, about 1.6× the radius) matches iOS better on filled shapes.
+- **Corners** use `BorderRadius.circular`. A continuous-corner shape (`ContinuousRectangleBorder`, about 1.6Ã— the radius) matches iOS better on filled shapes.
 - **Icons.**
   - Paint the paths in `icons.json` with a `CustomPainter`: parse them with `path_drawing`'s `parseSvgPathData`. Use a 24-unit viewBox, round caps and joins, and stroke width 1.7 (2.0 in buttons). They exactly match the references.
   - Don't mix in Material Icons. The SF Symbol equivalents (below) are for a later native pass.
@@ -70,7 +70,7 @@ The app has two registers, and every string belongs to exactly one.
 
 - Finance words for life events: guidance, headwinds, priced in, divestiture, management shakeup.
 - Roast the event, never the person's identity, body or anything they can't change.
-- Headlines ≤ 90 characters and notes ≤ 280. Sentence case in the app; the tape strip uppercases.
+- Headlines â‰¤ 90 characters and notes â‰¤ 280. Sentence case in the app; the tape strip uppercases.
 
 **The app** speaks wherever money, rules or errors are involved: buttons, confirmations, banners, settings and errors. It is plain, exact and in the second person. All of it lives in one strings file, built from API error `code` + `params`.
 
@@ -84,11 +84,11 @@ The rule over both: **funny where the market is, clear where your money is.**
 ## Numbers
 
 - Money is `A$` plus two decimals (`AuraMoney`). On big numbers the `A$` and the cents are `inkTertiary`. Never round, and never drop the `A$`. Parse with `Decimal`, never `double`.
-- Change is arrow + sign + color together (`AuraPriceChange`): `↑ +7.79 (+6.70%)`, `↓ −10.50 (−9.34%)`. Zero has no arrow.
-- The tape uses filled triangles (▲ ▼) in mono. Nothing else does.
-- Tickers are `$` plus an uppercase name of 3–5 letters. Times are in the exchange's timezone with lowercase am/pm. Countdowns are `m:ss`.
-- Impact scores are signed integers from −30 to +30.
-- Prices shown while offline or after the close carry their age: "Delayed · as of 9:41 pm". This is driven by the API's `asOf` and `marketState`.
+- Change is arrow + sign + color together (`AuraPriceChange`): `â†‘ +7.79 (+6.70%)`, `â†“ âˆ’10.50 (âˆ’9.34%)`. Zero has no arrow.
+- The tape uses filled triangles (â–² â–¼) in mono. Nothing else does.
+- Tickers are `$` plus an uppercase name of 3â€“5 letters. Times are in the exchange's timezone with lowercase am/pm. Countdowns are `m:ss`.
+- Impact scores are signed integers from âˆ’30 to +30.
+- Prices shown while offline or after the close carry their age: "Delayed Â· as of 9:41 pm". This is driven by the API's `asOf` and `marketState`.
 
 ## Color
 
@@ -126,9 +126,9 @@ All styles are in `AuraType`.
 
 ## Layout
 
-- 16pt side gutter. The status bar area is 52pt in the references. Groups are separated by 16–24pt of space, not by containers.
+- 16pt side gutter. The status bar area is 52pt in the references. Groups are separated by 16â€“24pt of space, not by containers.
 - Headers have back or close on the left and at most one status chip or two bare glyph buttons on the right, each with a 44pt hit area.
-  - The header row has −10pt horizontal margins so glyphs optically align with the gutter.
+  - The header row has âˆ’10pt horizontal margins so glyphs optically align with the gutter.
 - **Home**, top to bottom:
   1. Tape
   2. Search + bell
@@ -152,9 +152,9 @@ Draw charts with a `CustomPainter`; no chart library, so they look exactly like 
   - an `ink` dot ringed in `bg`
   - an `AuraChartTooltip`
   - a light haptic at each ruling marker
-- Ruling markers are small `ink` dots on the line; their tooltip says the impact ("−18 ruling").
+- Ruling markers are small `ink` dots on the line; their tooltip says the impact ("âˆ’18 ruling").
 - Ranges are always 1D, 1W, 1M, SZN.
-- Sparklines in rows are 72×30 with a dotted baseline at the previous close.
+- Sparklines in rows are 72Ã—30 with a dotted baseline at the previous close.
 
 ## States
 
@@ -166,10 +166,10 @@ Every screen is built in every state it can be in before it's done (see `shared/
 | Empty | `AuraEmptyState`: why it's empty and the one action that fills it |
 | Closed / pre / after hours | `AuraStatusChip` plus a neutral `AuraBanner` saying when it reopens and what's queued. Trading switches to limit orders, with the reason shown. |
 | Halted | `AuraStatusChip` (warn) and an `AuraCountdown`; trade buttons disabled with the reason under them (W10) |
-| Offline | Offline `AuraBanner` with Retry; every price stamped "as of …"; actions disabled (W11) |
+| Offline | Offline `AuraBanner` with Retry; every price stamped "as of â€¦"; actions disabled (W11) |
 | Rejected | Down `AuraBanner` with the exact amount and the fix as its action (W05) |
 | Success | `AuraToast` with Undo or View; an `AuraReceipt` for anything that moved money |
-| Worst moments | Roasted, margin call, liquidated, SEC charge, bankrupt (W01–W08). Same flat ground. The number (`display` or `impact`, in `down`) carries the weight, the Analyst's words follow in the serif, then an `AuraReceipt` and an `AuraNavCard` of your moves. |
+| Worst moments | Roasted, margin call, liquidated, SEC charge, bankrupt (W01â€“W08). Same flat ground. The number (`display` or `impact`, in `down`) carries the weight, the Analyst's words follow in the serif, then an `AuraReceipt` and an `AuraNavCard` of your moves. |
 
 ## Motion and haptics
 
@@ -180,7 +180,7 @@ Every screen is built in every state it can be in before it's done (see `shared/
 
 ## Accessibility
 
-- All text is ≥ 4.5:1 (each color's contrast is in `tokens.json`). `inkFaint` is never text people need to read.
+- All text is â‰¥ 4.5:1 (each color's contrast is in `tokens.json`). `inkFaint` is never text people need to read.
 - Direction is never color alone. `AuraPriceChange` has `Semantics(label: 'Up 7.79 (6.70%)')`.
 - Every glyph button has a semantics label and a 44pt hit area. Avatars and sparklines are `ExcludeSemantics`; the row already says it.
 

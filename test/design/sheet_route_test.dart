@@ -49,7 +49,10 @@ void main() {
 
     nav.push(AuraSheetRoute<void>(builder: (_) => sheet()));
     await tester.pumpAndSettle();
-    await tester.drag(find.byKey(const ValueKey('sheet')), const Offset(0, 160));
+    await tester.drag(
+      find.byKey(const ValueKey('sheet')),
+      const Offset(0, 160),
+    );
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('sheet')), findsNothing);
   });
@@ -67,9 +70,7 @@ void main() {
     expect(tester.getTopLeft(find.byKey(const ValueKey('sheet'))).dy, 300);
   });
 
-  testWidgets('a half-filled sheet can stop the close and ask', (
-    tester,
-  ) async {
+  testWidgets('a half-filled sheet can stop the close and ask', (tester) async {
     var asked = 0;
     final nav = await pumpHost(tester);
     nav.push(
@@ -78,7 +79,10 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.drag(find.byKey(const ValueKey('sheet')), const Offset(0, 200));
+    await tester.drag(
+      find.byKey(const ValueKey('sheet')),
+      const Offset(0, 200),
+    );
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('sheet')), findsOneWidget);
     expect(asked, 1);

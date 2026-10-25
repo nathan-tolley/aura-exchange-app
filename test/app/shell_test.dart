@@ -33,10 +33,7 @@ void main() {
       'superInjunctionsLeft': 3,
     };
     AsyncValue<Me?> me(List<Map<String, Object?>> memberships) => AsyncData(
-      Me.fromJson({
-        'user': tokenPairJson['user'],
-        'memberships': memberships,
-      }),
+      Me.fromJson({'user': tokenPairJson['user'], 'memberships': memberships}),
     );
     String? go(
       String location, {
