@@ -53,25 +53,32 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
 
 ## A2: API layer
 
-- [ ] Generate the client from `api/openapi.yaml` into `lib/api/generated/` (`swagger_parser.yaml` config).
-- [ ] `client.dart`:
+- [x] Generate the client from `api/openapi.yaml` into `lib/api/generated/` (`swagger_parser.yaml` config).
+  - *2026-10-25: 10 Retrofit clients, 53 requests, 119 models, committed (the iOS workflow doesn't run generators). Two generator name collisions are fixed in the config (see `NOTES.md`); `test/api/generated_test.dart` decodes the spec's examples.*
+- [x] `client.dart`:
   - base URL from `API_BASE_URL`
   - bearer token from secure storage
   - on 401 `AUTH_EXPIRED`, refresh once and replay; otherwise go to sign-in
   - `X-App-Version` / `X-App-Build` on every request
   - an idempotency-key helper bound to user actions
-- [ ] `errors.dart`: parse the one error shape. `l10n/strings.dart` builds copy for every code in `API-CONTRACT.md`.
-- [ ] `format/`: money, change, percent, ticker, exchange-local time, relative time and countdown, with unit tests using the examples in `DESIGN.md` → Numbers.
-  - *2026-10-24: money, change, percent, impact, tape change, quantity, ticker and countdown were pulled forward into A1 (the components need them), with tests in `test/format/`. Exchange-local time and relative time are still to do.*
-- [ ] `stream.dart`:
+  - *2026-10-25: `AuraClient` (`lib/api/client.dart`) with `AuthSession` and the Keychain store (`lib/api/session.dart`). Refreshes are single-flight (rotating refresh tokens), the replay keeps its `Idempotency-Key`, a rejected refresh signs out (`session.signedIn` turns false; the router's redirect to sign-in comes with that screen in A4), and an unreachable refresh keeps the tokens and reports offline. Version and build come from the bundle (`package_info_plus`). `IdempotencyKey` is created at commit and reused for retries. 14 tests against a fake adapter.*
+- [x] `errors.dart`: parse the one error shape. `l10n/strings.dart` builds copy for every code in `API-CONTRACT.md`.
+  - *2026-10-25: `ApiError` (code, params, retryable, action, status; `APP_` codes for offline, timeout and a body that isn't the shape) and `guardApi`. `errorCopy()` switches exhaustively over the generated `ErrorCode`, so a sync that adds a code won't compile until it has copy; unknown codes get "Something went wrong" with the code as the reference. All 31 codes have copy, word for word where a screen is drawn (W04, W05, W06, W09, W10, W11, W12, W13). A test checks that API-CONTRACT.md's table and the spec's enum agree. 47 tests.*
+- [x] `format/`: money, change, percent, ticker, exchange-local time, relative time and countdown, with unit tests using the examples in `DESIGN.md` → Numbers.
+  - *2026-10-24: money, change, percent, impact, tape change, quantity, ticker and countdown were pulled forward into A1 (the components need them), with tests in `test/format/`.*
+  - *2026-10-25: `lib/format/time.dart`: the exchange's IANA zone (UTC if unknown), `9:41 pm` clock, `formatMoment` (time alone within 12 h, then weekday, then date), `formatWhen` (relative under an hour, the contract's rule), `formatAgo` (`2 h ago`, W12) and `formatDay` (`tomorrow`, from the exchange's calendar). 8 tests, including daylight saving.*
+- [x] `stream.dart`:
   - subscribe per exchange
   - ping every 25 s
   - exponential-backoff reconnect
   - on close code 4401, refresh and reconnect
   - polling fallback every 15 s
   - exposes `connected` for the Delayed state
-- [ ] A Freshness provider: Delayed when `asOf` is more than 60 s old or the socket is down.
+  - *2026-10-25: `AuraStream` (`lib/api/stream.dart`) behind a small `SocketConnection` seam. A socket that answers nothing for a whole ping interval is replaced; backoff is 1 s doubling to 30 s with ±20% jitter, reset by a good connection; 4401 refreshes through `AuthSession` and reconnects at once (or stays down if that signs out); `StreamReconnected` tells screens to refetch. Messages are parsed from API-CONTRACT.md (the spec has no socket schemas). 13 tests in fake time.*
+- [x] A Freshness provider: Delayed when `asOf` is more than 60 s old or the socket is down.
+  - *2026-10-25: `lib/data/freshness.dart` (`Freshness`, `liveness()`, a one-second clock) and `marketLivenessProvider` in `lib/data/live_market.dart`. A closed market with the socket up reads "at the close" (W09), not Delayed. The live market is the last `GET /market` with ticks on top, refetched on reconnect and on each `PollDue` while the socket is down; a failed refetch keeps the numbers and records why (`problem`, for W11). Repositories for system, auth, market and trading go through `guardApi`; the stream starts on sign-in and stops on sign-out. 12 tests.*
 - **Check:** the repository tests pass against Prism, including forced `Prefer: code=409/422/426/500` responses mapping to the right `ApiError.action`.
+  - *2026-10-25: passes. `test/prism/prism_test.dart` (tag `prism`, skipped by default; run `flutter test --tags prism --run-skipped` with Prism up) decodes Prism's examples through the system, market, trading and auth repositories, and forces all 31 codes in API-CONTRACT.md's table (`Prefer: code=…, example=…`), each mapping to its code, status, `action` and `retryable`, with copy that isn't the generic fallback: 36 tests. `AUTH_EXPIRED` runs signed out because Prism's example token can't be replayed (contract request #5); the refresh and replay are covered against a fake server in `test/api/client_test.dart`. All 270 tests pass and `flutter analyze` is clean.*
 
 ## A3: Rebuild the 13 drawn worst moments in Flutter
 

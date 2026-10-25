@@ -3,3 +3,10 @@ tags:
     description: >-
       Pixel comparisons against test/goldens. They're rendered on Windows, so
       the macOS release runner skips them (font rasterization differs).
+  prism:
+    description: >-
+      Repository tests against the Prism mock of api/openapi.yaml (the A2
+      check). They need Prism on :4010, so they're skipped by default. Run:
+        npx @stoplight/prism-cli mock api/openapi.yaml
+        flutter test --tags prism --run-skipped
+    skip: "Needs Prism on :4010: flutter test --tags prism --run-skipped"

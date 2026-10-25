@@ -4,15 +4,18 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: contract synced to `1.0.0-draft.5` on `main`. A1 done; A0 done apart from the iOS release run.
-- State: done; A2 not started
-- Next action: A2 (API layer) on a new branch `a2-api-layer` off `main`: generate the client with swagger_parser (`swagger_parser.yaml`), then `client.dart`, `errors.dart` + `l10n/strings.dart` (copy for all 31 codes in `ErrorCode`), the rest of `format/` (exchange-local and relative time), `stream.dart`, and the Freshness provider. Error-mapping tests use local fixtures until contract request #1 lands.
+- Step: A2 → check passed; merging `a2-api-layer` into `main`
+- State: done apart from the merge
+- Next action: merge into `main` locally, then A3 (the 13 worst moments) on a new branch `a3-worst-moments`, starting with the shared screen scaffold and W13 (needs Nathan's answer on its footnote) or W05 (no open questions).
 - How to compare: goldens are 840 px wide at 2× like the references. Diff each golden against `design/reference/components/<Name>.png` and look at both. All 30 reference goldens are within 0.03–4.5% differing pixels (antialiasing). See `docs/aura/NOTES.md` for what was matched and the 12.5 pt quirk to recheck in A3.
 - Lessons: `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format` the generated token files.
 - Uncommitted work: none
 - Waiting on Nathan:
   - **First iOS release run.** The GitHub repo exists (public, `origin/main` at `39234c4`, created by Nathan on 2026-10-24). Later pushes and the A0 check's one manual run of iOS release still need your OK.
-  - **Contract request #1** (`docs/aura/CONTRACT-REQUESTS.md`): named error examples in the spec, so Prism can return `QUOTE_STALE`, `UPDATE_REQUIRED` and the rest. The API session is adding them now (its working copy says draft.6); sync again once it's committed. Not blocking the app.
+  - **Contract request #2** (`docs/aura/CONTRACT-REQUESTS.md`): `nextStimulusAt` on `INSUFFICIENT_CASH`, so W05 can say "tomorrow's stimulus check" without the app copying the schedule. Not blocking; the copy falls back to "the next stimulus check".
+  - **Contract request #5**: ASCII example tokens, so a refresh against Prism can be replayed. Not blocking.
+  - **Contract requests #3 and #4** (`docs/aura/CONTRACT-REQUESTS.md`): `changeAbs` on ticks (the app derives it meanwhile), and whether the server sends a tick at least every 60 s in PRE, AFTER and HALTED (otherwise quiet periods read Delayed). Not blocking.
+  - **W13's footnote** says "You'll get a notification when it's back", which the app can't do without push. Keep it, or change the lead-in (for example "This screen checks again by itself", with the screen polling `/health`)? Needed before A3's W13 golden.
   - Not blocking yet: the open questions and the three design-pass rules in `docs/aura/DECISIONS.md`.
 
 ## Log
@@ -37,3 +40,11 @@ One line per finished step: date · step · what · commit.
 - 2026-10-24 · A1 · State Gallery at `/gallery` (debug only): 31 components, 59 states, every state tested on its own (131 tests in all) · `c3c24a3`
 - 2026-10-24 · A1 · A1 check: 30 reference goldens within 0.03–4.52%, plus 31 State Gallery goldens covering every state; A1 boxes ticked · (this commit)
 - 2026-10-25 · Sync · Contract `1.0.0-draft.1` → `1.0.0-draft.5` (API `aura-v1` at `7212276`): `api/openapi.yaml` and `docs/aura/API-CONTRACT.md`, 31 error codes; Prism serves it. The GitHub repo exists (Nathan), so A0's first box is ticked · (this commit)
+- 2026-10-25 · A2 · Generated client (swagger_parser + Retrofit + json_serializable) from draft.5: 10 clients, 53 requests, 119 models; fixed two generator name collisions (`Side`, `Error`); decode test from the spec's examples · (this commit)
+- 2026-10-25 · A2 · `client.dart`: config (`''` → mock), app version/build headers, bearer from the Keychain, single-flight refresh and replay on `AUTH_EXPIRED`, `IdempotencyKey`; `errors.dart` parses the error shape (`ApiError`, `guardApi`); Riverpod providers; 14 client tests · (this commit)
+- 2026-10-25 · A2 · `format/time.dart`: exchange zone, clock, moment, relative (`formatWhen`, `formatAgo`) and day words, 8 tests · (this commit)
+- 2026-10-25 · A2 · `l10n/strings.dart`: copy for all 31 error codes (exhaustive over `ErrorCode`), local and unknown codes, freshness labels; doc/spec parity test; contract request #2 (`nextStimulusAt`) · (this commit)
+- 2026-10-25 · Sync · Contract → `1.0.0-draft.6` (named error examples; contract request #1 done). Client regenerated (version only) · (this commit)
+- 2026-10-25 · A2 · `stream.dart`: subscribe per exchange, 25 s ping with dead-socket detection, backoff reconnect, 4401 refresh, 15 s polling fallback, `connected`, message parsing; 13 fake-time tests · (this commit)
+- 2026-10-25 · A2 · Data layer: `Freshness` + `liveness()`, the live market (REST + ticks, refetch on reconnect and `PollDue`), system/auth/market/trading repositories, the stream following sign-in, Riverpod retry off; contract requests #3 and #4 · (this commit)
+- 2026-10-25 · A2 · A2 check: `test/prism/` (opt-in tag) passes against Prism, 36 tests including all 31 forced codes; only connection errors read as offline (`APP_UNEXPECTED` otherwise); errors unit tests; contract request #5. 270 tests, analyze clean · (this commit)
