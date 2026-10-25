@@ -44,7 +44,8 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - *2026-10-24: all 31, plus `AuraNavRow`, `AuraActionButton` and `AuraStatGrid` (the spec sheet's grid). Props follow COMPONENTS.md in Dart form: `onPressed: null` disables, tones are `AuraTone`. Each has a golden next to its reference (0.03–4.5% of pixels differ) and behavior tests. The inside-a-sheet variants come from `AuraSheetScope`, with a golden of W05's pattern (`SheetInside.png`).*
   - Get exact values from `design/reference/web/components.css` (`.ax-<name>`).
   - Implement the inside-a-sheet variants (lifted surfaces, `lineStrong` hairlines, disabled button on `raised2`).
-- [ ] State Gallery: a debug-only route listing every component in every state it supports.
+- [x] State Gallery: a debug-only route listing every component in every state it supports.
+  - *2026-10-24: `/gallery` (`aura://gallery` on the phone) in debug builds: all 31 components, 59 states, with fixtures from the drawn screens, and live controls where a component is interactive. `test/design/gallery_test.dart` builds every state on its own.*
 - [ ] Goldens for every component state.
 - **Check:** each component golden, put side by side with `design/reference/components/<Name>.png`, matches in spacing, size, color and type (Inter stands in for SF Pro).
 

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
+import 'design/gallery/gallery_screen.dart';
 import 'design/text.dart';
 import 'design/tokens.dart';
 
@@ -30,6 +32,12 @@ class AuraApp extends StatelessWidget {
 final GoRouter _router = GoRouter(
   routes: [
     GoRoute(path: '/', builder: (context, state) => const _BlankScreen()),
+    // The State Gallery: debug builds only (aura://gallery on the phone).
+    if (kDebugMode)
+      GoRoute(
+        path: '/gallery',
+        builder: (context, state) => const AuraGalleryScreen(),
+      ),
   ],
 );
 

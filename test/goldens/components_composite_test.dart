@@ -295,7 +295,7 @@ void main() {
           ),
           AuraBanner(
             tone: AuraBannerTone.down,
-            title: r'You' + '’' + r're A$229.91 short',
+            title: r'You’re A$229.91 short',
             body: r'You have A$2,264.50. Buy 18 instead.',
             action: 'Buy 18',
             onAction: tap,
