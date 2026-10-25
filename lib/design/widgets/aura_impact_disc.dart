@@ -28,7 +28,10 @@ class AuraImpactDisc extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(formatImpact(delta), style: AuraType.impact.copyWith(color: color)),
+          Text(
+            formatImpact(delta),
+            style: AuraType.impact.copyWith(color: color),
+          ),
           Text(
             label,
             style: const TextStyle(

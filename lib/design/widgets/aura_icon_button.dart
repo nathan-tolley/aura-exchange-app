@@ -53,7 +53,11 @@ class AuraIconButton extends StatelessWidget {
                 icon,
                 size: small ? 16 : 20,
                 filled: filled,
-                color: small ? AuraColors.inkTertiary : AuraColors.ink,
+                color: onPressed == null
+                    ? AuraColors.inkFaint
+                    : small
+                    ? AuraColors.inkTertiary
+                    : AuraColors.ink,
               ),
               if (badge)
                 Positioned(

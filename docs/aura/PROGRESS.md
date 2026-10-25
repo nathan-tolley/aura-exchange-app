@@ -4,11 +4,11 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A1 → components batch 1 done (branch `a1-design-foundation`). A0 is done locally; its GitHub items wait on Nathan.
-- State: paused at a usage limit, all work committed
-- Next action: components batch 2 (Button, SlideToConfirm, Stepper, SegmentedControl, Tabs, SearchField): one file each in `lib/design/widgets/`, previews added to `test/goldens/components_test.dart`, then `flutter test test/goldens --update-goldens` and compare every golden with its reference (see "How to compare" below). Then batch 3 (SectionHeader, StatCard, RangeBar, Receipt, NavCard/NavRow, QuoteCard, Banner, EmptyState, Toast), batch 4 (Sparkline, ChartTooltip, StockRow, HeroCard, Tape, TabBar, Sheet), the State Gallery, and the inside-sheet variants.
+- Step: A1 → components batch 2 done (branch `a1-design-foundation`). A0 is done locally; its GitHub items wait on Nathan.
+- State: in progress
+- Next action: components batch 3 (SectionHeader, StatCard, RangeBar, Receipt, NavCard/NavRow, QuoteCard, Banner, EmptyState, Toast): one file each in `lib/design/widgets/`, previews in `test/goldens/components_test.dart`, `flutter test test/goldens --update-goldens`, compare each golden with its reference. Then batch 4 (Sparkline, ChartTooltip, StockRow, HeroCard, Tape, TabBar, Sheet), the State Gallery, and the inside-sheet variants.
 - How to compare: goldens are 840 px wide at 2× like the references. Diff each golden against `design/reference/components/<Name>.png` and look at both. Batch 1 is within 0–3% differing pixels (antialiasing), except StatusChip and Tag, whose 12.5 pt text sits 2 pt lower than the preview card's. Recheck that against the real header chip in A3 (W01) before changing anything.
-- Lessons: put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`.
+- Lessons: `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`.
 - Uncommitted work: none
 - Waiting on Nathan:
   - **Create the GitHub repo.** Creating the public repo `nathan-tolley/aura-exchange-app` was blocked by Claude Code's auto-mode permission check, so this repo exists only locally (made from the template's commit `1268d28`, no remote). When you're happy to publish, run these from this folder. They create the repo empty, then push `main` first so it becomes the default branch:
@@ -34,4 +34,5 @@ One line per finished step: date · step · what · commit.
 - 2026-10-24 · A1 · `lib/format/`: money (parts, U+2212), change, percent, impact, tape change, quantity, ticker, countdown; 14 unit tests from `DESIGN.md` → Numbers · `965cfbe`
 - 2026-10-24 · A1 · `AuraIcon` (CustomPainter from the generated paths, stroke weight in viewBox units, filled variant, decorative unless labelled); all 34 checked by eye against `Icon.png` · `5be5258`
 - 2026-10-24 · A1 · Fonts: Newsreader (+ Italic), JetBrains Mono and Inter variable TTFs from google/fonts with OFL licenses (registered in `main.dart`); tests load them; `auraBaseTextStyle()` as the app's default text style · `71ec383`
-- 2026-10-24 · A1 · Golden harness (2× capture, `golden` tag, release workflow skips goldens), base text tracking and even leading to match the references, and components batch 1: Money, PriceChange, Tag, StatusChip (+ `glass`), Countdown, ImpactDisc, Avatar, IconButton, with goldens and behavior tests · (this commit)
+- 2026-10-24 · A1 · Golden harness (2× capture, `golden` tag, release workflow skips goldens), base text tracking and even leading to match the references, and components batch 1: Money, PriceChange, Tag, StatusChip (+ `glass`), Countdown, ImpactDisc, Avatar, IconButton, with goldens and behavior tests · `be7b1c8`
+- 2026-10-24 · A1 · Components batch 2: Button, SlideToConfirm, Stepper, SegmentedControl, Tabs, SearchField (+ `AuraSheetScope`), goldens within 0.4–2.3% of the references, behavior tests (slider confirms once, stepper floor, segments, disabled semantics) · (this commit)

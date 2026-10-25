@@ -3,14 +3,21 @@ library;
 
 import 'package:aura_exchange/design/icons.dart';
 import 'package:aura_exchange/design/widgets/aura_avatar.dart';
+import 'package:aura_exchange/design/widgets/aura_button.dart';
 import 'package:aura_exchange/design/widgets/aura_countdown.dart';
 import 'package:aura_exchange/design/widgets/aura_icon_button.dart';
 import 'package:aura_exchange/design/widgets/aura_impact_disc.dart';
 import 'package:aura_exchange/design/widgets/aura_money.dart';
 import 'package:aura_exchange/design/widgets/aura_price_change.dart';
+import 'package:aura_exchange/design/widgets/aura_search_field.dart';
+import 'package:aura_exchange/design/widgets/aura_segmented_control.dart';
+import 'package:aura_exchange/design/widgets/aura_slide_to_confirm.dart';
 import 'package:aura_exchange/design/widgets/aura_status_chip.dart';
+import 'package:aura_exchange/design/widgets/aura_stepper.dart';
+import 'package:aura_exchange/design/widgets/aura_tabs.dart';
 import 'package:aura_exchange/design/widgets/aura_tag.dart';
 import 'package:decimal/decimal.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/golden.dart';
@@ -160,6 +167,119 @@ void main() {
           onPressed: () {},
         ),
       ]),
+    ]);
+  });
+
+  testWidgets('Button', (tester) async {
+    void tap() {}
+    await expectPreview(tester, 'components/Button', [
+      Row(
+        spacing: 10,
+        children: [
+          Expanded(
+            child: AuraButton(
+              'Sell',
+              icon: AuraIcons.minus,
+              block: true,
+              onPressed: tap,
+            ),
+          ),
+          Expanded(
+            child: AuraButton(
+              'Buy',
+              icon: AuraIcons.plus,
+              variant: AuraButtonVariant.buy,
+              block: true,
+              onPressed: tap,
+            ),
+          ),
+        ],
+      ),
+      previewRow([
+        AuraButton(
+          'Invite friends',
+          variant: AuraButtonVariant.primary,
+          size: AuraButtonSize.md,
+          onPressed: tap,
+        ),
+        AuraButton('Short more', size: AuraButtonSize.md, onPressed: tap),
+      ]),
+      AuraButton(
+        'Not now',
+        variant: AuraButtonVariant.ghost,
+        size: AuraButtonSize.md,
+        onPressed: tap,
+      ),
+      previewRow([
+        AuraButton(
+          'Declare bankruptcy',
+          variant: AuraButtonVariant.danger,
+          size: AuraButtonSize.md,
+          onPressed: tap,
+        ),
+        const AuraButton(
+          'Buy',
+          variant: AuraButtonVariant.buy,
+          size: AuraButtonSize.md,
+        ),
+      ]),
+    ]);
+  });
+
+  testWidgets('SlideToConfirm', (tester) async {
+    await expectPreview(tester, 'components/SlideToConfirm', [
+      AuraSlideToConfirm(label: r'Slide to buy 12 $ANNA', onConfirmed: () {}),
+      AuraSlideToConfirm(
+        label: r'Slide to short 20 $JAKE',
+        down: true,
+        onConfirmed: () {},
+      ),
+    ]);
+  });
+
+  testWidgets('Stepper', (tester) async {
+    await expectPreview(tester, 'components/Stepper', [
+      AuraStepper(
+        value: d('20'),
+        note: r'shares at about A$124.10',
+        onChanged: (_) {},
+      ),
+    ]);
+  });
+
+  testWidgets('SegmentedControl', (tester) async {
+    await expectPreview(tester, 'components/SegmentedControl', [
+      const AuraSegmentedControl(
+        options: ['1D', '1W', '1M', 'SZN', 'ALL'],
+        value: '1M',
+        label: 'Chart range',
+      ),
+    ]);
+  });
+
+  testWidgets('Tabs', (tester) async {
+    await expectPreview(tester, 'components/Tabs', [
+      const AuraTabs(
+        items: ['Overview', 'Tape', 'Holders', 'Analyst'],
+        value: 'Overview',
+      ),
+    ]);
+  });
+
+  testWidgets('SearchField', (tester) async {
+    await expectPreview(tester, 'components/SearchField', [
+      Row(
+        spacing: 16,
+        children: [
+          const Expanded(child: AuraSearchField()),
+          AuraIconButton(
+            icon: AuraIcons.bell,
+            label: 'Notifications, 3 unread',
+            badge: true,
+            onPressed: () {},
+          ),
+        ],
+      ),
     ]);
   });
 }

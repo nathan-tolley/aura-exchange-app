@@ -48,7 +48,12 @@ enum _Tone { up, warn, down, neutral }
 /// `halted`, `delayed`, `pre`, `after` (warn) and `liquidated`, `sec`,
 /// `miss` (down) take color.
 class AuraStatusChip extends StatelessWidget {
-  const AuraStatusChip(this.status, {super.key, this.label, this.glass = false});
+  const AuraStatusChip(
+    this.status, {
+    super.key,
+    this.label,
+    this.glass = false,
+  });
 
   final AuraStatus status;
 

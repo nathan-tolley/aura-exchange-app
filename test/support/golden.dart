@@ -1,6 +1,6 @@
 import 'package:aura_exchange/design/text.dart';
 import 'package:aura_exchange/design/tokens.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The component references (design/reference/components/*.png) are 420 pt
@@ -73,11 +73,20 @@ class AuraTestApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: DefaultTextStyle(
-        style: auraBaseTextStyle(systemSans: false),
-        child: ColoredBox(color: background, child: child),
+    final base = auraBaseTextStyle(systemSans: false);
+    // The same Cupertino theme the app installs (lib/app.dart).
+    return CupertinoTheme(
+      data: CupertinoThemeData(
+        brightness: Brightness.dark,
+        primaryColor: AuraColors.ink,
+        textTheme: CupertinoTextThemeData(textStyle: base),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: DefaultTextStyle(
+          style: base,
+          child: ColoredBox(color: background, child: child),
+        ),
       ),
     );
   }
