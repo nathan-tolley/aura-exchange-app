@@ -30,6 +30,8 @@ Future<void> expectPreview(
       key: _stageKey,
       child: AuraTestApp(
         background: background,
+        // Still frames: the tape stops, like with Reduce Motion.
+        reduceMotion: true,
         child: Align(
           alignment: Alignment.topLeft,
           child: SizedBox(
@@ -66,14 +68,19 @@ class AuraTestApp extends StatelessWidget {
     super.key,
     required this.child,
     this.background = AuraColors.bg,
+    this.reduceMotion = false,
   });
 
   final Widget child;
   final Color background;
 
+  /// Turns on Reduce Motion (MediaQuery.disableAnimations).
+  final bool reduceMotion;
+
   @override
   Widget build(BuildContext context) {
     final base = auraBaseTextStyle(systemSans: false);
+    final media = MediaQuery.of(context);
     // The same Cupertino theme the app installs (lib/app.dart).
     return CupertinoTheme(
       data: CupertinoThemeData(
@@ -81,11 +88,14 @@ class AuraTestApp extends StatelessWidget {
         primaryColor: AuraColors.ink,
         textTheme: CupertinoTextThemeData(textStyle: base),
       ),
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: DefaultTextStyle(
-          style: base,
-          child: ColoredBox(color: background, child: child),
+      child: MediaQuery(
+        data: media.copyWith(disableAnimations: reduceMotion),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: DefaultTextStyle(
+            style: base,
+            child: ColoredBox(color: background, child: child),
+          ),
         ),
       ),
     );
