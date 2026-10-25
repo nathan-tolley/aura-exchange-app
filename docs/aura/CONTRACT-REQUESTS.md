@@ -2,7 +2,7 @@
 
 What the app needs from `/v1` that the contract doesn't give yet. The API repo owns the contract (`openapi/v1.yaml`), so each request goes to Nathan and the API session. Until one lands, the app builds against a local fixture. Mark a request done with the sync date from `api/SYNCED.md`.
 
-## 1. Named examples for each error code (2026-10-24 · open)
+## 1. Named examples for each error code (2026-10-24 · done, synced 2026-10-25 in draft.6)
 
 **What's wrong.** Every error response (`E400` to `E503`) uses the one `Error` schema and has no `examples`. Prism therefore answers every forced status with the same body:
 
