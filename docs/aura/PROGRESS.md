@@ -4,9 +4,18 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A2 → check passed; merging `a2-api-layer` into `main`
-- State: done apart from the merge
-- Next action: merge into `main` locally, then A3 (the 13 worst moments) on a new branch `a3-worst-moments`, starting with the shared screen scaffold and W13 (needs Nathan's answer on its footnote) or W05 (no open questions).
+- Step: A2 done (branch `a2-api-layer`, merged into `main` locally as `e8690b7`). A3 next.
+- State: done; A3 not started
+- Next action: A3 on a new branch `a3-worst-moments` off `main`, in this order (each one: fixtures with the reference's exact data → screen → 390×844 @2x golden → diff against `design/reference/screens/W##-*.png` and look at both → gallery entry → commit):
+  1. Screen scaffold: a full-screen golden harness (780×1688 px like the references), the shared layout (16 pt gutters, top bar with back glyph and status chip, bottom action area, tab bar), and a "Screens" section in the State Gallery.
+  2. Home family through `LiveMarket` + `liveness()` + strings: W09 closed, W11 offline, W12 IPO day.
+  3. Trade sheet over the dimmed stock page: W05 rejected, W06 requote (fixtures through `errorCopy`).
+  4. W10 halted (stock page + halt vote).
+  5. W07 margin warning sheet, W08 liquidated receipt.
+  6. W04 Chapter 7.
+  7. W01 rumor about you, W02 ruling on you, W03 SEC charge.
+  8. W13 exchange down, once Nathan answers the footnote question.
+  Recheck the 12.5 pt quirk (`NOTES.md`) on the first screen with chips or tags.
 - How to compare: goldens are 840 px wide at 2× like the references. Diff each golden against `design/reference/components/<Name>.png` and look at both. All 30 reference goldens are within 0.03–4.5% differing pixels (antialiasing). See `docs/aura/NOTES.md` for what was matched and the 12.5 pt quirk to recheck in A3.
 - Lessons: `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format` the generated token files.
 - Uncommitted work: none
@@ -48,3 +57,4 @@ One line per finished step: date · step · what · commit.
 - 2026-10-25 · A2 · `stream.dart`: subscribe per exchange, 25 s ping with dead-socket detection, backoff reconnect, 4401 refresh, 15 s polling fallback, `connected`, message parsing; 13 fake-time tests · (this commit)
 - 2026-10-25 · A2 · Data layer: `Freshness` + `liveness()`, the live market (REST + ticks, refetch on reconnect and `PollDue`), system/auth/market/trading repositories, the stream following sign-in, Riverpod retry off; contract requests #3 and #4 · (this commit)
 - 2026-10-25 · A2 · A2 check: `test/prism/` (opt-in tag) passes against Prism, 36 tests including all 31 forced codes; only connection errors read as offline (`APP_UNEXPECTED` otherwise); errors unit tests; contract request #5. 270 tests, analyze clean · (this commit)
+- 2026-10-25 · A2 · Merged `a2-api-layer` into `main` (`e8690b7`); A3 plan written into Now · (this commit)
