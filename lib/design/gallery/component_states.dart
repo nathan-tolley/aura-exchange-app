@@ -601,6 +601,10 @@ final List<GallerySection> componentStates = [
         ],
       ),
     ),
+    GalleryState(
+      'Not traded yet (an invite preview)',
+      (_) => const AuraStockRow(ticker: r'$ANNA', name: 'Anna'),
+    ),
   ]),
   GallerySection('HeroCard', [
     GalleryState('Net worth, hideable (live)', (_) => const _LiveHero()),

@@ -19,11 +19,13 @@ class IpoConsentView extends StatelessWidget {
   const IpoConsentView({
     super.key,
     required this.exchangeName,
+    this.loading = false,
     this.onContinue,
   });
 
-  /// Null while the exchange loads.
+  /// Null while the exchange loads, or if it couldn't be.
   final String? exchangeName;
+  final bool loading;
   final VoidCallback? onContinue;
 
   @override
@@ -31,7 +33,7 @@ class IpoConsentView extends StatelessWidget {
     final name = exchangeName;
     return OnboardingScaffold(
       title: ipoTitle,
-      body: name == null ? null : ipoBody(name),
+      body: loading ? null : ipoBody(name),
       actions: [
         AuraButton(
           chooseTicker,
@@ -42,7 +44,7 @@ class IpoConsentView extends StatelessWidget {
       ],
       note: theAnalystRoastsEvents,
       children: [
-        if (name == null) ...[
+        if (loading) ...[
           const AuraSkeletonText(style: AuraType.body, lines: 2),
           const SizedBox(height: 20),
         ],

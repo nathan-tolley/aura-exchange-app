@@ -634,15 +634,45 @@ const listYourself = 'List yourself';
 const youPickTickerNext = 'You pick your ticker next.';
 
 // ---------------------------------------------------------------------------
+// Join an exchange (SCREENS.md #2)
+// ---------------------------------------------------------------------------
+
+const yourInvite = 'Your invite';
+String joinTitle(String exchange) => 'Join $exchange';
+
+/// "7 people are in it, 6 listed. You'll pick your ticker after you join."
+String joinBody(int members, int listed) =>
+    '$members ${members == 1 ? 'person is' : 'people are'} in it, '
+    '$listed listed. You pick your ticker after you join.';
+const listedHeading = 'Listed';
+const nobodyListedYet = "Nobody's listed yet. You could be first.";
+const joinTheExchange = 'Join the exchange';
+const joiningLabel = 'Joining…';
+String inviteCode(String code) => 'Invite $code';
+const inviteDoesntWork = "This invite link doesn't work";
+const inviteDoesntWorkBody =
+    'Check the link, or ask whoever sent it for a new one.';
+String exchangeIsFull(String exchange) => '$exchange is full';
+const startAnExchange = 'Start an exchange';
+
+/// Joining while offline.
+const joinOffline = ErrorCopy(
+  title: "You're offline",
+  body: 'Joining needs a connection. Retry when you have one.',
+  action: 'Retry',
+);
+
+// ---------------------------------------------------------------------------
 // Your IPO (SCREENS.md #3)
 // ---------------------------------------------------------------------------
 
 const ipoTitle = 'Your IPO';
 
-/// "Listing makes you a stock on The Group Chat. ..."
-String ipoBody(String exchange) =>
-    'Listing makes you a stock on $exchange. Your friends can buy you, short '
-    'you and file events about you.';
+/// "Listing makes you a stock on The Group Chat. ..."; "this exchange" when
+/// its name couldn't be loaded.
+String ipoBody(String? exchange) =>
+    'Listing makes you a stock on ${exchange ?? 'this exchange'}. Your '
+    'friends can buy you, short you and file events about you.';
 const ifYouList = 'If you list';
 const whoTradesYou = 'Who trades you';
 const everyoneButYou = 'Everyone but you';

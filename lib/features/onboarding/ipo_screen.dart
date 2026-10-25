@@ -144,13 +144,15 @@ class _IpoScreenState extends ConsumerState<IpoScreen> {
     final state = ref.watch(ipoProvider);
     final controller = ref.read(ipoProvider.notifier);
     final exchangeId = ref.watch(currentExchangeIdProvider);
-    final exchange = exchangeId == null
+    final exchangeState = exchangeId == null
         ? null
-        : ref.watch(exchangeProvider(exchangeId)).value;
+        : ref.watch(exchangeProvider(exchangeId));
+    final exchange = exchangeState?.value;
     final name = ref.watch(meProvider).value?.user.displayName ?? '';
     return switch (state.step) {
       IpoStep.consent => IpoConsentView(
         exchangeName: exchange?.name,
+        loading: exchangeState?.isLoading ?? false,
         onContinue: controller.toTicker,
       ),
       IpoStep.ticker => IpoTickerView(

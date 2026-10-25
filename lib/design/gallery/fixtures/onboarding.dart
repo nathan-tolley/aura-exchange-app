@@ -6,6 +6,8 @@ import '../../../features/onboarding/create_exchange_model.dart';
 import '../../../features/onboarding/create_exchange_view.dart';
 import '../../../features/onboarding/ipo_model.dart';
 import '../../../features/onboarding/ipo_view.dart';
+import '../../../features/onboarding/join_model.dart';
+import '../../../features/onboarding/join_view.dart';
 import '../../../features/onboarding/sign_in_model.dart';
 import '../../../features/onboarding/sign_in_view.dart';
 import '../../../features/system/exchange_down_model.dart';
@@ -328,5 +330,72 @@ Widget _ipoTicker(IpoState state) => Controlled(
     onBack: _noop,
   ),
 );
+
+// Join an exchange (S02), from aura://invite/JAKE-7F2K.
+
+InvitePreview _preview(String status) => InvitePreview.fromJson({
+  'code': 'JAKE-7F2K',
+  'exchangeName': 'The Group Chat',
+  'listed': [
+    for (final (ticker, name) in [
+      (r'$JAKE', 'Jake'),
+      (r'$ANNA', 'Anna'),
+      (r'$ELI', 'Eli'),
+    ])
+      {
+        'id': '11111111-0000-4000-8000-00000000000${ticker.length}',
+        'ticker': ticker,
+        'displayName': name,
+        'avatarUrl': null,
+      },
+  ],
+  'memberCount': 4,
+  'expiresAt': '2026-10-31T10:41:00Z',
+  'status': status,
+});
+
+Widget _join({
+  InvitePreview? preview,
+  ApiError? previewError,
+  ApiError? joinError,
+  bool inAnExchange = false,
+}) => JoinView(
+  model: joinModel(
+    code: 'JAKE-7F2K',
+    preview: preview,
+    previewError: previewError,
+    joinError: joinError,
+    joining: false,
+    inAnExchange: inAnExchange,
+  ),
+  onAction: _noop,
+  onRetry: _noop,
+);
+
+/// S02a: the invite, and who's listed.
+Widget joinPreview() => _join(preview: _preview('VALID'));
+
+/// S02b: the invite expired.
+Widget joinExpired() => _join(preview: _preview('EXPIRED'));
+
+/// S02c: the exchange is full.
+Widget joinFull() => _join(preview: _preview('FULL'));
+
+/// S02d: the link doesn't lead anywhere.
+Widget joinNotFound() => _join(
+  previewError: const ApiError(
+    code: 'NOT_FOUND',
+    params: {'resource': 'invite'},
+    retryable: false,
+    action: ApiAction.none,
+    status: 404,
+  ),
+);
+
+/// S02e: loading the invite.
+Widget joinLoading() => _join();
+
+/// S02f: loading the invite failed offline.
+Widget joinNoNetwork() => _join(previewError: const ApiError.offline());
 
 void _noop() {}

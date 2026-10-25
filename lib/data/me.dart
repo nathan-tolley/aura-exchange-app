@@ -43,14 +43,29 @@ class MeNotifier extends AsyncNotifier<Me?> {
   }
 }
 
-/// The membership the app is showing: your first exchange. Null while signed
-/// out, while `/me` loads, and when you're in no exchange yet. (Several
-/// exchanges per person is an open question in DECISIONS.md; until it's
-/// settled the app shows the first.)
+/// The exchange you chose this session, such as the one you just joined.
+/// Not kept across launches yet: several exchanges per person is an open
+/// question in DECISIONS.md.
+final selectedExchangeProvider = NotifierProvider<SelectedExchange, String?>(
+  SelectedExchange.new,
+);
+
+class SelectedExchange extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void select(String exchangeId) => state = exchangeId;
+}
+
+/// The membership the app is showing: the one you chose this session if
+/// you're in it, otherwise your first. Null while signed out, while `/me`
+/// loads, and when you're in no exchange yet.
 final currentMembershipProvider = Provider<Membership?>((ref) {
   final me = ref.watch(meProvider).value;
   if (me == null || me.memberships.isEmpty) return null;
-  return me.memberships.first;
+  final chosen = ref.watch(selectedExchangeProvider);
+  return me.memberships.where((m) => m.exchangeId == chosen).firstOrNull ??
+      me.memberships.first;
 });
 
 /// The exchange the app is showing, by id.

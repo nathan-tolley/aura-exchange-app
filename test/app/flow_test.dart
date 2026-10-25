@@ -33,6 +33,10 @@ void main() {
       tokens: null,
     );
     addTearDown(container.dispose);
+    // Reduce Motion: skeletons hold still, so the app can settle.
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
     await tester.pumpWidget(
       UncontrolledProviderScope(container: container, child: const AuraApp()),
     );
@@ -123,6 +127,10 @@ void main() {
       now: DateTime.utc(2026, 10, 24, 10, 41),
     );
     addTearDown(container.dispose);
+    // Reduce Motion: skeletons hold still, so the app can settle.
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
     await tester.pumpWidget(
       UncontrolledProviderScope(container: container, child: const AuraApp()),
     );

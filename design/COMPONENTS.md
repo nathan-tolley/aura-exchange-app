@@ -217,6 +217,7 @@ Preview: [ChartTooltip.png](reference/components/ChartTooltip.png)
 The row for one listing in watchlists, the market list and search results: avatar, ticker, name and tag, sparkline, price and change, on a hairline.
 
 - Provide `ticker`, `name`, `price`, `pct`, `abs`; optional `initial`, `tag`, `tagTone`, `points`.
+- Before a listing has traded (an invite's preview of who's listed), leave out `price`, `pct` and `abs`: the row shows who, not what they trade at. (A4, 2026-10-25.)
 - 64pt tall with a `line` divider. Tap opens the stock page; long-press opens quick trade.
 - Rows sort by what the list is for: the market by % change, a watchlist by the member's order.
 
