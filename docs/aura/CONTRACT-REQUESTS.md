@@ -24,3 +24,12 @@ So a forced 409 can never be `QUOTE_STALE`, a 426 can never be `UPDATE_REQUIRED`
 The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is additive and changes no shapes.
 
 **Meanwhile.** The app's error-mapping tests use local fixtures copied from the table in `API-CONTRACT.md`.
+
+## 2. When the next stimulus check lands (2026-10-25 · open)
+
+**What's missing.** W05's rejection says "wait for **tomorrow's** stimulus check". The allowance is a game rule (PLAN.md: A$1,000, Mondays 9 am), and the app mustn't copy game rules, so it can't work out "tomorrow's" or "Monday's" by itself. Nothing in `/v1` says when the next one lands.
+
+**Ask (additive).** Add `nextStimulusAt` (ISO 8601 UTC) to the params of `INSUFFICIENT_CASH`. A `nextStimulusAt` on `Portfolio` would serve the Portfolio screen too, if that's easier; the app would read either.
+
+**Meanwhile.** `lib/l10n/strings.dart` already reads `params.nextStimulusAt` when it's there ("tomorrow's", "Monday's", from the exchange's calendar) and says "the next stimulus check" when it isn't. W05's golden in A3 uses a fixture with the param, so it matches the reference.
+
