@@ -4,6 +4,10 @@ import '../../data/freshness.dart';
 import '../../data/live_market.dart';
 import '../../features/home/home_model.dart';
 import '../../features/home/home_view.dart';
+import '../../features/portfolio/liquidated_model.dart';
+import '../../features/portfolio/liquidated_view.dart';
+import '../../features/stock/short_model.dart';
+import '../../features/stock/short_view.dart';
 import '../../features/stock/halted_model.dart';
 import '../../features/stock/halted_view.dart';
 import '../../features/trade/trade_model.dart';
@@ -286,9 +290,9 @@ HomeViewModel homeIpoDay() {
         ],
         teaserLabel: firstOnTheTape,
         teaser:
-            '“The group chat prepares for its first listings. Analysts '
+            'The group chat prepares for its first listings. Analysts '
             'expect volatility, poor decisions and at least one short '
-            'squeeze.”',
+            'squeeze.',
         teaserSource: analystAtTheOpen,
       ),
     ),
@@ -473,3 +477,106 @@ HaltedStockModel halted() {
     now: fixtureNow,
   );
 }
+
+Map<String, Object?> _jakeShort({required String status}) => {
+  'id': '55555555-0000-4000-8000-000000000001',
+  'listing': {
+    'id': _jake,
+    'ticker': r'$JAKE',
+    'displayName': 'Jake',
+    'avatarUrl': null,
+  },
+  'side': 'SHORT',
+  'status': status,
+  'quantity': '60',
+  'avgPrice': '97.50',
+  'marketPrice': '112.30',
+  'marketValue': '6738.00',
+  'unrealizedPnl': '-888.00',
+  'unrealizedPnlPct': '-15.18',
+  'short': {
+    'collateral': '8775.00',
+    'collateralRatioPct': '130.00',
+    'warningRatioPct': '140.00',
+    'maintenanceRatioPct': '125.00',
+    'liquidationPrice': '117.00',
+    'borrowFeeDailyPct': '0.60',
+  },
+  'openedAt': '2026-10-20T01:00:00Z',
+  'closedAt': status == 'OPEN' ? null : '2026-10-24T04:12:00Z',
+};
+
+/// W07: short 60 $JAKE from A$97.50; it's at A$112.30, 4.2% from the
+/// A$117.00 liquidation price, with the collateral at 130%.
+ShortPageModel shortNearLiquidation() => shortPageModel(
+  listing: ListingDetail.fromJson({
+    'asOf': fixtureNow.toIso8601String(),
+    'marketState': 'OPEN',
+    'nextChangeAt': null,
+    'id': _jake,
+    'ticker': r'$JAKE',
+    'displayName': 'Jake',
+    'avatarUrl': null,
+    'price': '112.30',
+    'changeAbs': '10.40',
+    'changePct': '10.21',
+    'state': 'ACTIVE',
+    'badges': ['HARD_TO_BORROW'],
+    'sparkline': <Object?>[],
+    'isMine': false,
+    'myPosition': {'side': 'SHORT', 'quantity': '60'},
+    'prevClose': '101.90',
+    'open': '102.10',
+    'dayHigh': '112.80',
+    'dayLow': '101.40',
+    'seasonHigh': '118.20',
+    'seasonLow': '88.40',
+    'volume': '1840',
+    'shortInterestPct': '31.00',
+    'borrowFeeDailyPct': '0.60',
+    'indicatedPrice': null,
+    'indicatedChangePct': null,
+    'halt': null,
+    'lastTradeAt': fixtureNow.toIso8601String(),
+    'events': <Object?>[],
+    'analyst': null,
+  }),
+  position: Position.fromJson(_jakeShort(status: 'OPEN')),
+);
+
+/// W08: the same short, liquidated at 3:12 pm when $JAKE crossed A$117.00.
+LiquidatedModel liquidated() => liquidatedModel(
+  liquidation: Liquidation(
+    position: Position.fromJson(_jakeShort(status: 'LIQUIDATED')),
+    at: DateTime.utc(2026, 10, 24, 4, 12),
+    triggerPrice: '117.00',
+    maintenanceRatioPct: '125.00',
+    price: '118.10',
+    cost: '7086.00',
+    feeRatePct: '0.50',
+    fee: '35.43',
+    returned: '1653.57',
+    realizedPnl: '-1271.43',
+    realizedPnlPct: '-21.73',
+  ),
+  tape: TapeItem.fromJson({
+    'id': '66666666-0000-4000-8000-000000000001',
+    'type': 'LIQUIDATION',
+    'at': '2026-10-24T04:12:00Z',
+    'listing': {
+      'id': _jake,
+      'ticker': r'$JAKE',
+      'displayName': 'Jake',
+      'avatarUrl': null,
+    },
+    'headline':
+        r'Bears obliterated as $JAKE rips 15%. One short seller forcibly '
+        'removed from the position.',
+    'body': null,
+    'impact': null,
+    'priceMovePct': '15.00',
+    'eventId': null,
+    'haltId': null,
+  }),
+  zone: sydney,
+);

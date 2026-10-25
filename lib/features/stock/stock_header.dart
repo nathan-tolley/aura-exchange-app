@@ -5,6 +5,7 @@ import '../../design/icons.dart';
 import '../../design/tokens.dart';
 import '../../design/widgets/aura_icon_button.dart';
 import '../../design/widgets/aura_money.dart';
+import '../../design/widgets/aura_price_change.dart';
 import '../../design/widgets/aura_status_chip.dart';
 
 /// The top of a stock page (W10, and behind the trade sheet in W05 and
@@ -19,6 +20,9 @@ class StockHeader extends StatelessWidget {
     this.statusLabel,
     required this.line,
     required this.price,
+    this.changeAbs,
+    this.changePct,
+    this.changePeriod,
     this.onBack,
   });
 
@@ -30,6 +34,11 @@ class StockHeader extends StatelessWidget {
   /// "$ANNA · Anna", "$MIA · Mia · last trade 4:51 pm".
   final String line;
   final Decimal price;
+
+  /// The day's move under the price (W07): `↑ +10.40 (+10.21%) today`.
+  final Decimal? changeAbs;
+  final Decimal? changePct;
+  final String? changePeriod;
   final VoidCallback? onBack;
 
   @override
@@ -72,6 +81,14 @@ class StockHeader extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               AuraMoney(price, size: AuraMoneySize.display),
+              if (changeAbs != null || changePct != null) ...[
+                const SizedBox(height: 6),
+                AuraPriceChange(
+                  abs: changeAbs,
+                  pct: changePct,
+                  period: changePeriod,
+                ),
+              ],
             ],
           ),
         ),

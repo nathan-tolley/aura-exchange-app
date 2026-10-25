@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../api/errors.dart';
+import '../api/generated/models/badge.dart';
 import '../api/generated/models/error_code.dart';
 import '../api/generated/models/halt_reason.dart';
 import '../api/generated/models/side.dart';
@@ -660,11 +661,28 @@ const priceHoldsFor = 'This price holds for';
 
 /// "$ANNA · Anna", or with the last trade while halted:
 /// "$MIA · Mia · last trade 4:51 pm".
-String stockLine(String ticker, String name, {String? lastTrade}) => [
+String stockLine(
+  String ticker,
+  String name, {
+  String? lastTrade,
+  List<Badge> badges = const [],
+}) => [
   formatTicker(ticker),
   name,
+  for (final badge in badges) ?badgeLabel(badge),
   if (lastTrade != null) 'last trade $lastTrade',
 ].join(' · ');
+
+/// A listing's badge, as it reads after the name: "Hard to borrow" (W07).
+/// Badges added to the contract later aren't shown until they have words.
+String? badgeLabel(Badge badge) => switch (badge) {
+  Badge.hardToBorrow => 'Hard to borrow',
+  Badge.otcPink => 'OTC Pink',
+  Badge.meme => 'Meme stock',
+  Badge.rumorPending => 'Rumor pending',
+  Badge.queuedForOpen => 'Ruling at the open',
+  Badge.$unknown => null,
+};
 
 /// The status chip on a halted stock page (W10).
 String haltStatus(HaltReason reason) => switch (reason) {
@@ -712,3 +730,92 @@ const buy = 'Buy';
 
 /// Under disabled Sell and Buy while a news vote runs (W10).
 const tradingResumesAfterVote = 'Trading resumes when the vote closes.';
+
+// ---------------------------------------------------------------------------
+// Your short, near liquidation (W07) and liquidated (W08)
+// ---------------------------------------------------------------------------
+
+const today = 'today';
+
+/// A percentage to one decimal, without a sign: "4.2%".
+String _pct1(Decimal pct) => '${pct.abs().round(scale: 1)}%';
+
+/// A percentage as the server sends it, without trailing zeros: "31%".
+String _pct(Decimal pct) => '${pct.abs()}%';
+
+String nearLiquidationTitle(String ticker) =>
+    'Your ${formatTicker(ticker)} short is close to liquidation';
+
+/// "4.2% more and the exchange covers it for you. Short interest is 31%, so
+/// a squeeze can get there fast."
+String nearLiquidationBody(Decimal awayPct, Decimal shortInterestPct) =>
+    '${_pct1(awayPct)} more and the exchange covers it for you. Short '
+    'interest is ${_pct(shortInterestPct)}, so a squeeze can get there fast.';
+
+const yourShort = 'Your short';
+const entryToLiquidation = 'From your entry to liquidation';
+
+/// "4.2% away".
+String awayFromLiquidation(Decimal awayPct) => '${_pct1(awayPct)} away';
+
+const statPosition = 'Position';
+const statReturn = 'Return';
+const statCollateral = 'Collateral';
+const statBorrowFee = 'Borrow fee';
+
+/// "Short 60".
+String shortQuantity(Decimal quantity) => 'Short ${formatQuantity(quantity)}';
+
+/// "130%".
+String ratio(Decimal pct) => _pct(pct);
+
+/// "min 125%".
+String minimumRatio(Decimal pct) => 'min ${_pct(pct)}';
+
+/// "0.6% a day".
+String perDay(Decimal pct) => '${_pct(pct)} a day';
+
+/// What liquidation does, in the position's own numbers (W07).
+String liquidationExplainer(Decimal liquidationPrice, Decimal quantity) =>
+    'Above ${formatMoney(liquidationPrice)} the exchange buys back all '
+    "${formatQuantity(quantity)} shares at market and returns what's left of "
+    'your collateral. Covering yourself nudges the price up too.';
+
+/// "Cover 30", "Cover all 60".
+String cover(Decimal quantity) => 'Cover ${formatQuantity(quantity)}';
+String coverAll(Decimal quantity) => 'Cover all ${formatQuantity(quantity)}';
+
+String liquidatedTitle(String ticker) =>
+    'Your ${formatTicker(ticker)} short was liquidated';
+
+/// "3:12 pm · $JAKE crossed A$117.00 and your collateral fell under 125%".
+String liquidatedWhy({
+  required String at,
+  required String ticker,
+  required Decimal triggerPrice,
+  required Decimal maintenancePct,
+}) =>
+    '$at · ${formatTicker(ticker)} crossed ${formatMoney(triggerPrice)} and '
+    'your collateral fell under ${_pct(maintenancePct)}';
+
+const returnedToCash = 'Returned to your cash';
+const onTheTrade = 'on the trade';
+const collateralHeld = 'Collateral held';
+
+/// "Bought back 60 at A$118.10".
+String boughtBack(Decimal quantity, Decimal price) =>
+    'Bought back ${formatQuantity(quantity)} at ${formatMoney(price)}';
+const returned = 'Returned';
+const onTheTape = 'On the tape';
+
+/// A tape headline quoted on a screen: “…”. Headlines come from the server
+/// bare; the screen that quotes them adds the marks.
+String quoted(String text) => '“$text”';
+
+/// Liquidations never name the trader (API-CONTRACT.md → Privacy), and the
+/// screen says so: "3:12 pm · your name isn't in it".
+String nameNotInIt(String at) => "$at · your name isn't in it";
+const seePortfolio = 'Portfolio';
+
+/// "See $JAKE".
+String seeStock(String ticker) => 'See ${formatTicker(ticker)}';

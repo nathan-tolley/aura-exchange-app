@@ -2,7 +2,6 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../design/tokens.dart';
-import '../../design/widgets/aura_banner.dart';
 import '../../design/widgets/aura_button.dart';
 import '../../design/widgets/aura_countdown.dart';
 import '../../design/widgets/aura_receipt.dart';
@@ -11,24 +10,7 @@ import '../../design/widgets/aura_sheet.dart';
 import '../../design/widgets/aura_slide_to_confirm.dart';
 import '../../design/widgets/aura_stepper.dart';
 import '../../l10n/strings.dart';
-
-/// A banner as the sheet shows it: copy already built, tone chosen.
-@immutable
-class SheetBanner {
-  const SheetBanner({
-    required this.tone,
-    required this.title,
-    this.body,
-    this.action,
-  });
-
-  final AuraBannerTone tone;
-  final String title;
-  final String? body;
-
-  /// "Buy 18".
-  final String? action;
-}
+import '../shared/banner_model.dart';
 
 /// The trade ticket (SCREENS.md #9): order type, quantity, the quote as a
 /// receipt, why it can't go through (W05), and the button.
@@ -63,7 +45,7 @@ class TradeTicketModel {
 
   /// False when the quote was refused; [banner] says why, right above it.
   final bool canTrade;
-  final SheetBanner? banner;
+  final BannerModel? banner;
 }
 
 class TradeTicketView extends StatelessWidget {
@@ -104,13 +86,7 @@ class TradeTicketView extends StatelessWidget {
         ),
         AuraReceipt(rows: m.rows, total: m.total),
         if (m.banner case final banner?)
-          AuraBanner(
-            tone: banner.tone,
-            title: banner.title,
-            body: banner.body,
-            action: banner.action,
-            onAction: banner.action == null ? null : onBannerAction,
-          ),
+          ModelBanner(banner, onAction: onBannerAction),
         AuraButton(
           m.button,
           variant: AuraButtonVariant.buy,
@@ -139,7 +115,7 @@ class RequoteModel {
 
   /// "Buy 12 $ANNA".
   final String title;
-  final SheetBanner banner;
+  final BannerModel banner;
   final List<AuraReceiptRow> rows;
   final AuraReceiptRow total;
   final Duration holdsFor;
@@ -172,11 +148,7 @@ class RequoteView extends StatelessWidget {
       title: m.title,
       onClose: onClose,
       children: [
-        AuraBanner(
-          tone: m.banner.tone,
-          title: m.banner.title,
-          body: m.banner.body,
-        ),
+        ModelBanner(m.banner),
         AuraReceipt(rows: m.rows, total: m.total),
         Row(
           spacing: 6,

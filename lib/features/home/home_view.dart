@@ -17,6 +17,7 @@ import '../../design/widgets/aura_status_chip.dart';
 import '../../design/widgets/aura_stock_row.dart';
 import '../../design/widgets/aura_tab_bar.dart';
 import '../../design/widgets/aura_tape.dart';
+import '../../l10n/strings.dart';
 
 /// Everything Home shows, already decided and worded (`home_model.dart`
 /// builds it from the market, the portfolio and freshness).
@@ -147,7 +148,7 @@ class HomeIpo {
   final List<HomeIpoRow> rows;
   final String teaserLabel;
 
-  /// The Analyst's line, from the server as-is (curly quotes included).
+  /// The Analyst's line, from the server as-is; the view quotes it.
   final String teaser;
   final String teaserSource;
 }
@@ -408,7 +409,7 @@ class _Ipo extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        AuraQuoteCard(quote: ipo.teaser, source: ipo.teaserSource),
+        AuraQuoteCard(quote: quoted(ipo.teaser), source: ipo.teaserSource),
       ],
     );
   }

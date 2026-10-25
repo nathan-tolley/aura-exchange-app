@@ -38,3 +38,15 @@ TextStyle auraBaseTextStyle({bool? systemSans}) {
 /// in this to match: the ink moves up, the layout doesn't.
 Widget auraLiftFootnote(Widget text) =>
     Transform.translate(offset: const Offset(0, -2), child: text);
+
+/// [AuraType.largeTitle] for this platform. On iOS it's SF Pro Display, as
+/// tokened. Elsewhere Inter stands in, and at 25 pt Inter runs about 15%
+/// wider than SF Pro Display (W08's title would wrap), so it uses its display
+/// optical size and a little more tracking to take SF Pro Display's width.
+TextStyle auraLargeTitle({bool? systemSans}) {
+  if (systemSans ?? auraUsesSystemSans) return AuraType.largeTitle;
+  return AuraType.largeTitle.copyWith(
+    fontVariations: const [FontVariation('opsz', 32)],
+    letterSpacing: -0.5,
+  );
+}

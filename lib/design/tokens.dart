@@ -90,6 +90,8 @@ abstract final class AuraType {
   /// Analyst notes, in ink-secondary, never boxed. Sample: “We are moving to Underweight.”
   static const TextStyle quote = TextStyle(fontFamily: AuraFonts.serif, fontFamilyFallback: AuraFonts.fallback, fontSize: 17.0, height: 1.4706, fontWeight: FontWeight.w400, color: AuraColors.ink, fontFeatures: _tabular, fontVariations: [FontVariation('opsz', 16)]);
   // Interface: SF Pro Text. Hierarchy comes from size and color, rarely from weight.
+  /// What happened, on a full-screen outcome (W08). One per screen; a section heading never uses it. Sample: Your $JAKE short was liquidated
+  static const TextStyle largeTitle = TextStyle(fontFamily: AuraFonts.sans, fontFamilyFallback: AuraFonts.fallback, fontSize: 25.0, height: 1.2, fontWeight: FontWeight.w600, letterSpacing: -0.25, color: AuraColors.ink, fontFeatures: _tabular);
   /// Stock headers and sheet titles. Sample: $ANNA
   static const TextStyle title = TextStyle(fontFamily: AuraFonts.sans, fontFamilyFallback: AuraFonts.fallback, fontSize: 17.0, height: 1.2941, fontWeight: FontWeight.w600, color: AuraColors.ink, fontFeatures: _tabular);
   /// Section headings. Small and confident, never 20pt+. Sample: Watchlist

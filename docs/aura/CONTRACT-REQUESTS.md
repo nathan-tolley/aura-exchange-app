@@ -67,3 +67,11 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** `tradeTicketModel()` (`lib/features/trade/trade_model.dart`) takes a `Quote` and an optional `ApiError` rejection, which is option A's shape. The W05 fixture supplies both.
 
+## 7. How a liquidation settled (2026-10-25 · open)
+
+**What's missing.** W08 is the liquidation receipt: when it happened, the price the stock crossed and the maintenance ratio it fell under, the collateral held, the buy-back (quantity, price, cost), the fee, what came back to your cash, and the realised loss on the trade with its percent. `Position` (status `LIQUIDATED`) gives the collateral and quantity, but nothing in `/v1` gives the settlement. Working it out in the app would copy the server's settlement rules.
+
+**Ask (additive).** On `Position`, when `status` is `LIQUIDATED`, a `liquidation` object: `at`, `triggerPrice`, `maintenanceRatioPct`, `price`, `cost`, `feeRatePct`, `fee`, `returned`, `realizedPnl`, `realizedPnlPct` (decimal strings like the rest). The liquidation notification's deep link can then open `GET /positions/{id}`.
+
+**Meanwhile.** `Liquidation` (`lib/features/portfolio/liquidated_model.dart`) has exactly these fields, and the W08 fixture fills it.
+

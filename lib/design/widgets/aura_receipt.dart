@@ -32,9 +32,15 @@ class AuraReceipt extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (final row in rows) _Row(row, bottom: line),
-          // The drawn screens close the receipt with a hairline under the
-          // total too (W05, W06, W13); the component preview doesn't.
-          if (total != null) _Row(total!, bottom: line, isTotal: true),
+          // Inside a sheet the receipt closes with a hairline under the
+          // total (W05, W06), since more content follows it; on the
+          // background it ends on the total (W08, and the component preview).
+          if (total != null)
+            _Row(
+              total!,
+              bottom: AuraSheetScope.contains(context) ? line : null,
+              isTotal: true,
+            ),
         ],
       ),
     );

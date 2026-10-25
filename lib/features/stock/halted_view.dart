@@ -10,6 +10,7 @@ import '../../design/widgets/aura_impact_disc.dart';
 import '../../design/widgets/aura_nav_card.dart';
 import '../../design/widgets/aura_section_header.dart';
 import '../../design/widgets/aura_status_chip.dart';
+import '../shared/action_bar.dart';
 import 'stock_header.dart';
 
 /// One way to vote on a news halt.
@@ -187,39 +188,14 @@ class HaltedStockView extends StatelessWidget {
               ),
             ],
           ),
-          // The Sell / Buy bar sits where the tab bar does (DESIGN.md →
-          // Layout), disabled with the reason right under it.
-          Positioned(
-            left: 16,
-            right: 16,
-            bottom: 29,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 8,
-              children: [
-                Row(
-                  spacing: 10,
-                  children: [
-                    Expanded(child: AuraButton(m.sell, block: true)),
-                    Expanded(
-                      child: AuraButton(
-                        m.buy,
-                        variant: AuraButtonVariant.buy,
-                        block: true,
-                      ),
-                    ),
-                  ],
-                ),
-                auraLiftFootnote(
-                  Text(
-                    m.disabledReason,
-                    style: AuraType.footnote.copyWith(
-                      color: AuraColors.inkTertiary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          // The Sell / Buy bar sits where the tab bar does, disabled with
+          // the reason right under it.
+          ActionBar(
+            actions: [
+              AuraButton(m.sell, block: true),
+              AuraButton(m.buy, variant: AuraButtonVariant.buy, block: true),
+            ],
+            note: m.disabledReason,
           ),
         ],
       ),

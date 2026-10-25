@@ -2,7 +2,9 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../features/home/home_view.dart';
+import '../../features/portfolio/liquidated_view.dart';
 import '../../features/stock/halted_view.dart';
+import '../../features/stock/short_view.dart';
 import '../../features/stock/stock_header.dart';
 import '../../features/trade/trade_sheet_view.dart';
 import '../../l10n/strings.dart';
@@ -84,6 +86,28 @@ final List<GalleryScreen> screenStates = [
     'Stock page, halted for a vote',
     (_) => HaltedStockView(model: halted(), onBack: _noop, onVote: (_) {}),
     reference: 'W10-Halted',
+  ),
+  GalleryScreen(
+    'W07',
+    'Stock page, your short near liquidation',
+    (_) => ShortPageView(
+      model: shortNearLiquidation(),
+      onBack: _noop,
+      onCoverPart: _noop,
+      onCoverAll: _noop,
+    ),
+    reference: 'W07-MarginWarning',
+  ),
+  GalleryScreen(
+    'W08',
+    'Liquidated',
+    (_) => LiquidatedView(
+      model: liquidated(),
+      onClose: _noop,
+      onSeeStock: _noop,
+      onPortfolio: _noop,
+    ),
+    reference: 'W08-Liquidated',
   ),
 ];
 

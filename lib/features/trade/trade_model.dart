@@ -7,6 +7,7 @@ import '../../design/widgets/aura_banner.dart';
 import '../../design/widgets/aura_receipt.dart';
 import '../../format/money.dart';
 import '../../l10n/strings.dart';
+import '../shared/banner_model.dart';
 import 'trade_sheet_view.dart';
 
 /// The ticket from a quote. With a [rejection] (cash, size, short cap and
@@ -41,7 +42,7 @@ TradeTicketModel tradeTicketModel({
     canTrade: rejection == null,
     banner: copy == null
         ? null
-        : SheetBanner(
+        : BannerModel(
             tone: AuraBannerTone.down,
             title: copy.title,
             body: copy.body,
@@ -64,7 +65,7 @@ RequoteModel requoteModel({
   final copy = errorCopy(stale, ErrorContext(side: quote.side, now: now));
   return RequoteModel(
     title: tradeTitle(quote.side, ticker, quantity: quantity),
-    banner: SheetBanner(
+    banner: BannerModel(
       tone: AuraBannerTone.warn,
       title: copy.title,
       body: copy.body,
