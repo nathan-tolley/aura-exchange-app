@@ -46,8 +46,10 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - Implement the inside-a-sheet variants (lifted surfaces, `lineStrong` hairlines, disabled button on `raised2`).
 - [x] State Gallery: a debug-only route listing every component in every state it supports.
   - *2026-10-24: `/gallery` (`aura://gallery` on the phone) in debug builds: all 31 components, 59 states, with fixtures from the drawn screens, and live controls where a component is interactive. `test/design/gallery_test.dart` builds every state on its own.*
-- [ ] Goldens for every component state.
+- [x] Goldens for every component state.
+  - *2026-10-24: 30 goldens drawn like the reference previews (`test/goldens/components/`), one of the inside-a-sheet variants, and one per State Gallery section with every state labelled (`test/goldens/gallery/`, 31 images). They're tagged `golden`; the macOS release run skips them.*
 - **Check:** each component golden, put side by side with `design/reference/components/<Name>.png`, matches in spacing, size, color and type (Inter stands in for SF Pro).
+  - *2026-10-24: done. Each golden was diffed against its reference and both were looked at. Share of pixels that differ by more than 24 levels: IconButton 0.03%, Avatar 0.04, SegmentedControl 0.20, Tabs 0.21, Sparkline 0.33, ImpactDisc 0.39, SearchField 0.42, Tag 0.48, SectionHeader 0.51, Stepper 0.53, Countdown 0.64, Tape 0.68, PriceChange 0.78, ChartTooltip 0.79, Toast 0.84, RangeBar 0.92, TabBar 0.95, StatCard 1.04, QuoteCard 1.26, Money 1.28, SlideToConfirm 1.50, Button 1.60, Sheet 1.70, StockRow 1.84, Receipt 2.02, EmptyState 2.10, StatusChip 2.73, NavCard 2.75, HeroCard 2.81, Banner 4.52. What's left is antialiasing, the sparkline data (approximated; the references don't give it) and the 12.5 pt offset noted in `NOTES.md`, to recheck against the screens in A3.*
 
 ## A2: API layer
 

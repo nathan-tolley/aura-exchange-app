@@ -18,38 +18,49 @@ Future<void> expectPreview(
   WidgetTester tester,
   String path,
   List<Widget> rows, {
-  double height = 400,
+  double? height = 400,
   Color background = AuraColors.bg,
 }) async {
-  tester.view.physicalSize = Size(previewWidth * 2, height * 2);
-  tester.view.devicePixelRatio = 2;
-  addTearDown(tester.view.reset);
-
-  await tester.pumpWidget(
-    KeyedSubtree(
-      key: _stageKey,
-      child: AuraTestApp(
-        background: background,
-        // Still frames: the tape stops, like with Reduce Motion.
-        reduceMotion: true,
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: 390,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 16,
-                children: rows,
+  const columnKey = ValueKey('golden-column');
+  Future<void> pumpAt(double h) async {
+    tester.view.physicalSize = Size(previewWidth * 2, h * 2);
+    tester.view.devicePixelRatio = 2;
+    await tester.pumpWidget(
+      KeyedSubtree(
+        key: _stageKey,
+        child: AuraTestApp(
+          background: background,
+          // Still frames: the tape stops, like with Reduce Motion.
+          reduceMotion: true,
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 390,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  key: columnKey,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 16,
+                  children: rows,
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
-  await tester.pumpAndSettle();
+    );
+    await tester.pumpAndSettle();
+  }
+
+  addTearDown(tester.view.reset);
+  if (height == null) {
+    // Fit the content: lay it out tall, measure, then draw at that height.
+    await pumpAt(4000);
+    height = (tester.getSize(find.byKey(columnKey)).height + 32).ceilToDouble();
+  }
+  await pumpAt(height);
   await expectLater(find.byKey(_stageKey), matchesGoldenFile('$path.png'));
 }
 
