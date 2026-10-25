@@ -562,6 +562,22 @@ const signInOffline = ErrorCopy(
 String noteFrom(ErrorCopy copy) => ['${copy.title}.', ?copy.body].join(' ');
 
 // ---------------------------------------------------------------------------
+// Launch problems (SCREENS.md #24)
+// ---------------------------------------------------------------------------
+
+/// Offline before anything loaded: there are no old numbers to stamp.
+const offlineAtLaunchTitle = "You're offline";
+const offlineAtLaunchBody =
+    'Aura Exchange needs a connection to load your exchange. Your cash and '
+    'positions are safe.';
+
+/// The app is sideloaded, so there's no store to send you to.
+const checkAgain = 'Check again';
+const updateFootnote = 'Install the new build, then open the app again';
+const somethingWentWrongBody = 'Try again in a moment.';
+const signOut = 'Sign out';
+
+// ---------------------------------------------------------------------------
 // Home (W09, W11, W12)
 // ---------------------------------------------------------------------------
 

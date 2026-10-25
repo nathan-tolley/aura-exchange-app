@@ -3,6 +3,10 @@ import 'package:flutter/widgets.dart';
 import '../../../api/errors.dart';
 import '../../../features/onboarding/sign_in_model.dart';
 import '../../../features/onboarding/sign_in_view.dart';
+import '../../../features/system/exchange_down_model.dart';
+import '../../../features/system/exchange_down_view.dart';
+import '../../../features/system/problem_view.dart';
+import '../../../format/time.dart';
 
 // Onboarding's states (SCREENS.md #1–#4) as the app reaches them: each is
 // the screen's own state object run through its presenter, with errors in
@@ -56,6 +60,55 @@ Widget signInNoNetwork() => Controlled(
     email: c[0],
     onSend: _noop,
   ),
+);
+
+/// S24a: offline before anything loaded.
+Widget launchOffline() =>
+    ProblemView(model: problemModel(const ApiError.offline()), onAction: _noop);
+
+/// S24b: this build is older than the exchange accepts.
+Widget launchUpdateRequired() => ProblemView(
+  model: problemModel(
+    const ApiError(
+      code: 'UPDATE_REQUIRED',
+      params: {'minBuild': '12'},
+      retryable: false,
+      action: ApiAction.updateApp,
+      status: 426,
+    ),
+  ),
+  onAction: _noop,
+);
+
+/// S24c: a failure the app has no words for, with its reference.
+Widget launchUnknown() => ProblemView(
+  model: problemModel(
+    const ApiError(
+      code: 'TEAPOT',
+      retryable: true,
+      action: ApiAction.retry,
+      status: 418,
+    ),
+  ),
+  onAction: _noop,
+  onSecondary: _noop,
+);
+
+/// S24d: the exchange down at launch, before any numbers were kept.
+Widget launchExchangeDown() => ExchangeDownView(
+  model: exchangeDownModel(
+    error: const ApiError(
+      code: 'SERVER',
+      params: {'reference': '7F2K'},
+      retryable: true,
+      action: ApiAction.retry,
+      status: 500,
+    ),
+    lastGood: null,
+    zone: exchangeZone('UTC'),
+    now: DateTime.utc(2026, 10, 24, 10, 41),
+  ),
+  onRetry: _noop,
 );
 
 Widget _code(SignInState state) => Controlled(

@@ -10,6 +10,7 @@ import 'design/gallery/screen_states.dart';
 import 'design/tokens.dart';
 import 'design/widgets/aura_tab_bar.dart';
 import 'features/onboarding/sign_in_screen.dart';
+import 'features/system/boot_screen.dart';
 
 /// Every screen is a route, so `aura://` deep links land on real screens
 /// (`aura://invite/JAKE-7F2K` arrives as `/invite/JAKE-7F2K`). The redirect
@@ -134,7 +135,7 @@ String _with(String path, String? from) => from == null
 
 final List<RouteBase> _routes = [
   GoRoute(path: '/', redirect: (_, _) => Routes.home),
-  GoRoute(path: Routes.boot, builder: (_, _) => const _Pending()),
+  GoRoute(path: Routes.boot, builder: (_, _) => const BootScreen()),
   GoRoute(path: Routes.signIn, builder: (_, _) => const SignInScreen()),
   GoRoute(path: Routes.createExchange, builder: (_, _) => const _Pending()),
   GoRoute(path: Routes.ipo, builder: (_, _) => const _Pending()),

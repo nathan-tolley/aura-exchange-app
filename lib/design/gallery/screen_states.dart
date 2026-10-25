@@ -52,6 +52,14 @@ final List<GalleryScreen> screenStates = [
   GalleryScreen('S01c', 'Sign in, wrong code', (_) => signInWrongCode()),
   GalleryScreen('S01d', 'Sign in, code expired', (_) => signInCodeExpired()),
   GalleryScreen('S01e', 'Sign in, offline', (_) => signInNoNetwork()),
+  GalleryScreen('S24a', 'Launch, offline', (_) => launchOffline()),
+  GalleryScreen(
+    'S24b',
+    'Launch, update required',
+    (_) => launchUpdateRequired(),
+  ),
+  GalleryScreen('S24c', 'Launch, unknown error', (_) => launchUnknown()),
+  GalleryScreen('S24d', 'Launch, exchange down', (_) => launchExchangeDown()),
   GalleryScreen(
     'W09',
     'Home, closed',
