@@ -251,14 +251,7 @@ ErrorCopy errorCopy(
       ),
     },
     // W04. The screen's slider and "Keep going" are the choices.
-    ErrorCode.equityTooLow => ErrorCopy(
-      title: p.has('minimum')
-          ? "You're under ${p.money('minimum')}"
-          : "You're too low to trade",
-      body:
-          "That's not enough to open a position. "
-          'Keep what you have, or start over with Chapter 7.',
-    ),
+    ErrorCode.equityTooLow => underMinimumCopy(p.decimal('minimum')),
     ErrorCode.dailyFilingLimit => ErrorCopy(
       title: switch (p.integer('limit')) {
         final int n => "You've filed $n ${_plural(n, 'event', 'events')} today",
@@ -819,3 +812,36 @@ const seePortfolio = 'Portfolio';
 
 /// "See $JAKE".
 String seeStock(String ticker) => 'See ${formatTicker(ticker)}';
+
+// ---------------------------------------------------------------------------
+// Chapter 7 (W04)
+// ---------------------------------------------------------------------------
+
+/// Under the minimum to trade (`EQUITY_TOO_LOW`, and the W04 offer). The
+/// screen's slider and "Keep going" are the choices, so no button here.
+ErrorCopy underMinimumCopy(Decimal? minimum) => ErrorCopy(
+  title: minimum == null
+      ? "You're too low to trade"
+      : "You're under ${formatMoney(minimum)}",
+  body:
+      "That's not enough to open a position. "
+      'Keep what you have, or start over with Chapter 7.',
+);
+
+const ifYouFile = 'If you file';
+const youGet = 'You get';
+const youGiveUp = 'You give up';
+
+/// "A$64.12 + 1 position".
+String netWorthAndPositions(Decimal netWorth, int positions) => positions == 0
+    ? formatMoney(netWorth)
+    : '${formatMoney(netWorth)} + $positions '
+          '${_plural(positions, 'position', 'positions')}';
+const badgeUntilSeasonEnds = 'Your badge, until the season ends';
+const whatTheTapeWillSay = 'What the tape will say';
+const tapeTheMomentYouFile = 'The tape · the moment you file';
+const slideToDeclareBankruptcy = 'Slide to declare bankruptcy';
+
+/// "Keep going with A$64.12".
+String keepGoingWith(Decimal netWorth) =>
+    'Keep going with ${formatMoney(netWorth)}';

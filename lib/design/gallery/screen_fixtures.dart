@@ -4,6 +4,8 @@ import '../../data/freshness.dart';
 import '../../data/live_market.dart';
 import '../../features/home/home_model.dart';
 import '../../features/home/home_view.dart';
+import '../../features/portfolio/bankruptcy_model.dart';
+import '../../features/portfolio/bankruptcy_view.dart';
 import '../../features/portfolio/liquidated_model.dart';
 import '../../features/portfolio/liquidated_view.dart';
 import '../../features/stock/short_model.dart';
@@ -580,3 +582,57 @@ LiquidatedModel liquidated() => liquidatedModel(
   }),
   zone: sydney,
 );
+
+/// W04: Eli is down to A$64.12 with one position left, under the A$100.00
+/// needed to open a position.
+BankruptcyModel bankrupt() {
+  final portfolio = Portfolio.fromJson({
+    'asOf': fixtureNow.toIso8601String(),
+    'marketState': 'OPEN',
+    'nextChangeAt': null,
+    'exchangeId': exchangeId,
+    'cash': '12.40',
+    'reservedCash': '0.00',
+    'netWorth': '64.12',
+    'seasonChangeAbs': '-9935.88',
+    'seasonChangePct': '-99.36',
+    'dayChangeAbs': '-412.30',
+    'dayChangePct': '-86.54',
+    'positions': [
+      {
+        'id': '77777777-0000-4000-8000-000000000001',
+        'listing': {
+          'id': _anna,
+          'ticker': r'$ANNA',
+          'displayName': 'Anna',
+          'avatarUrl': null,
+        },
+        'side': 'LONG',
+        'status': 'OPEN',
+        'quantity': '0.4167',
+        'avgPrice': '131.20',
+        'marketPrice': '124.10',
+        'marketValue': '51.72',
+        'unrealizedPnl': '-2.96',
+        'unrealizedPnlPct': '-5.41',
+        'short': null,
+        'openedAt': '2026-10-21T01:00:00Z',
+        'closedAt': null,
+      },
+    ],
+    'openOrders': <Object?>[],
+    'canDeclareBankruptcy': true,
+  });
+  return bankruptcyModel(
+    portfolio: portfolio,
+    offer: const BankruptcyOffer(
+      minimumEquity: '100.00',
+      resetCash: '2000.00',
+      badge: 'Chapter 7',
+      tapeHeadline:
+          'Eli files for Chapter 7. Creditors, also Eli, expect to recover '
+          'nothing.',
+    ),
+    season: 1,
+  );
+}

@@ -6,11 +6,11 @@ import '../../design/text.dart';
 import '../../design/tokens.dart';
 import '../../design/widgets/aura_button.dart';
 import '../../design/widgets/aura_hero_card.dart';
-import '../../design/widgets/aura_icon_button.dart';
 import '../../design/widgets/aura_quote_card.dart';
 import '../../design/widgets/aura_receipt.dart';
 import '../../design/widgets/aura_status_chip.dart';
 import '../shared/action_bar.dart';
+import '../shared/top_bar.dart';
 
 /// The liquidation receipt (W08): what happened and why, what came back to
 /// your cash, the settlement as a receipt, and the tape line, which never
@@ -82,22 +82,11 @@ class LiquidatedView extends StatelessWidget {
           ListView(
             padding: EdgeInsets.only(top: top, bottom: 128),
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 6, right: 16),
-                child: Row(
-                  children: [
-                    AuraIconButton(
-                      icon: AuraIcons.close,
-                      label: 'Close',
-                      onPressed: onClose,
-                    ),
-                    const Spacer(),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 6),
-                      child: AuraStatusChip(AuraStatus.liquidated),
-                    ),
-                  ],
-                ),
+              TopBar(
+                icon: AuraIcons.close,
+                label: 'Close',
+                onPressed: onClose,
+                status: AuraStatus.liquidated,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),

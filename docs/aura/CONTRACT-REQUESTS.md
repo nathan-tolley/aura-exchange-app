@@ -75,3 +75,11 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** `Liquidation` (`lib/features/portfolio/liquidated_model.dart`) has exactly these fields, and the W08 fixture fills it.
 
+## 8. What Chapter 7 would do (2026-10-25 · open)
+
+**What's missing.** W04 offers bankruptcy at the moment of the loss and shows its terms: the minimum to trade (A$100.00), the cash you'd restart with (A$2,000.00), the badge you'd carry until the season ends ("Chapter 7"), and the Analyst's line for the tape. `/v1` has `Portfolio.canDeclareBankruptcy` and `POST /exchanges/{id}/bankruptcy` ("reset to A$2,000 with a badge" in its summary), but none of those values. They're game rules, so the app shouldn't hold them.
+
+**Ask (additive).** When `canDeclareBankruptcy` is true, a `bankruptcyOffer` on `Portfolio`: `minimumEquity`, `resetCash`, `badge`, `tapeHeadline` (the line the tape would run). Or a `GET /exchanges/{id}/bankruptcy` returning the same.
+
+**Meanwhile.** `BankruptcyOffer` (`lib/features/portfolio/bankruptcy_model.dart`) has these fields, and the W04 fixture fills them. The banner's copy is the same `underMinimumCopy()` that `EQUITY_TOO_LOW` uses.
+

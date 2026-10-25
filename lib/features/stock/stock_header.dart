@@ -1,18 +1,15 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../design/icons.dart';
 import '../../design/tokens.dart';
-import '../../design/widgets/aura_icon_button.dart';
 import '../../design/widgets/aura_money.dart';
 import '../../design/widgets/aura_price_change.dart';
 import '../../design/widgets/aura_status_chip.dart';
+import '../shared/top_bar.dart';
 
 /// The top of a stock page (W10, and behind the trade sheet in W05 and
 /// W06): back, the market or halt status, the ticker line and the price.
-/// Full width: it keeps its own gutters, so the back button's 44 pt hit area
-/// can reach 10 pt into the left one and its glyph sits on the edge
-/// (DESIGN.md → Layout).
+/// Full width: it keeps its own gutters (see [TopBar]).
 class StockHeader extends StatelessWidget {
   const StockHeader({
     super.key,
@@ -46,25 +43,7 @@ class StockHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 6, right: 16),
-          child: Row(
-            children: [
-              AuraIconButton(
-                icon: AuraIcons.back,
-                label: 'Back',
-                onPressed: onBack,
-              ),
-              const Spacer(),
-              // The references set the chip 3 pt below the row's centre, so
-              // its words line up with the back glyph (W05, W10).
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: AuraStatusChip(status, label: statusLabel),
-              ),
-            ],
-          ),
-        ),
+        TopBar(onPressed: onBack, status: status, statusLabel: statusLabel),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(

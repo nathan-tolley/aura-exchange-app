@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../features/home/home_view.dart';
+import '../../features/portfolio/bankruptcy_view.dart';
 import '../../features/portfolio/liquidated_view.dart';
 import '../../features/stock/halted_view.dart';
 import '../../features/stock/short_view.dart';
@@ -108,6 +109,17 @@ final List<GalleryScreen> screenStates = [
       onPortfolio: _noop,
     ),
     reference: 'W08-Liquidated',
+  ),
+  GalleryScreen(
+    'W04',
+    'Chapter 7 offer',
+    (_) => BankruptcyView(
+      model: bankrupt(),
+      onBack: _noop,
+      onFile: _noop,
+      onKeepGoing: _noop,
+    ),
+    reference: 'W04-Bankruptcy',
   ),
 ];
 
