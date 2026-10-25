@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../features/events/about_you_views.dart';
 import '../../features/home/home_view.dart';
 import '../../features/portfolio/bankruptcy_view.dart';
 import '../../features/portfolio/liquidated_view.dart';
@@ -120,6 +121,29 @@ final List<GalleryScreen> screenStates = [
       onKeepGoing: _noop,
     ),
     reference: 'W04-Bankruptcy',
+  ),
+  GalleryScreen(
+    'W01',
+    'A rumor about you',
+    (_) => RumorAboutYouView(
+      model: rumorOnYou(),
+      onClose: _noop,
+      onRespond: (_) {},
+    ),
+    reference: 'W01-RumorAboutYou',
+  ),
+  GalleryScreen(
+    'W02',
+    'A ruling on you',
+    (_) =>
+        RulingOnYouView(model: rulingOnYou(), onClose: _noop, onAction: (_) {}),
+    reference: 'W02-RulingOnYou',
+  ),
+  GalleryScreen(
+    'W03',
+    'An SEC charge',
+    (_) => SecChargeView(model: secCharge(), onClose: _noop, onAction: (_) {}),
+    reference: 'W03-SECCharge',
   ),
 ];
 

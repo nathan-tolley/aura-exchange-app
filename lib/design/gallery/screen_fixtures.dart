@@ -1,7 +1,11 @@
+import 'package:decimal/decimal.dart';
+
 import '../../api/errors.dart';
 import '../../api/generated/export.dart' hide Freshness;
 import '../../data/freshness.dart';
 import '../../data/live_market.dart';
+import '../../features/events/about_you_models.dart';
+import '../../features/events/about_you_views.dart';
 import '../../features/home/home_model.dart';
 import '../../features/home/home_view.dart';
 import '../../features/portfolio/bankruptcy_model.dart';
@@ -508,41 +512,44 @@ Map<String, Object?> _jakeShort({required String status}) => {
   'closedAt': status == 'OPEN' ? null : '2026-10-24T04:12:00Z',
 };
 
+/// $JAKE's stock page on the day of W07.
+Map<String, Object?> _jakeDetailJson() => {
+  'asOf': fixtureNow.toIso8601String(),
+  'marketState': 'OPEN',
+  'nextChangeAt': null,
+  'id': _jake,
+  'ticker': r'$JAKE',
+  'displayName': 'Jake',
+  'avatarUrl': null,
+  'price': '112.30',
+  'changeAbs': '10.40',
+  'changePct': '10.21',
+  'state': 'ACTIVE',
+  'badges': ['HARD_TO_BORROW'],
+  'sparkline': <Object?>[],
+  'isMine': false,
+  'myPosition': {'side': 'SHORT', 'quantity': '60'},
+  'prevClose': '101.90',
+  'open': '102.10',
+  'dayHigh': '112.80',
+  'dayLow': '101.40',
+  'seasonHigh': '118.20',
+  'seasonLow': '88.40',
+  'volume': '1840',
+  'shortInterestPct': '31.00',
+  'borrowFeeDailyPct': '0.60',
+  'indicatedPrice': null,
+  'indicatedChangePct': null,
+  'halt': null,
+  'lastTradeAt': fixtureNow.toIso8601String(),
+  'events': <Object?>[],
+  'analyst': null,
+};
+
 /// W07: short 60 $JAKE from A$97.50; it's at A$112.30, 4.2% from the
 /// A$117.00 liquidation price, with the collateral at 130%.
 ShortPageModel shortNearLiquidation() => shortPageModel(
-  listing: ListingDetail.fromJson({
-    'asOf': fixtureNow.toIso8601String(),
-    'marketState': 'OPEN',
-    'nextChangeAt': null,
-    'id': _jake,
-    'ticker': r'$JAKE',
-    'displayName': 'Jake',
-    'avatarUrl': null,
-    'price': '112.30',
-    'changeAbs': '10.40',
-    'changePct': '10.21',
-    'state': 'ACTIVE',
-    'badges': ['HARD_TO_BORROW'],
-    'sparkline': <Object?>[],
-    'isMine': false,
-    'myPosition': {'side': 'SHORT', 'quantity': '60'},
-    'prevClose': '101.90',
-    'open': '102.10',
-    'dayHigh': '112.80',
-    'dayLow': '101.40',
-    'seasonHigh': '118.20',
-    'seasonLow': '88.40',
-    'volume': '1840',
-    'shortInterestPct': '31.00',
-    'borrowFeeDailyPct': '0.60',
-    'indicatedPrice': null,
-    'indicatedChangePct': null,
-    'halt': null,
-    'lastTradeAt': fixtureNow.toIso8601String(),
-    'events': <Object?>[],
-    'analyst': null,
-  }),
+  listing: ListingDetail.fromJson(_jakeDetailJson()),
   position: Position.fromJson(_jakeShort(status: 'OPEN')),
 );
 
@@ -634,5 +641,191 @@ BankruptcyModel bankrupt() {
           'nothing.',
     ),
     season: 1,
+  );
+}
+
+/// The market overnight: closed, opening at 7:00 am Sydney.
+final _closedOvernight = Freshness(
+  asOf: DateTime.utc(2026, 10, 24, 5),
+  marketState: MarketState.closed,
+  nextChangeAt: DateTime.utc(2026, 10, 24, 20),
+);
+
+const _jakeRef = {
+  'id': _jake,
+  'ticker': r'$JAKE',
+  'displayName': 'Jake',
+  'avatarUrl': null,
+};
+
+Map<String, Object?> _event({
+  required String status,
+  required String teaser,
+  required DateTime createdAt,
+  DateTime? rumorEndsAt,
+  int cosigns = 0,
+  int receipts = 0,
+  Map<String, Object?>? ruling,
+  Map<String, Object?>? votes,
+  Map<String, Object?>? appeal,
+}) => {
+  'id': '88888888-0000-4000-8000-000000000001',
+  'exchangeId': exchangeId,
+  'subject': _jakeRef,
+  'status': status,
+  'author': null,
+  'isMine': false,
+  'isAboutMe': true,
+  'isSelfFiled': false,
+  'teaser': teaser,
+  'text': null,
+  'receipts': [
+    for (var i = 0; i < receipts; i++)
+      {
+        'id': '99999999-0000-4000-8000-00000000000$i',
+        'kind': 'IMAGE',
+        'url': 'https://example.com/receipt-$i.jpg',
+        'width': 1170,
+        'height': 2532,
+      },
+  ],
+  'happenedAt': null,
+  'createdAt': createdAt.toIso8601String(),
+  'unsendUntil': null,
+  'rumorEndsAt': rumorEndsAt?.toIso8601String(),
+  'reactions': {'cosigns': cosigns, 'caps': 0, 'mine': null},
+  'subjectStatement': null,
+  'insiderUntil': null,
+  'ruling': ruling,
+  'halt': null,
+  'votes': votes,
+  'appeal': appeal,
+};
+
+/// W01: a rumor about $JAKE (you) filed at 2:14 am; the ruling is 9:12 away.
+RumorAboutYouModel rumorOnYou() {
+  final filed = DateTime.utc(2026, 10, 24, 15, 14); // 2:14 am Sunday
+  final now = filed.add(const Duration(seconds: 48));
+  return rumorAboutYouModel(
+    event: Event.fromJson(
+      _event(
+        status: 'RUMOR',
+        teaser:
+            r'Unconfirmed: reports of a late-night messaging incident '
+            r'involving $JAKE. More to follow.',
+        createdAt: filed,
+        rumorEndsAt: filed.add(const Duration(minutes: 10)),
+        cosigns: 2,
+        receipts: 1,
+      ),
+    ),
+    market: _closedOvernight,
+    denialPenaltyPct: Decimal.fromInt(20),
+    zone: sydney,
+    now: now,
+  );
+}
+
+/// W02: the ruling on $JAKE (you): −18, landing at the 7:00 am open.
+RulingOnYouModel rulingOnYou() {
+  final ruled = DateTime.utc(2026, 10, 24, 15, 24); // 2:24 am
+  final now = ruled.add(const Duration(minutes: 6));
+  final jake = ListingDetail.fromJson({
+    ..._jakeDetailJson(),
+    'price': '112.40',
+    'changeAbs': '0.00',
+    'changePct': '0.00',
+    'prevClose': '112.40',
+    'marketState': 'CLOSED',
+    'analyst': {
+      'rating': 'SELL',
+      'priceTarget': '96.00',
+      'note': 'We are moving to Underweight.',
+    },
+  });
+  return rulingOnYouModel(
+    event: Event.fromJson(
+      _event(
+        status: 'RULED',
+        teaser: r'Something happened to $JAKE overnight.',
+        createdAt: ruled.subtract(const Duration(minutes: 10)),
+        cosigns: 3,
+        receipts: 1,
+        ruling: {
+          'verdict': 'LOSS',
+          'impactAnalyst': -14,
+          'impactFinal': -18,
+          'multipliers': {
+            'cosign': '1.30',
+            'self': '1.00',
+            'pileOn': '1.00',
+            'denial': '1.00',
+            'votes': '1.00',
+          },
+          'confidence': '0.82',
+          'category': 'SCANDAL',
+          'headline':
+              'Jake indicated sharply lower after overnight “who is this” '
+              'incident',
+          'analystNote':
+              'We are moving to Underweight. Management reached out to a '
+              'former partner at 2 a.m. without a clear strategy and '
+              'received no recognition in return.',
+          'ruledAt': ruled.toIso8601String(),
+          'priceMovePct': '-12.20',
+          'landsAt': '2026-10-24T20:00:00Z',
+          'indicatedPrice': '98.70',
+          'correction': null,
+        },
+        votes: {
+          'up': 4,
+          'down': 1,
+          'mine': null,
+          'closesAt': ruled.add(const Duration(hours: 2)).toIso8601String(),
+          'conflicted': false,
+        },
+        appeal: {
+          'status': 'OPEN',
+          'deadline': now.add(const Duration(days: 6)).toIso8601String(),
+        },
+      ),
+    ),
+    listing: jake,
+    market: _closedOvernight,
+    ratingChange: 'Downgrade',
+    superInjunctionsLeft: 2,
+    superInjunctionsPerSeason: 3,
+    zone: sydney,
+    now: now,
+  );
+}
+
+/// W03: the SEC charges you (Sam) for trading $JAKE after filing the rumor
+/// that moved it.
+SecChargeModel secCharge() {
+  final at = DateTime.utc(2026, 10, 24, 2, 21); // 1:21 pm
+  return secChargeModel(
+    charge: SecCharge(
+      caseNumber: '0007',
+      at: at,
+      headline: 'SEC charges Sam with trading on nonpublic gym information',
+      taken: '315.00',
+      finePct: '50',
+      filedWhat: 'the gym rumor',
+      filedAt: DateTime.utc(2026, 10, 24, 1, 41),
+      tradeQuantity: '30',
+      tradeTicker: r'$JAKE',
+      tradeAt: DateTime.utc(2026, 10, 24, 1, 43),
+      tradePrice: '97.00',
+      profit: '210.00',
+      oddsPct: '27',
+      scandalTicker: r'$SAM',
+      scandalImpact: -8,
+      scandalMovePct: '-4.90',
+      appealDeadline: at.add(const Duration(days: 7)),
+      cleanWindowMinutes: 30,
+    ),
+    zone: sydney,
+    now: at,
   );
 }

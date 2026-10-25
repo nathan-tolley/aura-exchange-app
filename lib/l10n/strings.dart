@@ -845,3 +845,128 @@ const slideToDeclareBankruptcy = 'Slide to declare bankruptcy';
 /// "Keep going with A$64.12".
 String keepGoingWith(Decimal netWorth) =>
     'Keep going with ${formatMoney(netWorth)}';
+
+// ---------------------------------------------------------------------------
+// About you: a rumor (W01), a ruling (W02), an SEC charge (W03)
+// ---------------------------------------------------------------------------
+
+/// The status chip while closed: "Closed · opens 7:00 am".
+String closedOpens(
+  DateTime opensAt,
+  tz.Location zone, {
+  required DateTime now,
+}) => 'Closed · opens ${formatMoment(opensAt, zone, now: now)}';
+
+/// "An unconfirmed report about you · 2:14 am".
+String rumorAboutYou(String at) => 'An unconfirmed report about you · $at';
+
+/// "A ruling about you · 2:24 am".
+String rulingAboutYou(String at) => 'A ruling about you · $at';
+
+const rumorExplainer =
+    'This is all anyone can see right now. The details come with the ruling.';
+const rulingIn = 'Ruling in';
+const coSigns = 'Co-signs';
+const receiptsLabel = 'Receipts';
+const howDoYouRespond = 'How do you respond?';
+const respondNoComment = 'No comment';
+const respondNoCommentNote = 'Shows on the tape. Changes nothing.';
+const respondDeny = 'Deny it';
+
+/// "If it's confirmed, the hit is 20% bigger".
+String denyNote(Decimal penaltyPct) =>
+    "If it's confirmed, the hit is ${penaltyPct.abs()}% bigger";
+const risky = 'Risky';
+const respondNothing = 'Say nothing';
+
+/// "The ruling lands in 9 minutes either way".
+String rulingLandsIn(Duration left) {
+  final minutes = left.inMinutes;
+  return minutes < 1
+      ? 'The ruling lands in under a minute either way'
+      : 'The ruling lands in $minutes ${_plural(minutes, 'minute', 'minutes')} '
+            'either way';
+}
+
+/// Under a rumor about you (W01).
+String rumorFooter(String ticker) =>
+    "You can't trade ${formatTicker(ticker)}. Once it's ruled you'll see who "
+    'filed it; nobody else will.';
+
+/// "Lands at the 7:00 am open".
+String landsAtOpen(DateTime at, tz.Location zone, {required DateTime now}) =>
+    'Lands at the ${formatMoment(at, zone, now: now)} open';
+
+/// "From A$112.40 · indicated, not traded yet".
+String indicatedFrom(Decimal previousClose) =>
+    'From ${formatMoney(previousClose)} · indicated, not traded yet';
+
+/// "The Analyst · Downgrade · target A$96.00".
+String analystSource(String ratingChange, Decimal target) =>
+    'The Analyst · $ratingChange · target ${formatMoney(target)}';
+const statAnalyst = 'Analyst';
+
+/// "3 co-signs".
+String coSignCount(int n) => '$n ${_plural(n, 'co-sign', 'co-signs')}';
+
+/// "×1.30".
+String multiplier(Decimal factor) => '×${factor.toStringAsFixed(2)}';
+const groupVote = 'Group vote';
+
+/// "4–1".
+String voteScore(int up, int down) => '$up–$down';
+const postStatement = 'Post a statement';
+const postStatementNote = 'Runs on the tape next to the story';
+const superInjunction = 'Super-injunction';
+const superInjunctionNote = 'Hides the story · the price hit stays';
+
+/// "2 of 3 left".
+String leftOf(int left, int of) => '$left of $of left';
+const appealRuling = 'Appeal';
+const appealNote = 'The admin reviews it';
+
+/// "6 days left", from the deadline.
+String daysLeft(DateTime deadline, {required DateTime now}) {
+  final hours = deadline.difference(now).inHours;
+  final days = (hours / 24).ceil();
+  return days <= 1 ? 'Last day' : '$days days left';
+}
+
+/// "Social Exchange Commission · Case 0007 · 1:21 pm".
+String secCaseLine(String caseNumber, String at) =>
+    'Social Exchange Commission · Case $caseNumber · $at';
+const takenFromCash = 'Taken from your cash';
+
+/// "Your profit, clawed back, plus a 50% fine".
+String clawbackNote(Decimal finePct) =>
+    'Your profit, clawed back, plus a ${finePct.abs()}% fine';
+
+/// "You filed the gym rumor".
+String youFiled(String what) => 'You filed $what';
+
+/// "You bought 30 $JAKE".
+String youBought(Decimal quantity, String ticker) =>
+    'You bought ${formatQuantity(quantity)} ${formatTicker(ticker)}';
+
+/// "12:43 pm at A$97.00".
+String atPrice(String at, Decimal price) => '$at at ${formatMoney(price)}';
+const profitWhenRuled = 'Profit when it ruled';
+const oddsOfGettingCaught = 'Odds of getting caught';
+
+/// "27%".
+String percentWhole(Decimal pct) => '${pct.abs()}%';
+const clawedBackPlusFine = 'Clawed back + fine';
+
+/// "Scandal filed against $SAM".
+String scandalAgainst(String ticker) =>
+    'Scandal filed against ${formatTicker(ticker)}';
+
+/// "−8 impact · on the tape now".
+String impactOnTape(int impact) =>
+    '${formatImpact(impact)} impact · on the tape now';
+const appealCharge = 'Appeal the charge';
+
+/// How to stay clean, in the case's own window (W03).
+String stayClean(int windowMinutes) =>
+    "To stay clean: don't trade a stock from the moment you file or co-sign "
+    "on it until $windowMinutes minutes after it's ruled.";

@@ -83,3 +83,13 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** `BankruptcyOffer` (`lib/features/portfolio/bankruptcy_model.dart`) has these fields, and the W04 fixture fills them. The banner's copy is the same `underMinimumCopy()` that `EQUITY_TOO_LOW` uses.
 
+## 9. What the "about you" screens need besides the event (2026-10-25 · open)
+
+**What's missing.** W01–W03 come mostly from `Event`, `Ruling`, `Votes`, `Appeal` and `Membership`, but a few numbers are game rules the app shouldn't hold, and the SEC case has no schema at all:
+
+- **W01:** how much bigger a confirmed hit gets if you deny it ("If it's confirmed, the hit is 20% bigger"). Ask: `denialPenaltyPct` on `Event` while it's a rumor about you, or on the exchange's settings.
+- **W02:** the rating's change in the source line ("The Analyst · **Downgrade** · target A$96.00"); `Analyst.rating` is BUY/HOLD/SELL, not the change. Ask: `ratingChange` (`UPGRADE`, `DOWNGRADE`, `REITERATE`) on `Ruling` or `Analyst`. Also how many super-injunctions a season allows ("2 of 3 left"); `Membership.superInjunctionsLeft` gives the 2. Ask: `superInjunctionsPerSeason` on `Membership` or the exchange's settings.
+- **W03 (Phase 2):** an `SecCase` schema: `caseNumber`, `status`, `chargedAt`, `headline`, `taken`, `finePct`, the evidence (the event you filed with a short name such as "the gym rumor" and when, the trade with quantity, ticker, time and price, the profit when it ruled, the odds of getting caught), the scandal it filed against you (ticker, impact, move), the appeal deadline, and the clean window in minutes.
+
+**Meanwhile.** The presenters take these as inputs (`lib/features/events/about_you_models.dart`; `SecCharge` is the W03 record) and the fixtures fill them.
+
