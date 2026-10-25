@@ -16,6 +16,8 @@ import '../../features/stock/short_model.dart';
 import '../../features/stock/short_view.dart';
 import '../../features/stock/halted_model.dart';
 import '../../features/stock/halted_view.dart';
+import '../../features/system/exchange_down_model.dart';
+import '../../features/system/exchange_down_view.dart';
 import '../../features/trade/trade_model.dart';
 import '../../features/trade/trade_sheet_view.dart';
 import '../../format/time.dart';
@@ -829,3 +831,18 @@ SecChargeModel secCharge() {
     now: at,
   );
 }
+
+/// W13: the server answered 503 with reference 7F2K; the last good update
+/// was at 9:41 pm.
+ExchangeDownModel exchangeDown() => exchangeDownModel(
+  error: const ApiError(
+    code: 'SERVER',
+    params: {'reference': '7F2K'},
+    retryable: true,
+    action: ApiAction.retry,
+    status: 503,
+  ),
+  lastGood: fixtureNow,
+  zone: sydney,
+  now: fixtureNow.add(const Duration(minutes: 3)),
+);

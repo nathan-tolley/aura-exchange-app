@@ -8,13 +8,16 @@ import '../../design/tokens.dart';
 /// note under them, such as why they're disabled (W07, W08, W10). Put it in
 /// the screen's Stack, over the scrolling content.
 class ActionBar extends StatelessWidget {
-  const ActionBar({super.key, required this.actions, this.note});
+  const ActionBar({super.key, required this.actions, this.note, this.bottom});
 
   /// Usually two `AuraButton`s, secondary first.
   final List<Widget> actions;
 
   /// "Trading resumes when the vote closes."
   final String? note;
+
+  /// Overrides the measured default (30, or 29 with a note); W13 sits at 35.
+  final double? bottom;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class ActionBar extends StatelessWidget {
       right: 16,
       // Measured: the buttons end 30 pt above the bottom, or 29 with a note
       // under them (W10).
-      bottom: note == null ? 30 : 29,
+      bottom: bottom ?? (note == null ? 30 : 29),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         spacing: 8,

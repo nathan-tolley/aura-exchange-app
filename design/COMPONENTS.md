@@ -279,6 +279,15 @@ What a list says when there's nothing in it, always with the next step.
 
 Preview: [EmptyState.png](reference/components/EmptyState.png)
 
+## AuraIconTile
+
+A glyph on a `raised` rounded square (`md` radius). It heads an empty state (44pt) or a screen that is itself the message, such as the exchange being down (52pt, W13).
+
+- Provide `icon`, optional `size` (44 or 52) and `tone` (`warn` when the tile carries risk; otherwise the glyph is `inkSecondary`).
+- Decorative: the title beside it says what it means.
+
+Added in A3 (2026-10-25), extracted from `AuraEmptyState`; no separate preview.
+
 ## AuraToast
 
 Brief confirmation after an action, with one undo or follow-up.

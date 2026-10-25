@@ -970,3 +970,29 @@ const appealCharge = 'Appeal the charge';
 String stayClean(int windowMinutes) =>
     "To stay clean: don't trade a stock from the moment you file or co-sign "
     "on it until $windowMinutes minutes after it's ruled.";
+
+// ---------------------------------------------------------------------------
+// The exchange is down (W13)
+// ---------------------------------------------------------------------------
+
+const lastGoodUpdate = 'Last good update';
+const ordersAndRulingsQueued = 'Orders and rulings queued';
+const keptForLater = 'Kept for later';
+const marketClock = 'Market clock';
+const paused = 'Paused';
+const onTheTapeOnceBack = "On the tape, once it's back";
+
+/// The one Analyst line the app writes itself: the server can't send one
+/// while it's down.
+const exchangeDownTape =
+    'Trading halted exchange-wide pending a technical review. The Analyst was '
+    'unavailable for comment.';
+
+/// The lead-in to W13's reference line, as drawn. There's no push yet, so
+/// the promise isn't true: Nathan decides the wording (see PROGRESS.md →
+/// Waiting on Nathan).
+const exchangeDownLeadIn = "You'll get a notification when it's back";
+
+/// "You'll get a notification when it's back · 503 · 7F2K".
+String exchangeDownFootnote(String? reference) =>
+    [exchangeDownLeadIn, ?reference].join(' · ');

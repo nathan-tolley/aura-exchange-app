@@ -8,6 +8,7 @@ import '../../features/portfolio/liquidated_view.dart';
 import '../../features/stock/halted_view.dart';
 import '../../features/stock/short_view.dart';
 import '../../features/stock/stock_header.dart';
+import '../../features/system/exchange_down_view.dart';
 import '../../features/trade/trade_sheet_view.dart';
 import '../../l10n/strings.dart';
 import '../tokens.dart';
@@ -144,6 +145,12 @@ final List<GalleryScreen> screenStates = [
     'An SEC charge',
     (_) => SecChargeView(model: secCharge(), onClose: _noop, onAction: (_) {}),
     reference: 'W03-SECCharge',
+  ),
+  GalleryScreen(
+    'W13',
+    'The exchange is down',
+    (_) => ExchangeDownView(model: exchangeDown(), onRetry: _noop),
+    reference: 'W13-ServerError',
   ),
 ];
 

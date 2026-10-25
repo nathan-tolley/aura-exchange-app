@@ -39,14 +39,19 @@ TextStyle auraBaseTextStyle({bool? systemSans}) {
 Widget auraLiftFootnote(Widget text) =>
     Transform.translate(offset: const Offset(0, -2), child: text);
 
-/// [AuraType.largeTitle] for this platform. On iOS it's SF Pro Display, as
-/// tokened. Elsewhere Inter stands in, and at 25 pt Inter runs about 15%
+/// A large sans title for this platform: [AuraType.largeTitle] (25 pt, W08)
+/// or [AuraType.alertTitle] (30 pt, W13). On iOS it's SF Pro Display, as
+/// tokened. Elsewhere Inter stands in, and at these sizes Inter runs 10–15%
 /// wider than SF Pro Display (W08's title would wrap), so it uses its display
-/// optical size and a little more tracking to take SF Pro Display's width.
-TextStyle auraLargeTitle({bool? systemSans}) {
-  if (systemSans ?? auraUsesSystemSans) return AuraType.largeTitle;
-  return AuraType.largeTitle.copyWith(
+/// optical size and 0.01em more tracking to take SF Pro Display's width.
+TextStyle auraDisplayTitle(TextStyle style, {bool? systemSans}) {
+  if (systemSans ?? auraUsesSystemSans) return style;
+  return style.copyWith(
     fontVariations: const [FontVariation('opsz', 32)],
-    letterSpacing: -0.5,
+    letterSpacing: (style.letterSpacing ?? 0) - (style.fontSize ?? 0) * 0.01,
   );
 }
+
+/// [AuraType.largeTitle] for this platform (see [auraDisplayTitle]).
+TextStyle auraLargeTitle({bool? systemSans}) =>
+    auraDisplayTitle(AuraType.largeTitle, systemSans: systemSans);

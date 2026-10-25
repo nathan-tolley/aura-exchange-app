@@ -4,9 +4,9 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A3 → step 8: W13 exchange down (branch `a3-worst-moments`)
-- State: 12 of 13 screens done and committed; W13 waits on Nathan's answer about its footnote
-- Next action: build W13 with the drawn copy (`errorCopy` SERVER is already word for word), a receipt of the last good state from `Health` (`lastGoodUpdate`), the tape line, Try again, and a 30 pt title tuned like `auraLargeTitle()`. Use the footnote Nathan picks; if there's no answer yet, build it with the drawn text and note it as the one open difference. Then tick A3, merge `a3-worst-moments` into `main`, and report.
+- Step: A3 done (branch `a3-worst-moments`); merging into `main`
+- State: done apart from the merge
+- Next action: merge `a3-worst-moments` into `main` locally, then A4 (Phase 1 flows) on a new branch: start with the app shell (go_router routes for the 13 screens' real homes, the modal sheet route with the `scrim` barrier, lifecycle: stop the stream in the background and refetch on resume), then sign-in.
 - Uncommitted work: none
 - How to compare: `python tool/golden_diff.py diff GOLDEN REFERENCE` gives the share of differing pixels and a side-by-side image (look at it); `bands` lists where content sits, in points, for measuring the drawn screens. Component goldens are 840 px wide and now 0.03–2.81% from their references; screens are 780×1688 (`expectScreen`), Home at about 2%.
 - Lessons: 12.5 pt text goes through `auraLiftFootnote()`. Build screens as a view over a view-model plus a presenter from API payloads; fixtures are API-shaped JSON. `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format lib` or `dart format .`: name your own files. It reformats the generated token files (the drift test fails) and `lib/api/generated` (123 files); if it happens, rerun `dart run tool/gen_tokens.dart` and `git checkout -- lib/api/generated`.
@@ -59,3 +59,4 @@ One line per finished step: date · step · what · commit.
 - 2026-10-25 · A3 · W07 short near liquidation 2.42%, W08 liquidated 2.32%; `large-title` token and `auraLargeTitle()`; `AuraStatGrid.rowGap`; `ActionBar` and `BannerModel` shared; tape quotes added by screens; contract request #7 · (this commit)
 - 2026-10-25 · A3 · W04 Chapter 7 offer 1.95% (`Portfolio` + local `BankruptcyOffer`); `TopBar` shared; contract request #8 · (this commit)
 - 2026-10-25 · A3 · W01 rumor about you 2.15%, W02 ruling on you 2.26%, W03 SEC charge 2.27% (from `Event`, `Ruling`, `Votes`, `Appeal`; a local `SecCharge`); contract request #9 · (this commit)
+- 2026-10-25 · A3 · W13 exchange down 2.57%; `AuraIconTile` (component 32), `alert-title` token, `auraDisplayTitle()`; A3 check passes: all 13 screens 1.15–2.57% from their references · (this commit)
