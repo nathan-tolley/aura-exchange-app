@@ -59,26 +59,27 @@ class ApiError implements Exception {
       action = ApiAction.retry,
       status = null;
 
-  /// An answer that isn't the contract's shape: a proxy's HTML 502, or a
-  /// success body the client couldn't decode.
-  const ApiError.badResponse([this.status])
-    : code = appBadResponse,
+  /// Anything else: an answer that isn't the contract's shape (a proxy's
+  /// HTML 502, a success body the client couldn't decode), or a request that
+  /// couldn't be sent at all (say, a header the client can't encode).
+  const ApiError.unexpected([this.status])
+    : code = appUnexpected,
       params = const {},
       retryable = true,
       action = ApiAction.retry;
 
   static const appOffline = 'APP_OFFLINE';
   static const appTimeout = 'APP_TIMEOUT';
-  static const appBadResponse = 'APP_BAD_RESPONSE';
+  static const appUnexpected = 'APP_UNEXPECTED';
 
   /// Parses a non-2xx body. Anything that isn't `{"error": {"code": …}}` is
-  /// [ApiError.badResponse]. Params are strings by contract; anything else is
+  /// [ApiError.unexpected]. Params are strings by contract; anything else is
   /// stringified rather than dropped.
   factory ApiError.fromResponse(int? status, Object? body) {
     final error = body is Map ? body['error'] : null;
     final code = error is Map ? error['code'] : null;
     if (error is! Map || code is! String || code.isEmpty) {
-      return ApiError.badResponse(status);
+      return ApiError.unexpected(status);
     }
     final params = error['params'];
     return ApiError(
@@ -106,10 +107,12 @@ class ApiError implements Exception {
       DioExceptionType.connectionTimeout ||
       DioExceptionType.sendTimeout ||
       DioExceptionType.receiveTimeout => const ApiError.timeout(),
+      // dio reports an unreachable server or a dropped connection this way,
+      // on iOS and in the browser alike.
       DioExceptionType.connectionError => const ApiError.offline(),
-      // No response at all means the server was never reached.
-      _ when e.response == null => const ApiError.offline(),
-      _ => ApiError.badResponse(e.response?.statusCode),
+      // The rest (cancelled, a bad certificate, a request that couldn't be
+      // built) isn't evidence of being offline, so it isn't shown as such.
+      _ => ApiError.unexpected(e.response?.statusCode),
     };
   }
 
@@ -149,8 +152,8 @@ Future<T> guardApi<T>(Future<T> Function() call) async {
   } on DioException catch (e) {
     throw ApiError.fromDio(e);
   } on TypeError {
-    throw const ApiError.badResponse();
+    throw const ApiError.unexpected();
   } on FormatException {
-    throw const ApiError.badResponse();
+    throw const ApiError.unexpected();
   }
 }

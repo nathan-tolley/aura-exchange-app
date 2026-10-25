@@ -49,3 +49,11 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** The app follows the contract as written, except that CLOSED reads "at the close" (as W09 is drawn).
 
+## 5. ASCII example tokens (2026-10-25 · open)
+
+**What's wrong.** `TokenPair`'s examples are `"accessToken": "eyJhbGciOi…"` and `"refreshToken": "rt_9d8c…"`. The `…` (U+2026) can't be sent in an HTTP header, so after Prism answers `POST /auth/refresh`, the client can't replay the request with the new token. It fails before sending.
+
+**Ask.** ASCII examples, e.g. `eyJhbGciOiJIUzI1NiJ9.e30.c2lnbmF0dXJl` and `rt_9d8c4e2a`. No shape change.
+
+**Meanwhile.** The Prism check forces `AUTH_EXPIRED` signed out (no refresh). The refresh and replay are tested against a fake server.
+

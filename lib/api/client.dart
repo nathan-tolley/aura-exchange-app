@@ -233,7 +233,7 @@ class _AuthInterceptor extends Interceptor {
       return handler.next(
         DioException(
           requestOptions: options,
-          error: const ApiError.badResponse(),
+          error: const ApiError.unexpected(),
         ),
       );
     }

@@ -300,7 +300,7 @@ void main() {
     });
 
     test("a proxy's 502 page is the exchange being down", () {
-      final copy = errorCopy(const ApiError.badResponse(502));
+      final copy = errorCopy(const ApiError.unexpected(502));
       expect(copy.title, 'The exchange is down');
       expect(copy.reference, '502');
     });
