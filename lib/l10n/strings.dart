@@ -524,6 +524,44 @@ ErrorCopy offlineBanner(
 );
 
 // ---------------------------------------------------------------------------
+// Sign in (SCREENS.md #1)
+// ---------------------------------------------------------------------------
+
+const signInTitle = 'Sign in to Aura Exchange';
+const signInBody =
+    "Enter your email and we'll send you a 6-digit code. There's no password.";
+const emailLabel = 'Email';
+const emailPlaceholder = 'you@example.com';
+const sendCode = 'Send code';
+const sendingCode = 'Sending…';
+const enterYourEmail = 'Enter your email to get a code.';
+
+/// Under the first button: what Aura Bucks are (PLAN.md → Consent and
+/// safety), before anyone signs up.
+const playMoneyNote = 'Aura Bucks are play money, never bought or cashed out.';
+const checkYourEmail = 'Check your email';
+String codeSentTo(String email) => 'We sent a 6-digit code to $email.';
+String newCodeSentTo(String email) =>
+    'We sent a new code to $email. Use the latest email.';
+const sendNewCode = 'Send a new code';
+const signIn = 'Sign in';
+const checkingCode = 'Checking…';
+const enterTheCode = 'Enter the 6 digits from the email.';
+const sendNewCodeFirst = 'Send a new code first.';
+const useDifferentEmail = 'Use a different email';
+
+/// Signing in while offline: the W11 banner, worded for sign-in.
+const signInOffline = ErrorCopy(
+  title: "You're offline",
+  body: 'Signing in needs a connection. Retry when you have one.',
+  action: 'Retry',
+);
+
+/// A field note from an error's copy: "That code isn't right. You have 2
+/// more tries."
+String noteFrom(ErrorCopy copy) => ['${copy.title}.', ?copy.body].join(' ');
+
+// ---------------------------------------------------------------------------
 // Home (W09, W11, W12)
 // ---------------------------------------------------------------------------
 

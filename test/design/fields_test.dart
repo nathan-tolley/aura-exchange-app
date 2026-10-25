@@ -2,7 +2,6 @@ import 'package:aura_exchange/design/tone.dart';
 import 'package:aura_exchange/design/widgets/aura_code_field.dart';
 import 'package:aura_exchange/design/widgets/aura_text_field.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/golden.dart';

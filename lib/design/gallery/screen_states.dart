@@ -13,6 +13,7 @@ import '../../features/trade/trade_sheet_view.dart';
 import '../../l10n/strings.dart';
 import '../tokens.dart';
 import '../widgets/aura_status_chip.dart';
+import 'fixtures/onboarding.dart';
 import 'screen_fixtures.dart';
 
 /// A screen in one of its states, built from fixtures. The State Gallery
@@ -31,11 +32,26 @@ class GalleryScreen {
   /// The drawn reference's file name in design/reference/screens, without
   /// `.png`: "W09-MarketClosed".
   final String? reference;
+
+  /// The golden's file name in test/goldens/screens: the reference's name,
+  /// or the id and label for a screen that isn't drawn ("S01c-SignInWrongCode").
+  String get golden => reference ?? '$id-${_pascal(label)}';
 }
+
+String _pascal(String label) => label
+    .split(RegExp('[^A-Za-z0-9]+'))
+    .where((w) => w.isNotEmpty)
+    .map((w) => w[0].toUpperCase() + w.substring(1))
+    .join();
 
 /// Every screen state built so far. A screen is done when every state in its
 /// SCREENS.md row is here (CLAUDE.md → Every state exists).
 final List<GalleryScreen> screenStates = [
+  GalleryScreen('S01a', 'Sign in, email', (_) => signInEmail()),
+  GalleryScreen('S01b', 'Sign in, code sent', (_) => signInCodeSent()),
+  GalleryScreen('S01c', 'Sign in, wrong code', (_) => signInWrongCode()),
+  GalleryScreen('S01d', 'Sign in, code expired', (_) => signInCodeExpired()),
+  GalleryScreen('S01e', 'Sign in, offline', (_) => signInNoNetwork()),
   GalleryScreen(
     'W09',
     'Home, closed',

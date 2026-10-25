@@ -22,12 +22,14 @@ class ActionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final note = this.note;
+    // Measured: the buttons end 30 pt above the bottom, or 29 with a note
+    // under them (W10). With the keyboard up they ride 12 pt above it.
+    final keyboard = MediaQuery.viewInsetsOf(context).bottom;
+    final resting = bottom ?? (note == null ? 30 : 29);
     return Positioned(
       left: 16,
       right: 16,
-      // Measured: the buttons end 30 pt above the bottom, or 29 with a note
-      // under them (W10).
-      bottom: bottom ?? (note == null ? 30 : 29),
+      bottom: keyboard > 0 ? keyboard + 12 : resting,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         spacing: 8,
