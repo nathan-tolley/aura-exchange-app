@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
+import 'design/gallery/gallery_screen.dart';
+import 'design/text.dart';
 import 'design/tokens.dart';
 
 /// The app shell. Graphite is dark only (design/DESIGN.md), and every screen
@@ -13,11 +16,12 @@ class AuraApp extends StatelessWidget {
     return CupertinoApp.router(
       title: 'Aura Exchange',
       color: AuraColors.bg,
-      theme: const CupertinoThemeData(
+      theme: CupertinoThemeData(
         brightness: Brightness.dark,
         primaryColor: AuraColors.ink,
         scaffoldBackgroundColor: AuraColors.bg,
         barBackgroundColor: AuraColors.bg,
+        textTheme: CupertinoTextThemeData(textStyle: auraBaseTextStyle()),
       ),
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
@@ -28,6 +32,12 @@ class AuraApp extends StatelessWidget {
 final GoRouter _router = GoRouter(
   routes: [
     GoRoute(path: '/', builder: (context, state) => const _BlankScreen()),
+    // The State Gallery: debug builds only (aura://gallery on the phone).
+    if (kDebugMode)
+      GoRoute(
+        path: '/gallery',
+        builder: (context, state) => const AuraGalleryScreen(),
+      ),
   ],
 );
 

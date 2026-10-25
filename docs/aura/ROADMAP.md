@@ -31,19 +31,25 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
 
 ## A1: Design foundation
 
-- [ ] `lib/design/tokens.dart` from `design/aura_tokens.dart`, plus `tool/gen_tokens.dart` that regenerates it from `design/tokens.json`.
-  - *2026-10-24: `lib/design/tokens.dart` was copied in A0 so the shell could use `AuraColors.bg`. The generator is still to do.*
-- [ ] Fonts in `assets/fonts/`, declared in `pubspec.yaml`:
+- [x] `lib/design/tokens.dart` from `design/aura_tokens.dart`, plus `tool/gen_tokens.dart` that regenerates it from `design/tokens.json`.
+  - *2026-10-24: the generator reproduces the handoff's file exactly, also writes `lib/design/icon_paths.dart` from `design/icons.json`, and `test/tool/gen_tokens_test.dart` fails if either output drifts.*
+- [x] Fonts in `assets/fonts/`, declared in `pubspec.yaml`:
   - Newsreader (Regular, Italic)
   - JetBrains Mono (Regular, Medium)
   - Inter (Regular, Medium, SemiBold), for web preview and goldens only
-- [ ] `AuraIcon`, painting `design/icons.json`.
-- [ ] Every component in `design/COMPONENTS.md` as `lib/design/widgets/aura_<name>.dart`, with the same props.
+  - *2026-10-24: as variable fonts from google/fonts, which cover every weight listed. Their OFL licenses are registered with `LicenseRegistry`, and `test/flutter_test_config.dart` loads the fonts so goldens render real type.*
+- [x] `AuraIcon`, painting `design/icons.json`.
+  - *2026-10-24: all 34 icons and the filled star were rendered and checked by eye against `design/reference/components/Icon.png`. Its golden comes with the other goldens, once fonts are in.*
+- [x] Every component in `design/COMPONENTS.md` as `lib/design/widgets/aura_<name>.dart`, with the same props.
+  - *2026-10-24: all 31, plus `AuraNavRow`, `AuraActionButton` and `AuraStatGrid` (the spec sheet's grid). Props follow COMPONENTS.md in Dart form: `onPressed: null` disables, tones are `AuraTone`. Each has a golden next to its reference (0.03–4.5% of pixels differ) and behavior tests. The inside-a-sheet variants come from `AuraSheetScope`, with a golden of W05's pattern (`SheetInside.png`).*
   - Get exact values from `design/reference/web/components.css` (`.ax-<name>`).
   - Implement the inside-a-sheet variants (lifted surfaces, `lineStrong` hairlines, disabled button on `raised2`).
-- [ ] State Gallery: a debug-only route listing every component in every state it supports.
-- [ ] Goldens for every component state.
+- [x] State Gallery: a debug-only route listing every component in every state it supports.
+  - *2026-10-24: `/gallery` (`aura://gallery` on the phone) in debug builds: all 31 components, 59 states, with fixtures from the drawn screens, and live controls where a component is interactive. `test/design/gallery_test.dart` builds every state on its own.*
+- [x] Goldens for every component state.
+  - *2026-10-24: 30 goldens drawn like the reference previews (`test/goldens/components/`), one of the inside-a-sheet variants, and one per State Gallery section with every state labelled (`test/goldens/gallery/`, 31 images). They're tagged `golden`; the macOS release run skips them.*
 - **Check:** each component golden, put side by side with `design/reference/components/<Name>.png`, matches in spacing, size, color and type (Inter stands in for SF Pro).
+  - *2026-10-24: done. Each golden was diffed against its reference and both were looked at. Share of pixels that differ by more than 24 levels: IconButton 0.03%, Avatar 0.04, SegmentedControl 0.20, Tabs 0.21, Sparkline 0.33, ImpactDisc 0.39, SearchField 0.42, Tag 0.48, SectionHeader 0.51, Stepper 0.53, Countdown 0.64, Tape 0.68, PriceChange 0.78, ChartTooltip 0.79, Toast 0.84, RangeBar 0.92, TabBar 0.95, StatCard 1.04, QuoteCard 1.26, Money 1.28, SlideToConfirm 1.50, Button 1.60, Sheet 1.70, StockRow 1.84, Receipt 2.02, EmptyState 2.10, StatusChip 2.73, NavCard 2.75, HeroCard 2.81, Banner 4.52. What's left is antialiasing, the sparkline data (approximated; the references don't give it) and the 12.5 pt offset noted in `NOTES.md`, to recheck against the screens in A3.*
 
 ## A2: API layer
 
@@ -56,6 +62,7 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - an idempotency-key helper bound to user actions
 - [ ] `errors.dart`: parse the one error shape. `l10n/strings.dart` builds copy for every code in `API-CONTRACT.md`.
 - [ ] `format/`: money, change, percent, ticker, exchange-local time, relative time and countdown, with unit tests using the examples in `DESIGN.md` → Numbers.
+  - *2026-10-24: money, change, percent, impact, tape change, quantity, ticker and countdown were pulled forward into A1 (the components need them), with tests in `test/format/`. Exchange-local time and relative time are still to do.*
 - [ ] `stream.dart`:
   - subscribe per exchange
   - ping every 25 s
