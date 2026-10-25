@@ -4,10 +4,10 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
 
 ## A0: Set up the repo
 
-- [ ] Create the repo from the template.
+- [x] Create the repo from the template.
   - Preferred: `gh repo create nathan-tolley/aura-exchange-app --public --template nathan-tolley/flutter-ios-template --clone`, run in `C:\Users\natha\OneDrive\Desktop\Personal\Programming Projects\The Aura Exchange\`. It must be public, because macOS minutes are free for public repos.
   - If `gh` isn't installed or signed in, ask Nathan to click **Use this template** on GitHub, then clone it there.
-  - *2026-10-24: the local repo is made (cloned from the template's `1268d28`, no remote). Creating the GitHub repo is waiting on Nathan; see `PROGRESS.md`.*
+  - *2026-10-24: the local repo is made (cloned from the template's `1268d28`). Nathan created the public GitHub repo from it and pushed `main` (`39234c4`).*
 - [x] Give the app its identity (template README, "Start a new app"):
   - `pubspec.yaml`: `name: aura_exchange`.
   - `Info.plist`: `CFBundleDisplayName` = `Aura Exchange`; add `UIUserInterfaceStyle` = `Dark`; register the URL scheme `aura`.

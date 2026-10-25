@@ -62,15 +62,25 @@ Every non-2xx response has this body:
 | --- | --- | --- | --- | --- | --- |
 | 400 | `VALIDATION` | `field`, `rule` | no | NONE | inline field error |
 | 401 | `AUTH_EXPIRED` | | no | SIGN_IN | silent refresh, then sign-in |
+| 401 | `LOGIN_CODE_INVALID` | `attemptsLeft` | no | NONE | sign-in: wrong code, try again (a new `Idempotency-Key` per attempt) |
+| 401 | `LOGIN_CODE_EXPIRED` | | no | NONE | sign-in: code expired or out of tries; request a new one |
+| 403 | `FORBIDDEN` | | no | NONE | generic "not allowed" (e.g. a moderator-only action) |
 | 403 | `NOT_A_MEMBER` | `exchangeId` | no | NONE | |
 | 403 | `SELF_TRADE` | `ticker` | no | NONE | trade button hidden on your own stock |
 | 404 | `NOT_FOUND` | `resource` | no | NONE | |
+| 409 | `CONFLICT` | | no | NONE | generic "that changed under you"; refetch |
 | 409 | `QUOTE_STALE` | `oldPrice`, `newPrice`, `changePct` | yes | REQUOTE | W06 requote |
 | 409 | `IDEMPOTENCY_MISMATCH` | | no | NONE | |
+| 409 | `IDEMPOTENCY_IN_PROGRESS` | | yes | RETRY | the first request with this key is still running; retry shortly with the same key |
+| 409 | `INVITE_EXPIRED` | | no | NONE | S02 invite expired |
+| 409 | `EXCHANGE_FULL` | `maxMembers` | no | NONE | S02 exchange full |
+| 409 | `TICKER_TAKEN` | `ticker` | no | NONE | S03 ticker taken (check `/tickers/check` first) |
+| 409 | `TRADING_NOT_OPEN` | `listedCount`, `minListingsToOpen` | no | WAIT | IPO day: trading opens once enough friends are listed |
 | 409 | `LISTING_HALTED` | `haltId`, `resumesAt` | no | WAIT | W10 halted |
 | 409 | `MARKET_CLOSED` | `opensAt`, `queuedEvents` | no | WAIT | W09 closed |
 | 409 | `ORDER_TYPE_NOT_ALLOWED` | `marketState` (limit orders only in PRE/AFTER) | no | NONE | trade sheet |
 | 422 | `INSUFFICIENT_CASH` | `needed`, `available`, `shortBy`, `maxQuantity` | no | REDUCE_QUANTITY | W05 rejected |
+| 422 | `INSUFFICIENT_SHARES` | `available` | no | REDUCE_QUANTITY | selling or covering more than you hold |
 | 422 | `ORDER_TOO_LARGE` | `maxQuantity` (10% of pool) | no | REDUCE_QUANTITY | W05 variant |
 | 422 | `SHORT_CAP` | `maxQuantity`, `capPct` | no | REDUCE_QUANTITY | W05 variant |
 | 422 | `OPPOSITE_POSITION` | `positionId` | no | NONE | "Close your short first" |

@@ -4,19 +4,15 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A1 done (branch `a1-design-foundation`, merged into `main` locally). A0 is done locally; its GitHub items wait on Nathan.
+- Step: contract synced to `1.0.0-draft.5` on `main`. A1 done; A0 done apart from the iOS release run.
 - State: done; A2 not started
-- Next action: A2 (API layer) on a new branch `a2-api-layer` off `main`: generate the client with swagger_parser (`swagger_parser.yaml`), then `client.dart`, `errors.dart`, the rest of `format/` (exchange-local and relative time), `stream.dart`, and the Freshness provider. Error-mapping tests use local fixtures until contract request #1 lands.
+- Next action: A2 (API layer) on a new branch `a2-api-layer` off `main`: generate the client with swagger_parser (`swagger_parser.yaml`), then `client.dart`, `errors.dart` + `l10n/strings.dart` (copy for all 31 codes in `ErrorCode`), the rest of `format/` (exchange-local and relative time), `stream.dart`, and the Freshness provider. Error-mapping tests use local fixtures until contract request #1 lands.
 - How to compare: goldens are 840 px wide at 2× like the references. Diff each golden against `design/reference/components/<Name>.png` and look at both. All 30 reference goldens are within 0.03–4.5% differing pixels (antialiasing). See `docs/aura/NOTES.md` for what was matched and the 12.5 pt quirk to recheck in A3.
 - Lessons: `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format` the generated token files.
 - Uncommitted work: none
 - Waiting on Nathan:
-  - **Create the GitHub repo.** Creating the public repo `nathan-tolley/aura-exchange-app` was blocked by Claude Code's auto-mode permission check, so this repo exists only locally (made from the template's commit `1268d28`, no remote). When you're happy to publish, run these from this folder. They create the repo empty, then push `main` first so it becomes the default branch:
-    `gh repo create nathan-tolley/aura-exchange-app --public --source . --remote origin`
-    `git push -u origin main`
-    Don't use "Use this template" on GitHub now: it would start with its own first commit, unrelated to this history.
-  - **First push and first iOS release run.** Both need your OK (the A0 check includes one manual run of iOS release).
-  - **Contract request #1** (`docs/aura/CONTRACT-REQUESTS.md`): named error examples in the spec, so Prism can return `QUOTE_STALE`, `UPDATE_REQUIRED` and the rest. For the API session; not blocking the app.
+  - **First iOS release run.** The GitHub repo exists (public, `origin/main` at `39234c4`, created by Nathan on 2026-10-24). Later pushes and the A0 check's one manual run of iOS release still need your OK.
+  - **Contract request #1** (`docs/aura/CONTRACT-REQUESTS.md`): named error examples in the spec, so Prism can return `QUOTE_STALE`, `UPDATE_REQUIRED` and the rest. The API session is adding them now (its working copy says draft.6); sync again once it's committed. Not blocking the app.
   - Not blocking yet: the open questions and the three design-pass rules in `docs/aura/DECISIONS.md`.
 
 ## Log
@@ -40,3 +36,4 @@ One line per finished step: date · step · what · commit.
 - 2026-10-24 · A1 · Components batch 4: Sparkline, ChartTooltip, StockRow, HeroCard (+ AuraActionButton), Tape (loops, stops with Reduce Motion), TabBar, Sheet; inside-sheet golden; goldens 0.3–2.8%; behavior tests (69 tests in all) · `e2bd02b`
 - 2026-10-24 · A1 · State Gallery at `/gallery` (debug only): 31 components, 59 states, every state tested on its own (131 tests in all) · `c3c24a3`
 - 2026-10-24 · A1 · A1 check: 30 reference goldens within 0.03–4.52%, plus 31 State Gallery goldens covering every state; A1 boxes ticked · (this commit)
+- 2026-10-25 · Sync · Contract `1.0.0-draft.1` → `1.0.0-draft.5` (API `aura-v1` at `7212276`): `api/openapi.yaml` and `docs/aura/API-CONTRACT.md`, 31 error codes; Prism serves it. The GitHub repo exists (Nathan), so A0's first box is ticked · (this commit)
