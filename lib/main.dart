@@ -14,6 +14,7 @@ Future<void> main() async {
   final app = await _appIdentity();
   runApp(
     ProviderScope(
+      retry: noRetry,
       overrides: [appIdentityProvider.overrideWithValue(app)],
       child: const AuraApp(),
     ),

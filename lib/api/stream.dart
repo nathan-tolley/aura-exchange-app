@@ -164,6 +164,14 @@ final class StreamReconnected extends StreamMessage {
   const StreamReconnected();
 }
 
+/// Not from the server: the socket is down, so it's time to refetch this
+/// exchange's market (`GET /exchanges/{id}/market`), every 15 s.
+final class PollDue extends StreamMessage {
+  const PollDue(this.exchangeId);
+
+  final String exchangeId;
+}
+
 // ---------------------------------------------------------------------------
 // The connection
 // ---------------------------------------------------------------------------
@@ -222,8 +230,8 @@ class _WebSocketConnection implements SocketConnection {
 ///   jitter). Close code 4401 means the token expired: it refreshes through
 ///   the [AuthSession] and reconnects at once; if that signs the user out,
 ///   it stays down.
-/// - While it's down, calls [poll] for each subscribed exchange every 15 s,
-///   so screens refetch `GET /exchanges/{id}/market` and show Delayed.
+/// - While it's down, sends [PollDue] for each subscribed exchange every
+///   15 s, so screens refetch `GET /exchanges/{id}/market` and show Delayed.
 /// - [connected] drives the Delayed state.
 ///
 /// The app [start]s it in the foreground and [stop]s it in the background.
@@ -231,7 +239,6 @@ class AuraStream {
   AuraStream({
     required this.uri,
     required this._session,
-    required this.poll,
     this._connector = connectWebSocket,
     this.pingEvery = const Duration(seconds: 25),
     this.pollEvery = const Duration(seconds: 15),
@@ -241,9 +248,6 @@ class AuraStream {
 
   /// `ApiConfig.streamUri`: `wss://host/v1/stream`.
   final Uri uri;
-
-  /// Refetch an exchange's market while the socket is down.
-  final void Function(String exchangeId) poll;
 
   final Duration pingEvery;
   final Duration pollEvery;
@@ -258,7 +262,8 @@ class AuraStream {
 
   final _messages = StreamController<StreamMessage>.broadcast();
 
-  /// Everything from the server except pongs, plus [StreamReconnected].
+  /// Everything from the server except pongs, plus [StreamReconnected] and
+  /// [PollDue].
   Stream<StreamMessage> get messages => _messages.stream;
 
   final Set<String> _exchanges = {};
@@ -274,6 +279,10 @@ class AuraStream {
 
   /// The exchanges subscribed to.
   Set<String> get exchanges => Set.unmodifiable(_exchanges);
+
+  /// Delivers [message] as if the stream had produced it.
+  @visibleForTesting
+  void inject(StreamMessage message) => _messages.add(message);
 
   void subscribe(String exchangeId) {
     if (_exchanges.add(exchangeId)) {
@@ -430,7 +439,7 @@ class AuraStream {
     _pollTimer = Timer.periodic(pollEvery, (_) {
       if (connected.value) return;
       for (final id in _exchanges) {
-        poll(id);
+        _messages.add(PollDue(id));
       }
     });
   }

@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:aura_exchange/api/generated/export.dart';
@@ -7,6 +5,8 @@ import 'package:aura_exchange/api/session.dart';
 import 'package:aura_exchange/api/stream.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/fake_socket.dart';
 
 /// `lib/api/stream.dart` with a fake socket and fake time
 /// (API-CONTRACT.md → Realtime).
@@ -57,7 +57,6 @@ void main() {
       stream = AuraStream(
         uri: uri,
         session: session,
-        poll: polled.add,
         random: _MidRandom(),
         connector: (uri) {
           final socket = FakeSocket(uri);
@@ -70,7 +69,13 @@ void main() {
           return socket;
         },
       );
-      stream.messages.listen(received.add);
+      stream.messages.listen((message) {
+        if (message is PollDue) {
+          polled.add(message.exchangeId);
+        } else {
+          received.add(message);
+        }
+      });
       body(async);
       stream.dispose();
       async.flushMicrotasks();
@@ -342,44 +347,6 @@ void main() {
       expect(async.pendingTimers, isEmpty);
     });
   });
-}
-
-class FakeSocket implements SocketConnection {
-  FakeSocket(this.uri);
-
-  final Uri uri;
-  final List<Map<String, Object?>> sent = [];
-  final _ready = Completer<void>();
-  final _incoming = StreamController<Object?>();
-  bool closed = false;
-
-  void open() => _ready.complete();
-
-  void failToOpen() => _ready.completeError(StateError('refused'));
-
-  void receive(Map<String, Object?> message) => receiveRaw(jsonEncode(message));
-
-  void receiveRaw(String frame) => _incoming.add(frame);
-
-  void serverClose(int code) {
-    closeCode = code;
-    unawaited(_incoming.close());
-  }
-
-  @override
-  int? closeCode;
-
-  @override
-  Future<void> get ready => _ready.future;
-
-  @override
-  Stream<Object?> get messages => _incoming.stream;
-
-  @override
-  void send(String text) => sent.add(jsonDecode(text) as Map<String, Object?>);
-
-  @override
-  Future<void> close() async => closed = true;
 }
 
 /// Jitter at its midpoint, so backoff waits are exact.

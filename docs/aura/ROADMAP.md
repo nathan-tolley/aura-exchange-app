@@ -75,7 +75,8 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - polling fallback every 15 s
   - exposes `connected` for the Delayed state
   - *2026-10-25: `AuraStream` (`lib/api/stream.dart`) behind a small `SocketConnection` seam. A socket that answers nothing for a whole ping interval is replaced; backoff is 1 s doubling to 30 s with ±20% jitter, reset by a good connection; 4401 refreshes through `AuthSession` and reconnects at once (or stays down if that signs out); `StreamReconnected` tells screens to refetch. Messages are parsed from API-CONTRACT.md (the spec has no socket schemas). 13 tests in fake time.*
-- [ ] A Freshness provider: Delayed when `asOf` is more than 60 s old or the socket is down.
+- [x] A Freshness provider: Delayed when `asOf` is more than 60 s old or the socket is down.
+  - *2026-10-25: `lib/data/freshness.dart` (`Freshness`, `liveness()`, a one-second clock) and `marketLivenessProvider` in `lib/data/live_market.dart`. A closed market with the socket up reads "at the close" (W09), not Delayed. The live market is the last `GET /market` with ticks on top, refetched on reconnect and on each `PollDue` while the socket is down; a failed refetch keeps the numbers and records why (`problem`, for W11). Repositories for system, auth, market and trading go through `guardApi`; the stream starts on sign-in and stops on sign-out. 12 tests.*
 - **Check:** the repository tests pass against Prism, including forced `Prefer: code=409/422/426/500` responses mapping to the right `ApiError.action`.
 
 ## A3: Rebuild the 13 drawn worst moments in Flutter

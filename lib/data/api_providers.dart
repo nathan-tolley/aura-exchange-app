@@ -1,8 +1,14 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/client.dart';
 import '../api/generated/aura_api.dart';
 import '../api/session.dart';
+
+/// Riverpod 3 retries failed providers by itself; the app doesn't. A
+/// failure reaches the screen at once as an `ApiError`, and recovery is the
+/// screen's Try again, the stream's polling and the refetch on reconnect.
+Duration? noRetry(int retryCount, Object error) => null;
 
 /// The bundle's version and build. `main()` overrides it from the bundle;
 /// tests and the State Gallery get [AppIdentity.unknown].
@@ -15,10 +21,14 @@ final apiConfigProvider = Provider<ApiConfig>(
 /// The Keychain on the phone. Tests override it with a [MemoryTokenStore].
 final tokenStoreProvider = Provider<TokenStore>((ref) => SecureTokenStore());
 
+/// The network. Tests override it with a fake adapter.
+final httpAdapterProvider = Provider<HttpClientAdapter?>((ref) => null);
+
 final auraClientProvider = Provider<AuraClient>((ref) {
   final client = AuraClient(
     config: ref.watch(apiConfigProvider),
     tokens: ref.watch(tokenStoreProvider),
+    adapter: ref.watch(httpAdapterProvider),
   );
   ref.onDispose(client.close);
   return client;

@@ -33,3 +33,19 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** `lib/l10n/strings.dart` already reads `params.nextStimulusAt` when it's there ("tomorrow's", "Monday's", from the exchange's calendar) and says "the next stimulus check" when it isn't. W05's golden in A3 uses a fixture with the param, so it matches the reference.
 
+## 3. The change amount on ticks (2026-10-25 · open)
+
+**What's missing.** A `ticks` message gives each listing's `price` and `changePct` but not `changeAbs`, which every price row shows (`↑ +7.79 (+6.70%)`, `AuraPriceChange`).
+
+**Ask (additive).** Add `changeAbs` (decimal string, 2 dp) to each listing in `ticks`, like `ListingSummary.changeAbs`.
+
+**Meanwhile.** `LiveMarket` (`lib/data/live_market.dart`) works the amount out from the tick's own price and percent (`price − price × 100 / (100 + changePct)`, rounded half-up to 2 dp). That matches the fixtures (124.10 at +6.70% → +7.79; 101.90 at −9.34% → −10.50), but because the percent is already rounded it can be a cent off the server's figure.
+
+## 4. A heartbeat in quiet market states (2026-10-25 · question)
+
+**The question.** The app marks prices Delayed when `asOf` is over 60 s old (API-CONTRACT.md → Freshness). Ticks come "at most every 15 s" and only with the listings that changed. While the market is OPEN the price engine moves every listing every 15 s, so that's fine. But in PRE, AFTER and an exchange-wide HALTED nothing may move for minutes, and the app would show Delayed although nothing was missed.
+
+**Ask.** Either send a `ticks` message (with an empty `listings` array if nothing changed) at least every 60 s to each subscribed exchange in every market state, or say in API-CONTRACT.md that `asOf` only goes stale while OPEN, and the app will treat the other states like CLOSED.
+
+**Meanwhile.** The app follows the contract as written, except that CLOSED reads "at the close" (as W09 is drawn).
+
