@@ -63,8 +63,9 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
   - an idempotency-key helper bound to user actions
   - *2026-10-25: `AuraClient` (`lib/api/client.dart`) with `AuthSession` and the Keychain store (`lib/api/session.dart`). Refreshes are single-flight (rotating refresh tokens), the replay keeps its `Idempotency-Key`, a rejected refresh signs out (`session.signedIn` turns false; the router's redirect to sign-in comes with that screen in A4), and an unreachable refresh keeps the tokens and reports offline. Version and build come from the bundle (`package_info_plus`). `IdempotencyKey` is created at commit and reused for retries. 14 tests against a fake adapter.*
 - [ ] `errors.dart`: parse the one error shape. `l10n/strings.dart` builds copy for every code in `API-CONTRACT.md`.
-- [ ] `format/`: money, change, percent, ticker, exchange-local time, relative time and countdown, with unit tests using the examples in `DESIGN.md` → Numbers.
-  - *2026-10-24: money, change, percent, impact, tape change, quantity, ticker and countdown were pulled forward into A1 (the components need them), with tests in `test/format/`. Exchange-local time and relative time are still to do.*
+- [x] `format/`: money, change, percent, ticker, exchange-local time, relative time and countdown, with unit tests using the examples in `DESIGN.md` → Numbers.
+  - *2026-10-24: money, change, percent, impact, tape change, quantity, ticker and countdown were pulled forward into A1 (the components need them), with tests in `test/format/`.*
+  - *2026-10-25: `lib/format/time.dart`: the exchange's IANA zone (UTC if unknown), `9:41 pm` clock, `formatMoment` (time alone within 12 h, then weekday, then date), `formatWhen` (relative under an hour, the contract's rule), `formatAgo` (`2 h ago`, W12) and `formatDay` (`tomorrow`, from the exchange's calendar). 8 tests, including daylight saving.*
 - [ ] `stream.dart`:
   - subscribe per exchange
   - ping every 25 s
