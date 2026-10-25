@@ -4,9 +4,10 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A3 done (branch `a3-worst-moments`, merged into `main` locally)
-- State: done; A4 not started
-- Next action: A4 (Phase 1 flows) on a new branch `a4-flows` off `main`: start with the app shell (go_router routes for the 13 screens' real homes, the modal sheet route with the `scrim` barrier, lifecycle: stop the stream in the background and refetch on resume), then sign-in.
+- Step: A4 → sign-in (branch `a4-flows` off `main`)
+- State: in progress; the shell is done
+- Plan for A4, one commit each, in this order (Gate 0's path first): (1) shell: router with the sign-in redirect, `/me` and the current exchange, onboarding redirects, the tab shell, the sheet route with the `scrim` barrier, lifecycle (stream stops in the background, screens refetch on resume); (2) sign-in (email, code sent, wrong, expired, offline) with `AuraTextField` + `AuraCodeField`; (3) create an exchange (name, timezone and hours, invite, waiting for friends); (4) join from invite; (5) your IPO; then Home live, market, stock, trade, file, events, tape and notifications, portfolio, you and settings, app-wide states, as ROADMAP.md lists them. Check sign-in against the live API after (2).
+- Next action: `AuraTextField` and `AuraCodeField` (COMPONENTS.md, gallery, goldens), then the sign-in screens over `AuthRepository`.
 - Uncommitted work: none
 - How to compare: `python tool/golden_diff.py diff GOLDEN REFERENCE` gives the share of differing pixels and a side-by-side image (look at it); `bands` lists where content sits, in points, for measuring the drawn screens. Component goldens are 840 px wide and now 0.03–2.81% from their references; screens are 780×1688 (`expectScreen`), Home at about 2%.
 - Lessons: 12.5 pt text goes through `auraLiftFootnote()`. Build screens as a view over a view-model plus a presenter from API payloads; fixtures are API-shaped JSON. `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format lib` or `dart format .`: name your own files. It reformats the generated token files (the drift test fails) and `lib/api/generated` (123 files); if it happens, rerun `dart run tool/gen_tokens.dart` and `git checkout -- lib/api/generated`.
@@ -61,3 +62,5 @@ One line per finished step: date · step · what · commit.
 - 2026-10-25 · A3 · W01 rumor about you 2.15%, W02 ruling on you 2.26%, W03 SEC charge 2.27% (from `Event`, `Ruling`, `Votes`, `Appeal`; a local `SecCharge`); contract request #9 · (this commit)
 - 2026-10-25 · A3 · W13 exchange down 2.57%; `AuraIconTile` (component 32), `alert-title` token, `auraDisplayTitle()`; A3 check passes: all 13 screens 1.15–2.57% from their references · (this commit)
 - 2026-10-25 · A3 · Merged `a3-worst-moments` into `main` · (this commit)
+- 2026-10-25 · A4 · Contract request #10: CORS for the web preview (the live API's preflight answers 404, and responses carry `Cross-Origin-Resource-Policy: same-origin`) · `4a54aa8`
+- 2026-10-25 · A4 · App shell: `lib/router.dart` (sign-in and onboarding redirect, five-tab `StatefulShellRoute`, routes for the screens to come), `AuraSheetRoute` with the scrim, `/me` and the current exchange (`lib/data/me.dart`), lifecycle (stream stops in the background; resume and reconnect fire `refetchSignalProvider`); 15 tests · (this commit)

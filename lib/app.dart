@@ -1,16 +1,43 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'design/gallery/gallery_screen.dart';
-import 'design/gallery/screen_states.dart';
+import 'data/lifecycle.dart';
 import 'design/text.dart';
 import 'design/tokens.dart';
+import 'router.dart';
 
 /// The app shell. Graphite is dark only (design/DESIGN.md), and every screen
-/// is a go_router route so `aura://` deep links land on real screens.
-class AuraApp extends StatelessWidget {
+/// is a go_router route (`router.dart`) so `aura://` deep links land on real
+/// screens.
+///
+/// There's no background refresh without the paid program, so the app
+/// follows its own lifecycle: leaving the foreground stops the stream, and
+/// coming back restarts it and refetches what's on screen
+/// (`foregroundProvider`).
+class AuraApp extends ConsumerStatefulWidget {
   const AuraApp({super.key});
+
+  @override
+  ConsumerState<AuraApp> createState() => _AuraAppState();
+}
+
+class _AuraAppState extends ConsumerState<AuraApp> {
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(
+      onShow: () => ref.read(foregroundProvider.notifier).set(true),
+      onHide: () => ref.read(foregroundProvider.notifier).set(false),
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,44 +52,7 @@ class AuraApp extends StatelessWidget {
         textTheme: CupertinoTextThemeData(textStyle: auraBaseTextStyle()),
       ),
       debugShowCheckedModeBanner: false,
-      routerConfig: _router,
+      routerConfig: ref.watch(routerProvider),
     );
-  }
-}
-
-final GoRouter _router = GoRouter(
-  routes: [
-    GoRoute(path: '/', builder: (context, state) => const _BlankScreen()),
-    // The State Gallery: debug builds only (aura://gallery on the phone).
-    if (kDebugMode)
-      GoRoute(
-        path: '/gallery',
-        builder: (context, state) => AuraGalleryScreen(
-          onOpenScreen: (id) => context.push('/gallery/screens/$id'),
-        ),
-        routes: [
-          // A screen state full size: swipe back to the gallery.
-          GoRoute(
-            path: 'screens/:id',
-            builder: (context, state) {
-              final id = state.pathParameters['id'];
-              final screen = screenStates.where((s) => s.id == id).firstOrNull;
-              return screen == null
-                  ? const _BlankScreen()
-                  : Builder(builder: screen.build);
-            },
-          ),
-        ],
-      ),
-  ],
-);
-
-/// Placeholder until Home exists: the one background, nothing on it.
-class _BlankScreen extends StatelessWidget {
-  const _BlankScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return const ColoredBox(color: AuraColors.bg, child: SizedBox.expand());
   }
 }

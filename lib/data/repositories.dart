@@ -23,6 +23,14 @@ final authRepositoryProvider = Provider<AuthRepository>(
   ),
 );
 
+final meRepositoryProvider = Provider<MeRepository>(
+  (ref) => MeRepository(ref.watch(auraApiProvider)),
+);
+
+final exchangesRepositoryProvider = Provider<ExchangesRepository>(
+  (ref) => ExchangesRepository(ref.watch(auraApiProvider)),
+);
+
 final marketRepositoryProvider = Provider<MarketRepository>(
   (ref) => MarketRepository(ref.watch(auraApiProvider)),
 );
@@ -90,6 +98,77 @@ class AuthRepository {
       await _session.signOut();
     }
   }
+}
+
+class MeRepository {
+  MeRepository(this._api);
+
+  final AuraApi _api;
+
+  /// You and your memberships: which exchanges you're in, and whether you're
+  /// listed in each.
+  Future<Me> me() => guardApi(_api.me.getMe);
+}
+
+/// Exchanges, invites and your IPO: everything onboarding needs.
+class ExchangesRepository {
+  ExchangesRepository(this._api);
+
+  final AuraApi _api;
+
+  /// One exchange: its name, timezone, hours, season and how many are
+  /// listed.
+  Future<Exchange> exchange(String exchangeId) => guardApi(
+    () => _api.exchanges.getExchangesExchangeId(exchangeId: exchangeId),
+  );
+
+  /// Creates an exchange with you as its admin.
+  Future<Exchange> create(ExchangeCreate body, IdempotencyKey key) => guardApi(
+    () => _api.exchanges.postExchanges(idempotencyKey: key.value, body: body),
+  );
+
+  /// A new invite link for the exchange.
+  Future<Invite> invite(String exchangeId, IdempotencyKey key) => guardApi(
+    () => _api.exchanges.postExchangesExchangeIdInvites(
+      exchangeId: exchangeId,
+      idempotencyKey: key.value,
+    ),
+  );
+
+  /// What an invite leads to, before joining: the exchange, who's listed,
+  /// and whether it's still valid.
+  Future<InvitePreview> previewInvite(String code) =>
+      guardApi(() => _api.exchanges.getInvitesCode(code: code));
+
+  /// Joins the exchange the invite is for.
+  Future<Membership> acceptInvite(String code, IdempotencyKey key) => guardApi(
+    () => _api.exchanges.postInvitesCodeAccept(
+      code: code,
+      idempotencyKey: key.value,
+    ),
+  );
+
+  /// Whether a ticker is free in the exchange, with suggestions if not.
+  Future<TickerCheck> checkTicker(String exchangeId, String ticker) => guardApi(
+    () => _api.exchanges.getExchangesExchangeIdTickersCheck(
+      exchangeId: exchangeId,
+      ticker: ticker,
+    ),
+  );
+
+  /// Your IPO: lists you under [ticker] (3–5 letters, no `$`), with your
+  /// consent.
+  Future<ListingRef> list(
+    String exchangeId,
+    String ticker,
+    IdempotencyKey key,
+  ) => guardApi(
+    () => _api.exchanges.postExchangesExchangeIdListing(
+      exchangeId: exchangeId,
+      idempotencyKey: key.value,
+      body: IpoRequest(ticker: ticker, consent: true),
+    ),
+  );
 }
 
 class MarketRepository {

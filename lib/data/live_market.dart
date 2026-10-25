@@ -9,6 +9,7 @@ import '../api/generated/export.dart' hide Freshness;
 import '../api/stream.dart';
 import 'api_providers.dart';
 import 'freshness.dart';
+import 'lifecycle.dart';
 import 'repositories.dart';
 
 /// The real socket. Tests override it.
@@ -16,9 +17,11 @@ final socketConnectorProvider = Provider<SocketConnector>(
   (ref) => connectWebSocket,
 );
 
-/// The one realtime stream. It runs while someone is signed in; it stops
-/// itself when signed out and starts again on sign-in. While it's down,
-/// each watched market refetches when its `PollDue` arrives.
+/// The one realtime stream. It runs while someone is signed in and the app is
+/// in the foreground; it stops when signed out or backgrounded and starts
+/// again on sign-in or resume. While it's down, each watched market refetches
+/// when its `PollDue` arrives. A reconnect fires the refetch signal, so the
+/// screen on show refetches what it may have missed.
 final auraStreamProvider = Provider<AuraStream>((ref) {
   final client = ref.watch(auraClientProvider);
   final session = client.session;
@@ -28,6 +31,10 @@ final auraStreamProvider = Provider<AuraStream>((ref) {
     connector: ref.watch(socketConnectorProvider),
   );
   void follow() {
+    if (!ref.read(foregroundProvider)) {
+      stream.stop();
+      return;
+    }
     switch (session.signedIn.value) {
       case true:
         stream.start();
@@ -39,11 +46,18 @@ final auraStreamProvider = Provider<AuraStream>((ref) {
   }
 
   session.signedIn.addListener(follow);
+  ref.listen(foregroundProvider, (_, _) => follow());
+  final reconnects = stream.messages.listen((message) {
+    if (message is StreamReconnected) {
+      ref.read(refetchSignalProvider.notifier).fire();
+    }
+  });
   ref.onDispose(() {
     session.signedIn.removeListener(follow);
+    unawaited(reconnects.cancel());
     stream.dispose();
   });
-  stream.start();
+  if (ref.read(foregroundProvider)) stream.start();
   return stream;
 });
 
@@ -203,6 +217,8 @@ class MarketNotifier extends AsyncNotifier<LiveMarket> {
     final stream = ref.watch(auraStreamProvider);
     final messages = stream.messages.listen(_receive);
     stream.subscribe(exchangeId);
+    // Back in the foreground, or reconnected after missing messages.
+    ref.listen(refetchSignalProvider, (_, _) => unawaited(refresh()));
     ref.onDispose(() {
       unawaited(messages.cancel());
       stream.unsubscribe(exchangeId);
@@ -240,8 +256,6 @@ class MarketNotifier extends AsyncNotifier<LiveMarket> {
       case MarketMessage() when message.exchangeId == exchangeId:
         state = AsyncData(shown.withMarketState(message));
       case PollDue() when message.exchangeId == exchangeId:
-        unawaited(refresh());
-      case StreamReconnected():
         unawaited(refresh());
       default:
         break;
