@@ -4,24 +4,19 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A2 done (branch `a2-api-layer`, merged into `main` locally as `e8690b7`). A3 next.
-- State: done; A3 not started
-- Next action: A3 on a new branch `a3-worst-moments` off `main`, in this order (each one: fixtures with the reference's exact data → screen → 390×844 @2x golden → diff against `design/reference/screens/W##-*.png` and look at both → gallery entry → commit):
-  1. Screen scaffold: a full-screen golden harness (780×1688 px like the references), the shared layout (16 pt gutters, top bar with back glyph and status chip, bottom action area, tab bar), and a "Screens" section in the State Gallery.
-  2. Home family through `LiveMarket` + `liveness()` + strings: W09 closed, W11 offline, W12 IPO day.
-  3. Trade sheet over the dimmed stock page: W05 rejected, W06 requote (fixtures through `errorCopy`).
-  4. W10 halted (stock page + halt vote).
-  5. W07 margin warning sheet, W08 liquidated receipt.
-  6. W04 Chapter 7.
-  7. W01 rumor about you, W02 ruling on you, W03 SEC charge.
-  8. W13 exchange down, once Nathan answers the footnote question.
-  Recheck the 12.5 pt quirk (`NOTES.md`) on the first screen with chips or tags.
-- How to compare: goldens are 840 px wide at 2× like the references. Diff each golden against `design/reference/components/<Name>.png` and look at both. All 30 reference goldens are within 0.03–4.5% differing pixels (antialiasing). See `docs/aura/NOTES.md` for what was matched and the 12.5 pt quirk to recheck in A3.
-- Lessons: `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format` the generated token files.
+- Step: A3 done (branch `a3-worst-moments`); merging into `main`
+- State: done apart from the merge
+- Next action: merge `a3-worst-moments` into `main` locally, then A4 (Phase 1 flows) on a new branch: start with the app shell (go_router routes for the 13 screens' real homes, the modal sheet route with the `scrim` barrier, lifecycle: stop the stream in the background and refetch on resume), then sign-in.
 - Uncommitted work: none
+- How to compare: `python tool/golden_diff.py diff GOLDEN REFERENCE` gives the share of differing pixels and a side-by-side image (look at it); `bands` lists where content sits, in points, for measuring the drawn screens. Component goldens are 840 px wide and now 0.03–2.81% from their references; screens are 780×1688 (`expectScreen`), Home at about 2%.
+- Lessons: 12.5 pt text goes through `auraLiftFootnote()`. Build screens as a view over a view-model plus a presenter from API payloads; fixtures are API-shaped JSON. `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format lib` or `dart format .`: name your own files. It reformats the generated token files (the drift test fails) and `lib/api/generated` (123 files); if it happens, rerun `dart run tool/gen_tokens.dart` and `git checkout -- lib/api/generated`.
 - Waiting on Nathan:
   - **First iOS release run.** The GitHub repo exists (public, `origin/main` at `39234c4`, created by Nathan on 2026-10-24). Later pushes and the A0 check's one manual run of iOS release still need your OK.
   - **Contract request #2** (`docs/aura/CONTRACT-REQUESTS.md`): `nextStimulusAt` on `INSUFFICIENT_CASH`, so W05 can say "tomorrow's stimulus check" without the app copying the schedule. Not blocking; the copy falls back to "the next stimulus check".
+  - **Contract request #9**: the "about you" screens' game numbers (denial penalty, rating change, super-injunctions per season) and an SEC case schema (W01–W03). Not blocking; presenters take them as inputs.
+  - **Contract request #8**: Chapter 7's terms on `Portfolio` (W04). Not blocking; a local `BankruptcyOffer` stands in.
+  - **Contract request #7**: a liquidation's settlement on `Position` (W08). Not blocking; a local `Liquidation` record stands in.
+  - **Contract request #6**: a refused quote that still carries its numbers (W05 needs the receipt and `maxQuantity` together). Not blocking; the presenter takes a `Quote` plus the rejection.
   - **Contract request #5**: ASCII example tokens, so a refresh against Prism can be replayed. Not blocking.
   - **Contract requests #3 and #4** (`docs/aura/CONTRACT-REQUESTS.md`): `changeAbs` on ticks (the app derives it meanwhile), and whether the server sends a tick at least every 60 s in PRE, AFTER and HALTED (otherwise quiet periods read Delayed). Not blocking.
   - **W13's footnote** says "You'll get a notification when it's back", which the app can't do without push. Keep it, or change the lead-in (for example "This screen checks again by itself", with the screen polling `/health`)? Needed before A3's W13 golden.
@@ -58,3 +53,10 @@ One line per finished step: date · step · what · commit.
 - 2026-10-25 · A2 · Data layer: `Freshness` + `liveness()`, the live market (REST + ticks, refetch on reconnect and `PollDue`), system/auth/market/trading repositories, the stream following sign-in, Riverpod retry off; contract requests #3 and #4 · (this commit)
 - 2026-10-25 · A2 · A2 check: `test/prism/` (opt-in tag) passes against Prism, 36 tests including all 31 forced codes; only connection errors read as offline (`APP_UNEXPECTED` otherwise); errors unit tests; contract request #5. 270 tests, analyze clean · (this commit)
 - 2026-10-25 · A2 · Merged `a2-api-layer` into `main` (`e8690b7`); A3 plan written into Now · (this commit)
+- 2026-10-25 · A3 · Screen scaffold (`expectScreen`, `tool/golden_diff.py`, Screens in the State Gallery) and Home: W09 2.17%, W11 2.01%, W12 2.00%; 12.5 pt text lifted 2 pt and the banner fixed in the components (all touched component goldens closer); 277 tests · (this commit)
+- 2026-10-25 · A3 · Trade sheet: W05 1.08%, W06 1.21% (ticket and requote from `Quote` + `ApiError`); `scrim` token (generator reads `#rrggbbaa`); receipt text 1 pt up with a line under the total, sheet title 11/13 pt; contract request #6 · (this commit)
+- 2026-10-25 · A3 · W10 halted: 1.90% (stock page from `ListingDetail` + `Halt` + `EventSummary`); `StockHeader` chip 3 pt lower and price 2 pt lower, as W05 and W10 draw them · (this commit)
+- 2026-10-25 · A3 · W07 short near liquidation 2.42%, W08 liquidated 2.32%; `large-title` token and `auraLargeTitle()`; `AuraStatGrid.rowGap`; `ActionBar` and `BannerModel` shared; tape quotes added by screens; contract request #7 · (this commit)
+- 2026-10-25 · A3 · W04 Chapter 7 offer 1.95% (`Portfolio` + local `BankruptcyOffer`); `TopBar` shared; contract request #8 · (this commit)
+- 2026-10-25 · A3 · W01 rumor about you 2.15%, W02 ruling on you 2.26%, W03 SEC charge 2.27% (from `Event`, `Ruling`, `Votes`, `Appeal`; a local `SecCharge`); contract request #9 · (this commit)
+- 2026-10-25 · A3 · W13 exchange down 2.57%; `AuraIconTile` (component 32), `alert-title` token, `auraDisplayTitle()`; A3 check passes: all 13 screens 1.15–2.57% from their references · (this commit)

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
+import '../text.dart';
 import '../../format/money.dart';
 import '../icons.dart';
 import '../tokens.dart';
@@ -71,12 +72,14 @@ class AuraStepper extends StatelessWidget {
                       maxLines: 1,
                     ),
                     if (note != null)
-                      Text(
-                        note!,
-                        style: AuraType.footnote.copyWith(
-                          color: AuraColors.inkTertiary,
+                      auraLiftFootnote(
+                        Text(
+                          note!,
+                          style: AuraType.footnote.copyWith(
+                            color: AuraColors.inkTertiary,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                   ],
                 ),

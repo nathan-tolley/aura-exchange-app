@@ -46,3 +46,8 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Golden test failure images (flutter_test writes them next to the goldens).
+**/goldens/failures/
+# Side-by-side images from tool/golden_diff.py.
+*.diff.png

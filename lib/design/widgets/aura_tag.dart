@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../text.dart';
 import '../tokens.dart';
 import '../tone.dart';
 
@@ -18,19 +19,21 @@ class AuraTag extends StatelessWidget {
   Widget build(BuildContext context) {
     assert(tone != AuraTone.up, 'Tags are never up-colored');
     final color = tone.colorOr(AuraColors.inkTertiary);
-    return Text.rich(
-      TextSpan(
-        children: [
-          const TextSpan(text: '·'),
-          // 6 pt between the dot and the word, as in the reference.
-          const WidgetSpan(child: SizedBox(width: 6)),
-          TextSpan(text: text),
-        ],
+    return auraLiftFootnote(
+      Text.rich(
+        TextSpan(
+          children: [
+            const TextSpan(text: '·'),
+            // 6 pt between the dot and the word, as in the reference.
+            const WidgetSpan(child: SizedBox(width: 6)),
+            TextSpan(text: text),
+          ],
+        ),
+        style: AuraType.footnote.copyWith(color: color),
+        maxLines: 1,
+        softWrap: false,
+        semanticsLabel: text,
       ),
-      style: AuraType.footnote.copyWith(color: color),
-      maxLines: 1,
-      softWrap: false,
-      semanticsLabel: text,
     );
   }
 }

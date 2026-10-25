@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../api/errors.dart';
+import '../api/generated/models/badge.dart';
 import '../api/generated/models/error_code.dart';
+import '../api/generated/models/halt_reason.dart';
 import '../api/generated/models/side.dart';
 import '../format/change.dart';
 import '../format/money.dart';
@@ -175,7 +177,7 @@ ErrorCopy errorCopy(
       title: 'Trading is halted',
       body: p.has('resumesAt')
           ? 'Trading resumes at ${p.moment('resumesAt')}.'
-          : 'Trading resumes when the vote closes.',
+          : tradingResumesAfterVote,
     ),
     // W09: "Closed until 7:00 am".
     ErrorCode.marketClosed => ErrorCopy(
@@ -249,14 +251,7 @@ ErrorCopy errorCopy(
       ),
     },
     // W04. The screen's slider and "Keep going" are the choices.
-    ErrorCode.equityTooLow => ErrorCopy(
-      title: p.has('minimum')
-          ? "You're under ${p.money('minimum')}"
-          : "You're too low to trade",
-      body:
-          "That's not enough to open a position. "
-          'Keep what you have, or start over with Chapter 7.',
-    ),
+    ErrorCode.equityTooLow => underMinimumCopy(p.decimal('minimum')),
     ErrorCode.dailyFilingLimit => ErrorCopy(
       title: switch (p.integer('limit')) {
         final int n => "You've filed $n ${_plural(n, 'event', 'events')} today",
@@ -527,3 +522,477 @@ ErrorCopy offlineBanner(
       "Trading and filing wait until you're back.",
   action: 'Retry',
 );
+
+// ---------------------------------------------------------------------------
+// Home (W09, W11, W12)
+// ---------------------------------------------------------------------------
+
+const fileAnEvent = 'File an event';
+const trade = 'Trade';
+
+/// Trading while the market is closed means setting orders (W09).
+const setAnOrder = 'Set an order';
+const watchlistTitle = 'Watchlist';
+const searchFriends = 'Search friends or tickers…';
+
+/// IPO day (W12): nobody else is listed yet.
+const nobodyToSearch = 'Nobody to search yet';
+
+/// The tag after a name in a row: a ruling waiting for the open, then your
+/// own position.
+const tagRuled = 'Ruled';
+const tagHolding = 'Holding';
+const tagShort = 'Short';
+
+/// "Net worth · Season 1", "Net worth · at the close",
+/// "Net worth · as of 9:41 pm".
+String netWorthLabel({
+  required bool closed,
+  required bool delayed,
+  required int season,
+  required DateTime asOf,
+  required tz.Location zone,
+  required DateTime now,
+}) {
+  if (delayed) return 'Net worth · ${asOfLabel(asOf, zone, now: now)}';
+  if (closed) return 'Net worth · at the close';
+  return 'Net worth · Season $season';
+}
+
+/// "As of 9:41 pm", next to a list whose prices aren't live (W11).
+String asOfStatus(DateTime asOf, tz.Location zone, {required DateTime now}) =>
+    'As of ${formatMoment(asOf, zone, now: now)}';
+
+/// The closed banner (W09): when it opens, what lands then, and what orders
+/// do meanwhile. [queued] are the tickers with a ruling waiting for the open.
+ErrorCopy closedBanner({
+  required DateTime? opensAt,
+  required List<String> queued,
+  required tz.Location zone,
+  required DateTime now,
+}) {
+  const orders = 'Orders you set now fill at the opening price.';
+  return ErrorCopy(
+    title: opensAt == null
+        ? 'The market is closed'
+        : 'Closed until ${formatMoment(opensAt, zone, now: now)}',
+    body: switch (queued) {
+      [] => orders,
+      [final one] =>
+        'A ruling on $one lands at the open, so it will gap. $orders',
+      [...final some, final last] =>
+        'Rulings on ${some.join(', ')} and $last land at the open, so they '
+            'will gap. $orders',
+    },
+  );
+}
+
+/// IPO day (W12).
+String ipoHeroNote(int minListings) =>
+    'Your starting cash. The market opens at $minListings listings.';
+String listedOf(int listed, int minListings) =>
+    '$listed of $minListings listed';
+const cantTradeYourself = "You can't trade yourself";
+const memberPickingTicker = 'Joined · picking a ticker';
+String invitedNotOpened(String ago) => "Invited $ago · hasn't opened it";
+const almost = 'Almost';
+const nudge = 'Nudge';
+const inviteSomeone = 'Invite someone';
+const inviteSomeoneNote = 'Anyone with the link can list';
+const firstOnTheTape = 'First thing on the tape';
+const analystAtTheOpen = 'The Analyst · when the market opens';
+
+// ---------------------------------------------------------------------------
+// Trade sheet (W05, W06)
+// ---------------------------------------------------------------------------
+
+/// "Buy $ANNA"; with a quantity once it's settled, "Buy 12 $ANNA".
+String tradeTitle(Side side, String ticker, {Decimal? quantity}) =>
+    quantity == null
+    ? '${_verb(side)} $ticker'
+    : '${_verb(side)} ${formatQuantity(quantity)} $ticker';
+
+const orderMarket = 'Market';
+const orderLimit = 'Limit';
+const orderStop = 'Stop';
+const orderType = 'Order type';
+
+/// Under the stepper: "shares at about A$124.10".
+String sharesAtAbout(Decimal price) => 'shares at about ${formatMoney(price)}';
+
+/// "20 × A$124.10".
+String quantityAt(Decimal quantity, Decimal price) =>
+    '${formatQuantity(quantity)} × ${formatMoney(price)}';
+
+/// "Fee (0.5%)": the rate as the server sends it, without trailing zeros.
+String feeLabel(Decimal ratePct) => 'Fee (${ratePct.toString()}%)';
+
+const estimatedTotal = 'Estimated total';
+const youSaw = 'You saw';
+const newTotal = 'New total';
+
+/// "A$1,511.84 (+15.19)": the new total and how far it moved.
+String totalWithChange(Decimal total, Decimal change) =>
+    '${formatMoney(total)} (${formatSigned(change)})';
+
+/// The ticket's button: "Buy 20 $ANNA".
+String tradeButton(Side side, Decimal quantity, String ticker) =>
+    '${_verb(side)} ${formatQuantity(quantity)} $ticker';
+
+/// The requote's slider: "Slide to buy at A$125.36".
+String slideToTradeAt(Side side, Decimal price) =>
+    'Slide to ${_verb(side).toLowerCase()} at ${formatMoney(price)}';
+
+/// The requote's way out: "Don't buy".
+String dontTrade(Side side) => "Don't ${_verb(side).toLowerCase()}";
+
+const priceHoldsFor = 'This price holds for';
+
+// ---------------------------------------------------------------------------
+// Stock page (W10, and behind the trade sheet)
+// ---------------------------------------------------------------------------
+
+/// "$ANNA · Anna", or with the last trade while halted:
+/// "$MIA · Mia · last trade 4:51 pm".
+String stockLine(
+  String ticker,
+  String name, {
+  String? lastTrade,
+  List<Badge> badges = const [],
+}) => [
+  formatTicker(ticker),
+  name,
+  for (final badge in badges) ?badgeLabel(badge),
+  if (lastTrade != null) 'last trade $lastTrade',
+].join(' · ');
+
+/// A listing's badge, as it reads after the name: "Hard to borrow" (W07).
+/// Badges added to the contract later aren't shown until they have words.
+String? badgeLabel(Badge badge) => switch (badge) {
+  Badge.hardToBorrow => 'Hard to borrow',
+  Badge.otcPink => 'OTC Pink',
+  Badge.meme => 'Meme stock',
+  Badge.rumorPending => 'Rumor pending',
+  Badge.queuedForOpen => 'Ruling at the open',
+  Badge.$unknown => null,
+};
+
+/// The status chip on a halted stock page (W10).
+String haltStatus(HaltReason reason) => switch (reason) {
+  HaltReason.newsPending => 'Halted · news pending',
+  HaltReason.volatility => 'Halted · big move',
+  HaltReason.circuitBreaker => 'Halted · circuit breaker',
+  HaltReason.$unknown => 'Halted',
+};
+
+const voteClosesIn = 'Vote closes in';
+
+/// "4 of 6 voted".
+String votedOf(int voted, int eligible) => '$voted of $eligible voted';
+
+/// The word under an impact score.
+String impactWord(int impact) => switch (impact.sign) {
+  > 0 => 'Gain',
+  < 0 => 'Loss',
+  _ => 'Lore',
+};
+
+/// Why a news halt needs a vote, and what confirming it does (W10).
+String haltExplainer(String ticker, Decimal movePct) {
+  final size = movePct.abs().toString();
+  final way = movePct.sign < 0 ? 'lower' : 'higher';
+  return "A ruling this big needs the group's vote. If it's confirmed, "
+      '${formatTicker(ticker)} reopens about $size% $way.';
+}
+
+const yourVote = 'Your vote';
+const voteConfirm = 'Confirm';
+String voteConfirmNote(int impact) =>
+    'The ruling stands at ${formatImpact(impact)}';
+const voteDecline = 'Decline';
+const voteDeclineNote = 'The ruling is voided';
+const voteReconsider = 'Reconsider';
+const voteReconsiderNote = "The Analyst rules once more, and that's final";
+
+/// "Voting pays A$100.00. Nobody sees how you voted."
+String votingPays(Decimal reward) =>
+    'Voting pays ${formatMoney(reward)}. Nobody sees how you voted.';
+
+const sell = 'Sell';
+const buy = 'Buy';
+
+/// Under disabled Sell and Buy while a news vote runs (W10).
+const tradingResumesAfterVote = 'Trading resumes when the vote closes.';
+
+// ---------------------------------------------------------------------------
+// Your short, near liquidation (W07) and liquidated (W08)
+// ---------------------------------------------------------------------------
+
+const today = 'today';
+
+/// A percentage to one decimal, without a sign: "4.2%".
+String _pct1(Decimal pct) => '${pct.abs().round(scale: 1)}%';
+
+/// A percentage as the server sends it, without trailing zeros: "31%".
+String _pct(Decimal pct) => '${pct.abs()}%';
+
+String nearLiquidationTitle(String ticker) =>
+    'Your ${formatTicker(ticker)} short is close to liquidation';
+
+/// "4.2% more and the exchange covers it for you. Short interest is 31%, so
+/// a squeeze can get there fast."
+String nearLiquidationBody(Decimal awayPct, Decimal shortInterestPct) =>
+    '${_pct1(awayPct)} more and the exchange covers it for you. Short '
+    'interest is ${_pct(shortInterestPct)}, so a squeeze can get there fast.';
+
+const yourShort = 'Your short';
+const entryToLiquidation = 'From your entry to liquidation';
+
+/// "4.2% away".
+String awayFromLiquidation(Decimal awayPct) => '${_pct1(awayPct)} away';
+
+const statPosition = 'Position';
+const statReturn = 'Return';
+const statCollateral = 'Collateral';
+const statBorrowFee = 'Borrow fee';
+
+/// "Short 60".
+String shortQuantity(Decimal quantity) => 'Short ${formatQuantity(quantity)}';
+
+/// "130%".
+String ratio(Decimal pct) => _pct(pct);
+
+/// "min 125%".
+String minimumRatio(Decimal pct) => 'min ${_pct(pct)}';
+
+/// "0.6% a day".
+String perDay(Decimal pct) => '${_pct(pct)} a day';
+
+/// What liquidation does, in the position's own numbers (W07).
+String liquidationExplainer(Decimal liquidationPrice, Decimal quantity) =>
+    'Above ${formatMoney(liquidationPrice)} the exchange buys back all '
+    "${formatQuantity(quantity)} shares at market and returns what's left of "
+    'your collateral. Covering yourself nudges the price up too.';
+
+/// "Cover 30", "Cover all 60".
+String cover(Decimal quantity) => 'Cover ${formatQuantity(quantity)}';
+String coverAll(Decimal quantity) => 'Cover all ${formatQuantity(quantity)}';
+
+String liquidatedTitle(String ticker) =>
+    'Your ${formatTicker(ticker)} short was liquidated';
+
+/// "3:12 pm · $JAKE crossed A$117.00 and your collateral fell under 125%".
+String liquidatedWhy({
+  required String at,
+  required String ticker,
+  required Decimal triggerPrice,
+  required Decimal maintenancePct,
+}) =>
+    '$at · ${formatTicker(ticker)} crossed ${formatMoney(triggerPrice)} and '
+    'your collateral fell under ${_pct(maintenancePct)}';
+
+const returnedToCash = 'Returned to your cash';
+const onTheTrade = 'on the trade';
+const collateralHeld = 'Collateral held';
+
+/// "Bought back 60 at A$118.10".
+String boughtBack(Decimal quantity, Decimal price) =>
+    'Bought back ${formatQuantity(quantity)} at ${formatMoney(price)}';
+const returned = 'Returned';
+const onTheTape = 'On the tape';
+
+/// A tape headline quoted on a screen: “…”. Headlines come from the server
+/// bare; the screen that quotes them adds the marks.
+String quoted(String text) => '“$text”';
+
+/// Liquidations never name the trader (API-CONTRACT.md → Privacy), and the
+/// screen says so: "3:12 pm · your name isn't in it".
+String nameNotInIt(String at) => "$at · your name isn't in it";
+const seePortfolio = 'Portfolio';
+
+/// "See $JAKE".
+String seeStock(String ticker) => 'See ${formatTicker(ticker)}';
+
+// ---------------------------------------------------------------------------
+// Chapter 7 (W04)
+// ---------------------------------------------------------------------------
+
+/// Under the minimum to trade (`EQUITY_TOO_LOW`, and the W04 offer). The
+/// screen's slider and "Keep going" are the choices, so no button here.
+ErrorCopy underMinimumCopy(Decimal? minimum) => ErrorCopy(
+  title: minimum == null
+      ? "You're too low to trade"
+      : "You're under ${formatMoney(minimum)}",
+  body:
+      "That's not enough to open a position. "
+      'Keep what you have, or start over with Chapter 7.',
+);
+
+const ifYouFile = 'If you file';
+const youGet = 'You get';
+const youGiveUp = 'You give up';
+
+/// "A$64.12 + 1 position".
+String netWorthAndPositions(Decimal netWorth, int positions) => positions == 0
+    ? formatMoney(netWorth)
+    : '${formatMoney(netWorth)} + $positions '
+          '${_plural(positions, 'position', 'positions')}';
+const badgeUntilSeasonEnds = 'Your badge, until the season ends';
+const whatTheTapeWillSay = 'What the tape will say';
+const tapeTheMomentYouFile = 'The tape · the moment you file';
+const slideToDeclareBankruptcy = 'Slide to declare bankruptcy';
+
+/// "Keep going with A$64.12".
+String keepGoingWith(Decimal netWorth) =>
+    'Keep going with ${formatMoney(netWorth)}';
+
+// ---------------------------------------------------------------------------
+// About you: a rumor (W01), a ruling (W02), an SEC charge (W03)
+// ---------------------------------------------------------------------------
+
+/// The status chip while closed: "Closed · opens 7:00 am".
+String closedOpens(
+  DateTime opensAt,
+  tz.Location zone, {
+  required DateTime now,
+}) => 'Closed · opens ${formatMoment(opensAt, zone, now: now)}';
+
+/// "An unconfirmed report about you · 2:14 am".
+String rumorAboutYou(String at) => 'An unconfirmed report about you · $at';
+
+/// "A ruling about you · 2:24 am".
+String rulingAboutYou(String at) => 'A ruling about you · $at';
+
+const rumorExplainer =
+    'This is all anyone can see right now. The details come with the ruling.';
+const rulingIn = 'Ruling in';
+const coSigns = 'Co-signs';
+const receiptsLabel = 'Receipts';
+const howDoYouRespond = 'How do you respond?';
+const respondNoComment = 'No comment';
+const respondNoCommentNote = 'Shows on the tape. Changes nothing.';
+const respondDeny = 'Deny it';
+
+/// "If it's confirmed, the hit is 20% bigger".
+String denyNote(Decimal penaltyPct) =>
+    "If it's confirmed, the hit is ${penaltyPct.abs()}% bigger";
+const risky = 'Risky';
+const respondNothing = 'Say nothing';
+
+/// "The ruling lands in 9 minutes either way".
+String rulingLandsIn(Duration left) {
+  final minutes = left.inMinutes;
+  return minutes < 1
+      ? 'The ruling lands in under a minute either way'
+      : 'The ruling lands in $minutes ${_plural(minutes, 'minute', 'minutes')} '
+            'either way';
+}
+
+/// Under a rumor about you (W01).
+String rumorFooter(String ticker) =>
+    "You can't trade ${formatTicker(ticker)}. Once it's ruled you'll see who "
+    'filed it; nobody else will.';
+
+/// "Lands at the 7:00 am open".
+String landsAtOpen(DateTime at, tz.Location zone, {required DateTime now}) =>
+    'Lands at the ${formatMoment(at, zone, now: now)} open';
+
+/// "From A$112.40 · indicated, not traded yet".
+String indicatedFrom(Decimal previousClose) =>
+    'From ${formatMoney(previousClose)} · indicated, not traded yet';
+
+/// "The Analyst · Downgrade · target A$96.00".
+String analystSource(String ratingChange, Decimal target) =>
+    'The Analyst · $ratingChange · target ${formatMoney(target)}';
+const statAnalyst = 'Analyst';
+
+/// "3 co-signs".
+String coSignCount(int n) => '$n ${_plural(n, 'co-sign', 'co-signs')}';
+
+/// "×1.30".
+String multiplier(Decimal factor) => '×${factor.toStringAsFixed(2)}';
+const groupVote = 'Group vote';
+
+/// "4–1".
+String voteScore(int up, int down) => '$up–$down';
+const postStatement = 'Post a statement';
+const postStatementNote = 'Runs on the tape next to the story';
+const superInjunction = 'Super-injunction';
+const superInjunctionNote = 'Hides the story · the price hit stays';
+
+/// "2 of 3 left".
+String leftOf(int left, int of) => '$left of $of left';
+const appealRuling = 'Appeal';
+const appealNote = 'The admin reviews it';
+
+/// "6 days left", from the deadline.
+String daysLeft(DateTime deadline, {required DateTime now}) {
+  final hours = deadline.difference(now).inHours;
+  final days = (hours / 24).ceil();
+  return days <= 1 ? 'Last day' : '$days days left';
+}
+
+/// "Social Exchange Commission · Case 0007 · 1:21 pm".
+String secCaseLine(String caseNumber, String at) =>
+    'Social Exchange Commission · Case $caseNumber · $at';
+const takenFromCash = 'Taken from your cash';
+
+/// "Your profit, clawed back, plus a 50% fine".
+String clawbackNote(Decimal finePct) =>
+    'Your profit, clawed back, plus a ${finePct.abs()}% fine';
+
+/// "You filed the gym rumor".
+String youFiled(String what) => 'You filed $what';
+
+/// "You bought 30 $JAKE".
+String youBought(Decimal quantity, String ticker) =>
+    'You bought ${formatQuantity(quantity)} ${formatTicker(ticker)}';
+
+/// "12:43 pm at A$97.00".
+String atPrice(String at, Decimal price) => '$at at ${formatMoney(price)}';
+const profitWhenRuled = 'Profit when it ruled';
+const oddsOfGettingCaught = 'Odds of getting caught';
+
+/// "27%".
+String percentWhole(Decimal pct) => '${pct.abs()}%';
+const clawedBackPlusFine = 'Clawed back + fine';
+
+/// "Scandal filed against $SAM".
+String scandalAgainst(String ticker) =>
+    'Scandal filed against ${formatTicker(ticker)}';
+
+/// "−8 impact · on the tape now".
+String impactOnTape(int impact) =>
+    '${formatImpact(impact)} impact · on the tape now';
+const appealCharge = 'Appeal the charge';
+
+/// How to stay clean, in the case's own window (W03).
+String stayClean(int windowMinutes) =>
+    "To stay clean: don't trade a stock from the moment you file or co-sign "
+    "on it until $windowMinutes minutes after it's ruled.";
+
+// ---------------------------------------------------------------------------
+// The exchange is down (W13)
+// ---------------------------------------------------------------------------
+
+const lastGoodUpdate = 'Last good update';
+const ordersAndRulingsQueued = 'Orders and rulings queued';
+const keptForLater = 'Kept for later';
+const marketClock = 'Market clock';
+const paused = 'Paused';
+const onTheTapeOnceBack = "On the tape, once it's back";
+
+/// The one Analyst line the app writes itself: the server can't send one
+/// while it's down.
+const exchangeDownTape =
+    'Trading halted exchange-wide pending a technical review. The Analyst was '
+    'unavailable for comment.';
+
+/// The lead-in to W13's reference line, as drawn. There's no push yet, so
+/// the promise isn't true: Nathan decides the wording (see PROGRESS.md →
+/// Waiting on Nathan).
+const exchangeDownLeadIn = "You'll get a notification when it's back";
+
+/// "You'll get a notification when it's back · 503 · 7F2K".
+String exchangeDownFootnote(String? reference) =>
+    [exchangeDownLeadIn, ?reference].join(' · ');

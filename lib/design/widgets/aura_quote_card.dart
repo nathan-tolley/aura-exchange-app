@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../text.dart';
 import '../tokens.dart';
 
 /// The Analyst speaking: notes, Fed statements and company profiles, in the
@@ -25,9 +26,11 @@ class AuraQuoteCard extends StatelessWidget {
           style: AuraType.quote.copyWith(color: AuraColors.inkSecondary),
         ),
         if (source != null)
-          Text(
-            source!,
-            style: AuraType.footnote.copyWith(color: AuraColors.inkTertiary),
+          auraLiftFootnote(
+            Text(
+              source!,
+              style: AuraType.footnote.copyWith(color: AuraColors.inkTertiary),
+            ),
           ),
       ],
     );

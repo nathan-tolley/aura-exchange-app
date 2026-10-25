@@ -32,6 +32,8 @@ abstract final class AuraColors {
   static const Color onUp = Color(0xFF0A0E12);
   /// Text on an ink fill: primary and Buy button labels. 17.6:1.
   static const Color onInk = Color(0xFF0B0C0E);
+  /// Behind a sheet: dims the screen it came from to two fifths, so the sheet is the only thing lit (W05, W06). Black at 60%.
+  static const Color scrim = Color(0x99000000);
 }
 
 /// 4pt spacing scale. 16 is the screen gutter.
@@ -88,6 +90,10 @@ abstract final class AuraType {
   /// Analyst notes, in ink-secondary, never boxed. Sample: “We are moving to Underweight.”
   static const TextStyle quote = TextStyle(fontFamily: AuraFonts.serif, fontFamilyFallback: AuraFonts.fallback, fontSize: 17.0, height: 1.4706, fontWeight: FontWeight.w400, color: AuraColors.ink, fontFeatures: _tabular, fontVariations: [FontVariation('opsz', 16)]);
   // Interface: SF Pro Text. Hierarchy comes from size and color, rarely from weight.
+  /// The one statement on a screen that is itself the message (W13). Nothing else on the screen competes with it. Sample: The exchange is down
+  static const TextStyle alertTitle = TextStyle(fontFamily: AuraFonts.sans, fontFamilyFallback: AuraFonts.fallback, fontSize: 30.0, height: 1.2, fontWeight: FontWeight.w600, letterSpacing: -0.3, color: AuraColors.ink, fontFeatures: _tabular);
+  /// What happened, on a full-screen outcome (W08). One per screen; a section heading never uses it. Sample: Your $JAKE short was liquidated
+  static const TextStyle largeTitle = TextStyle(fontFamily: AuraFonts.sans, fontFamilyFallback: AuraFonts.fallback, fontSize: 25.0, height: 1.2, fontWeight: FontWeight.w600, letterSpacing: -0.25, color: AuraColors.ink, fontFeatures: _tabular);
   /// Stock headers and sheet titles. Sample: $ANNA
   static const TextStyle title = TextStyle(fontFamily: AuraFonts.sans, fontFamilyFallback: AuraFonts.fallback, fontSize: 17.0, height: 1.2941, fontWeight: FontWeight.w600, color: AuraColors.ink, fontFeatures: _tabular);
   /// Section headings. Small and confident, never 20pt+. Sample: Watchlist

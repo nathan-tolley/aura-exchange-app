@@ -57,3 +57,39 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** The Prism check forces `AUTH_EXPIRED` signed out (no refresh). The refresh and replay are tested against a fake server.
 
+## 6. A refused quote that still shows its numbers (2026-10-25 · open)
+
+**What's missing.** W05 shows a refused trade with its receipt (20 × A$124.10 = A$2,482.00, fee A$12.41, estimated total A$2,494.41) **and** the reason with its fix ("You're A$229.91 short … Buy 18 instead"). Today `POST /quotes` either returns a `Quote` (whose `cashAfter` can be negative, "the trade would be rejected", but which has no `maxQuantity`) or fails with `422 INSUFFICIENT_CASH` (which has `maxQuantity` but no gross, fee or total). Neither answer has both.
+
+**Ask (additive), either of:**
+- **A.** On a quote that would be refused, return `201` with the `Quote` plus a `rejection` field in the error shape (`code`, `params`, `retryable`, `action`). The app shows the receipt and the banner from one answer. Preferred.
+- **B.** Keep the 422, and add the priced numbers to the params of `INSUFFICIENT_CASH`, `ORDER_TOO_LARGE` and `SHORT_CAP`: `price`, `gross`, `feeRate`, `fee`, `total`.
+
+**Meanwhile.** `tradeTicketModel()` (`lib/features/trade/trade_model.dart`) takes a `Quote` and an optional `ApiError` rejection, which is option A's shape. The W05 fixture supplies both.
+
+## 7. How a liquidation settled (2026-10-25 · open)
+
+**What's missing.** W08 is the liquidation receipt: when it happened, the price the stock crossed and the maintenance ratio it fell under, the collateral held, the buy-back (quantity, price, cost), the fee, what came back to your cash, and the realised loss on the trade with its percent. `Position` (status `LIQUIDATED`) gives the collateral and quantity, but nothing in `/v1` gives the settlement. Working it out in the app would copy the server's settlement rules.
+
+**Ask (additive).** On `Position`, when `status` is `LIQUIDATED`, a `liquidation` object: `at`, `triggerPrice`, `maintenanceRatioPct`, `price`, `cost`, `feeRatePct`, `fee`, `returned`, `realizedPnl`, `realizedPnlPct` (decimal strings like the rest). The liquidation notification's deep link can then open `GET /positions/{id}`.
+
+**Meanwhile.** `Liquidation` (`lib/features/portfolio/liquidated_model.dart`) has exactly these fields, and the W08 fixture fills it.
+
+## 8. What Chapter 7 would do (2026-10-25 · open)
+
+**What's missing.** W04 offers bankruptcy at the moment of the loss and shows its terms: the minimum to trade (A$100.00), the cash you'd restart with (A$2,000.00), the badge you'd carry until the season ends ("Chapter 7"), and the Analyst's line for the tape. `/v1` has `Portfolio.canDeclareBankruptcy` and `POST /exchanges/{id}/bankruptcy` ("reset to A$2,000 with a badge" in its summary), but none of those values. They're game rules, so the app shouldn't hold them.
+
+**Ask (additive).** When `canDeclareBankruptcy` is true, a `bankruptcyOffer` on `Portfolio`: `minimumEquity`, `resetCash`, `badge`, `tapeHeadline` (the line the tape would run). Or a `GET /exchanges/{id}/bankruptcy` returning the same.
+
+**Meanwhile.** `BankruptcyOffer` (`lib/features/portfolio/bankruptcy_model.dart`) has these fields, and the W04 fixture fills them. The banner's copy is the same `underMinimumCopy()` that `EQUITY_TOO_LOW` uses.
+
+## 9. What the "about you" screens need besides the event (2026-10-25 · open)
+
+**What's missing.** W01–W03 come mostly from `Event`, `Ruling`, `Votes`, `Appeal` and `Membership`, but a few numbers are game rules the app shouldn't hold, and the SEC case has no schema at all:
+
+- **W01:** how much bigger a confirmed hit gets if you deny it ("If it's confirmed, the hit is 20% bigger"). Ask: `denialPenaltyPct` on `Event` while it's a rumor about you, or on the exchange's settings.
+- **W02:** the rating's change in the source line ("The Analyst · **Downgrade** · target A$96.00"); `Analyst.rating` is BUY/HOLD/SELL, not the change. Ask: `ratingChange` (`UPGRADE`, `DOWNGRADE`, `REITERATE`) on `Ruling` or `Analyst`. Also how many super-injunctions a season allows ("2 of 3 left"); `Membership.superInjunctionsLeft` gives the 2. Ask: `superInjunctionsPerSeason` on `Membership` or the exchange's settings.
+- **W03 (Phase 2):** an `SecCase` schema: `caseNumber`, `status`, `chargedAt`, `headline`, `taken`, `finePct`, the evidence (the event you filed with a short name such as "the gym rumor" and when, the trade with quantity, ticker, time and price, the profit when it ruled, the odds of getting caught), the scandal it filed against you (ticker, impact, move), the appeal deadline, and the clean window in minutes.
+
+**Meanwhile.** The presenters take these as inputs (`lib/features/events/about_you_models.dart`; `SecCharge` is the W03 record) and the fixtures fill them.
+

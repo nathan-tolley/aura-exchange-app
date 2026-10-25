@@ -58,11 +58,15 @@ String generateTokens(Map<String, dynamic> json) {
     )
     ..writeln('abstract final class AuraColors {');
   for (final t in colors) {
+    // #rrggbb, or #rrggbbaa for a translucent color such as the scrim.
     final hex = hexOf(t).substring(1).toUpperCase();
+    final argb = hex.length == 8
+        ? '${hex.substring(6)}${hex.substring(0, 6)}'
+        : 'FF$hex';
     out
       ..writeln('  /// ${t['usage']}')
       ..writeln(
-        '  static const Color ${_camel(t['name'] as String)} = Color(0xFF$hex);',
+        '  static const Color ${_camel(t['name'] as String)} = Color(0x$argb);',
       );
   }
   out

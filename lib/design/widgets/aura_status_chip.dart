@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../text.dart';
 import '../tokens.dart';
 
 /// The shared status vocabulary. The API's status enums use the same words
@@ -77,14 +78,16 @@ class AuraStatusChip extends StatelessWidget {
             height: 6,
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
-        Text(
-          label ?? status.word,
-          style: AuraType.footnote.copyWith(
-            fontWeight: FontWeight.w500,
-            color: color,
+        auraLiftFootnote(
+          Text(
+            label ?? status.word,
+            style: AuraType.footnote.copyWith(
+              fontWeight: FontWeight.w500,
+              color: color,
+            ),
+            maxLines: 1,
+            softWrap: false,
           ),
-          maxLines: 1,
-          softWrap: false,
         ),
       ],
     );

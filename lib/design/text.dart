@@ -31,3 +31,27 @@ TextStyle auraBaseTextStyle({bool? systemSans}) {
     decoration: TextDecoration.none,
   );
 }
+
+/// The references draw 12.5 pt text (footnotes, tags, chips, row and nav
+/// subtitles, stat labels) 2 pt higher than its line box puts it, and every
+/// drawn screen agrees (docs/aura/NOTES.md, 2026-10-25). Wrap 12.5 pt text
+/// in this to match: the ink moves up, the layout doesn't.
+Widget auraLiftFootnote(Widget text) =>
+    Transform.translate(offset: const Offset(0, -2), child: text);
+
+/// A large sans title for this platform: [AuraType.largeTitle] (25 pt, W08)
+/// or [AuraType.alertTitle] (30 pt, W13). On iOS it's SF Pro Display, as
+/// tokened. Elsewhere Inter stands in, and at these sizes Inter runs 10–15%
+/// wider than SF Pro Display (W08's title would wrap), so it uses its display
+/// optical size and 0.01em more tracking to take SF Pro Display's width.
+TextStyle auraDisplayTitle(TextStyle style, {bool? systemSans}) {
+  if (systemSans ?? auraUsesSystemSans) return style;
+  return style.copyWith(
+    fontVariations: const [FontVariation('opsz', 32)],
+    letterSpacing: (style.letterSpacing ?? 0) - (style.fontSize ?? 0) * 0.01,
+  );
+}
+
+/// [AuraType.largeTitle] for this platform (see [auraDisplayTitle]).
+TextStyle auraLargeTitle({bool? systemSans}) =>
+    auraDisplayTitle(AuraType.largeTitle, systemSans: systemSans);

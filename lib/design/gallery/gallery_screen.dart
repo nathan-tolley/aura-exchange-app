@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
 
 import '../tokens.dart';
+import '../widgets/aura_nav_card.dart';
 import '../widgets/aura_section_header.dart';
 import 'component_states.dart';
+import 'screen_states.dart';
 
 /// One state of a component, built with fixture data.
 class GalleryState {
@@ -26,10 +28,14 @@ class GallerySection {
 /// and their states join it as they're built (CLAUDE.md → Every state
 /// exists).
 class AuraGalleryScreen extends StatelessWidget {
-  const AuraGalleryScreen({super.key, this.sections});
+  const AuraGalleryScreen({super.key, this.sections, this.onOpenScreen});
 
   /// Defaults to every component.
   final List<GallerySection>? sections;
+
+  /// Opens a screen state full size (`/gallery/screens/W09`). Without it the
+  /// gallery lists components only.
+  final ValueChanged<String>? onOpenScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +62,20 @@ class AuraGalleryScreen extends StatelessWidget {
                         color: AuraColors.inkTertiary,
                       ),
                     ),
+                    if (onOpenScreen case final open?) ...[
+                      const SizedBox(height: 24),
+                      const AuraSectionHeader('Screens'),
+                      const SizedBox(height: 4),
+                      AuraNavCard(
+                        children: [
+                          for (final screen in screenStates)
+                            AuraNavRow(
+                              title: '${screen.id} · ${screen.label}',
+                              onTap: () => open(screen.id),
+                            ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               );

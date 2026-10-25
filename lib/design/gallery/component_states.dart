@@ -12,6 +12,7 @@ import '../widgets/aura_countdown.dart';
 import '../widgets/aura_empty_state.dart';
 import '../widgets/aura_hero_card.dart';
 import '../widgets/aura_icon_button.dart';
+import '../widgets/aura_icon_tile.dart';
 import '../widgets/aura_impact_disc.dart';
 import '../widgets/aura_money.dart';
 import '../widgets/aura_nav_card.dart';
@@ -685,6 +686,16 @@ final List<GallerySection> componentStates = [
         title: 'You’re an insider on this one',
         body: r'Trading $ELI until 1:21 pm may get the SEC’s attention.',
       ),
+    ),
+  ]),
+  GallerySection('IconTile', [
+    GalleryState(
+      'Empty state, 44 pt',
+      (_) => const AuraIconTile(AuraIcons.tape),
+    ),
+    GalleryState(
+      'A screen that is the message, 52 pt, warn (W13)',
+      (_) => const AuraIconTile(AuraIcons.alert, size: 52, tone: AuraTone.warn),
     ),
   ]),
   GallerySection('EmptyState', [

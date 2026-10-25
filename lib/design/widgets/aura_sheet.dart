@@ -42,7 +42,6 @@ class AuraSheet extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
-            spacing: 12,
             children: [
               Center(
                 child: Container(
@@ -54,7 +53,10 @@ class AuraSheet extends StatelessWidget {
                   ),
                 ),
               ),
-              if (title != null)
+              // The title sits 11 pt under the grabber and 13 pt over the
+              // content, as in the references; content is 12 pt apart.
+              if (title != null) ...[
+                const SizedBox(height: 11),
                 Row(
                   children: [
                     Expanded(
@@ -71,7 +73,13 @@ class AuraSheet extends StatelessWidget {
                     ),
                   ],
                 ),
-              ...children,
+                const SizedBox(height: 13),
+              ] else
+                const SizedBox(height: 12),
+              for (final (i, child) in children.indexed) ...[
+                if (i > 0) const SizedBox(height: 12),
+                child,
+              ],
             ],
           ),
         ),

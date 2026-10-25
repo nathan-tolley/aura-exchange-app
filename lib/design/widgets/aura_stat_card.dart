@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../text.dart';
 import '../surface.dart';
 import '../tokens.dart';
 import '../tone.dart';
@@ -53,23 +54,25 @@ class AuraStatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 3,
         children: [
-          Row(
-            spacing: 8,
-            children: [
-              Expanded(
-                child: Text(
-                  label,
-                  style: _small.copyWith(color: AuraColors.inkTertiary),
-                ),
-              ),
-              if (trailing != null)
-                Text(
-                  trailing!,
-                  style: _small.copyWith(
-                    color: trailingTone.colorOr(AuraColors.inkTertiary),
+          auraLiftFootnote(
+            Row(
+              spacing: 8,
+              children: [
+                Expanded(
+                  child: Text(
+                    label,
+                    style: _small.copyWith(color: AuraColors.inkTertiary),
                   ),
                 ),
-            ],
+                if (trailing != null)
+                  Text(
+                    trailing!,
+                    style: _small.copyWith(
+                      color: trailingTone.colorOr(AuraColors.inkTertiary),
+                    ),
+                  ),
+              ],
+            ),
           ),
           valueChild ??
               Text(
@@ -88,10 +91,19 @@ class AuraStatCard extends StatelessWidget {
 /// Stat cards in a 2- or 3-column grid with 10 pt gaps; a `wide` card takes
 /// a whole row.
 class AuraStatGrid extends StatelessWidget {
-  const AuraStatGrid({super.key, required this.children, this.columns = 2});
+  const AuraStatGrid({
+    super.key,
+    required this.children,
+    this.columns = 2,
+    this.rowGap = gap,
+  });
 
   final List<AuraStatCard> children;
   final int columns;
+
+  /// Between rows. The component reference has 10; W07's position sheet
+  /// sets its rows 6 apart (columns stay 10 apart).
+  final double rowGap;
 
   static const gap = 10.0;
 
@@ -110,7 +122,7 @@ class AuraStatGrid extends StatelessWidget {
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: gap,
+      spacing: rowGap,
       children: [
         for (final row in rows)
           row.first.wide

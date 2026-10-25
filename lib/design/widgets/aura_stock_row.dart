@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
+import '../text.dart';
 import '../../format/change.dart';
 import '../../format/money.dart';
 import '../../format/ticker.dart';
@@ -98,12 +99,14 @@ class AuraStockRow extends StatelessWidget {
                       spacing: 6,
                       children: [
                         Flexible(
-                          child: Text(
-                            name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AuraType.footnote.copyWith(
-                              color: AuraColors.inkTertiary,
+                          child: auraLiftFootnote(
+                            Text(
+                              name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AuraType.footnote.copyWith(
+                                color: AuraColors.inkTertiary,
+                              ),
                             ),
                           ),
                         ),

@@ -64,6 +64,35 @@ Future<void> expectPreview(
   await expectLater(find.byKey(_stageKey), matchesGoldenFile('$path.png'));
 }
 
+/// The drawn screens (design/reference/screens/W##-*.png) are an iPhone at
+/// 390×844 pt, 2×, with a 52 pt status bar area.
+const screenSize = Size(390, 844);
+const screenPadding = EdgeInsets.only(top: 52, bottom: 34);
+
+/// Pumps [screen] full size, as the references were drawn, and compares it
+/// with `test/goldens/<path>.png` (780×1688 px).
+Future<void> expectScreen(
+  WidgetTester tester,
+  String path,
+  Widget screen,
+) async {
+  tester.view.physicalSize = screenSize * 2;
+  tester.view.devicePixelRatio = 2;
+  tester.view.padding = FakeViewPadding(
+    top: screenPadding.top * 2,
+    bottom: screenPadding.bottom * 2,
+  );
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(
+    KeyedSubtree(
+      key: _stageKey,
+      child: AuraTestApp(reduceMotion: true, child: screen),
+    ),
+  );
+  await tester.pumpAndSettle();
+  await expectLater(find.byKey(_stageKey), matchesGoldenFile('$path.png'));
+}
+
 /// One preview row: items side by side, wrapping, 16 pt apart, centered.
 Widget previewRow(List<Widget> children, {double spacing = 16}) => Wrap(
   spacing: spacing,

@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 
 import '../icons.dart';
-import '../surface.dart';
 import '../tokens.dart';
 import 'aura_button.dart';
+import 'aura_icon_tile.dart';
 
 /// What a list says when there's nothing in it: why it's empty and the one
 /// action that fills it. In voice, but clear: "No positions yet" / "Your
@@ -33,16 +33,7 @@ class AuraEmptyState extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         spacing: 8,
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: AuraSheetScope.raised(context),
-              borderRadius: BorderRadius.circular(AuraRadius.md),
-            ),
-            alignment: Alignment.center,
-            child: AuraIcon(icon, size: 24, color: AuraColors.inkSecondary),
-          ),
+          AuraIconTile(icon),
           Padding(
             padding: const EdgeInsets.only(top: 6),
             child: Text(

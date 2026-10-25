@@ -84,8 +84,10 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
 
 Each screen is driven by fixtures identical to the reference data. These prove the design system in Flutter before the flows are built.
 
-- [ ] W01 Rumor about you · W02 Ruling on you · W03 SEC charge · W04 Chapter 7 · W05 Trade rejected · W06 Requote · W07 Margin warning · W08 Liquidated · W09 Home closed · W10 Halted · W11 Home offline · W12 Home IPO day · W13 Exchange down
+- [x] W01 Rumor about you · W02 Ruling on you · W03 SEC charge · W04 Chapter 7 · W05 Trade rejected · W06 Requote · W07 Margin warning · W08 Liquidated · W09 Home closed · W10 Halted · W11 Home offline · W12 Home IPO day · W13 Exchange down
+  - *2026-10-25: all 13 done, through presenters from API-shaped fixtures (or local records where the contract has no shape yet: contract requests #6–#9), each in the State Gallery under Screens. Share of pixels that differ by more than 24 levels: W01 2.15%, W02 2.26%, W03 2.27%, W04 1.95%, W05 1.15%, W06 1.36%, W07 2.42%, W08 2.32%, W09 2.17%, W10 1.90%, W11 2.01%, W12 2.00%, W13 2.57%. On the way, the components moved to where the screens draw them (12.5 pt text, banner, receipt, sheet), and every component golden got closer to its reference (now 0.03–2.81%).*
 - **Check:** for each one, open the golden (390×844 @2x) and `design/reference/screens/W##-*.png` side by side. They are near identical apart from the font. Note any deliberate difference in `docs/aura/NOTES.md`.
+  - *2026-10-25: passes. Each golden was diffed (`python tool/golden_diff.py diff`) and looked at beside its reference. What's left is Inter against SF Pro (including the hero number sitting 1 pt high) and the approximated sparklines. Deliberate differences, all in `NOTES.md`: W07's "Your short" heading 2 pt high, W05's dimmed price 2 pt low (the stock header follows W10), W13's note 2 pt high, and W13's footnote lead-in, which waits on Nathan.*
 
 ## A4: Phase 1 flows (every state in `SCREENS.md`)
 
