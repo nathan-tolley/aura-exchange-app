@@ -1,0 +1,35 @@
+# Generates the /v1 client from the synced contract (api/openapi.yaml).
+#   dart run swagger_parser
+#   dart run build_runner build
+# The output in lib/api/generated is committed and never edited by hand: the
+# iOS workflow doesn't run the generators. lib/api/client.dart wraps it.
+# swagger_parser overwrites but never deletes, so when a schema is renamed or
+# removed, delete its old file (and .g.dart) by hand.
+swagger_parser:
+  schema_path: api/openapi.yaml
+  output_directory: lib/api/generated
+  language: dart
+  json_serializer: json_serializable
+  root_client: true
+  root_client_name: AuraApi
+  export_file: true
+  put_clients_in_folder: true
+  # New enum values are additive (API-CONTRACT.md), so an older app must
+  # still parse them rather than throw.
+  unknown_enum_value: true
+  enums_to_json: true
+  mark_files_as_generated: true
+  # swagger_parser 1.45 de-duplicates names case-sensitively, so a component
+  # and an inline schema named after a property can both generate as one
+  # class, and the second overwrites the first:
+  # - Side (BUY/SELL/SHORT/COVER) and ListingSummary.myPosition's inline
+  #   LONG/SHORT `side`. The inline one goes to the identical PositionSide.
+  # - The Error envelope and its inline `error` object: only the inner shape
+  #   survives. It's renamed ErrorDetail so it doesn't shadow Dart's Error.
+  #   The app never uses it; lib/api/errors.dart parses the envelope itself.
+  # test/api/generated_test.dart fails if the Side collision comes back.
+  replacement_rules:
+    - pattern: "^side$"
+      replacement: "PositionSide"
+    - pattern: "^Error$"
+      replacement: "ErrorDetail"

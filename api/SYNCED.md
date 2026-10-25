@@ -2,7 +2,7 @@
 
 `api/openapi.yaml` is a copy of the API repo's `openapi/v1.yaml`. The API repo owns it: never edit the copy here to make the app work. If the app needs something the contract doesn't have, write it in `docs/aura/CONTRACT-REQUESTS.md`.
 
-To sync: copy `..\Aura-Exchange\openapi\v1.yaml` to `api/openapi.yaml`, regenerate the client (`dart run swagger_parser`), fix compile errors, then add a row here.
+To sync: copy `..\Aura-Exchange\openapi\v1.yaml` to `api/openapi.yaml`, regenerate the client (`dart run swagger_parser`, then `dart run build_runner build`; delete the files of any schema that was renamed or removed), run `test/api/generated_test.dart`, fix compile errors, then add a row here.
 
 | Date | Source | Spec version | API `CHANGES.md` entry |
 | --- | --- | --- | --- |

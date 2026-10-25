@@ -53,7 +53,8 @@ Work top to bottom. Tick a box only when its check passes, and `flutter analyze`
 
 ## A2: API layer
 
-- [ ] Generate the client from `api/openapi.yaml` into `lib/api/generated/` (`swagger_parser.yaml` config).
+- [x] Generate the client from `api/openapi.yaml` into `lib/api/generated/` (`swagger_parser.yaml` config).
+  - *2026-10-25: 10 Retrofit clients, 53 requests, 119 models, committed (the iOS workflow doesn't run generators). Two generator name collisions are fixed in the config (see `NOTES.md`); `test/api/generated_test.dart` decodes the spec's examples.*
 - [ ] `client.dart`:
   - base URL from `API_BASE_URL`
   - bearer token from secure storage

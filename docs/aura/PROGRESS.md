@@ -4,9 +4,9 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: contract synced to `1.0.0-draft.5` on `main`. A1 done; A0 done apart from the iOS release run.
-- State: done; A2 not started
-- Next action: A2 (API layer) on a new branch `a2-api-layer` off `main`: generate the client with swagger_parser (`swagger_parser.yaml`), then `client.dart`, `errors.dart` + `l10n/strings.dart` (copy for all 31 codes in `ErrorCode`), the rest of `format/` (exchange-local and relative time), `stream.dart`, and the Freshness provider. Error-mapping tests use local fixtures until contract request #1 lands.
+- Step: A2 → `client.dart` (branch `a2-api-layer`)
+- State: in progress (the generated client is committed)
+- Next action: `lib/api/client.dart`: base URL from `API_BASE_URL` (`''` means unset → Prism default), bearer from secure storage, single-flight refresh on 401 `AUTH_EXPIRED` then replay once, `X-App-Version`/`X-App-Build` (package_info_plus), and the idempotency-key helper. Then `errors.dart` + `l10n/strings.dart` (all 31 codes), time formats, `stream.dart`, Freshness, repositories + Prism tests.
 - How to compare: goldens are 840 px wide at 2× like the references. Diff each golden against `design/reference/components/<Name>.png` and look at both. All 30 reference goldens are within 0.03–4.5% differing pixels (antialiasing). See `docs/aura/NOTES.md` for what was matched and the 12.5 pt quirk to recheck in A3.
 - Lessons: `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format` the generated token files.
 - Uncommitted work: none
@@ -37,3 +37,4 @@ One line per finished step: date · step · what · commit.
 - 2026-10-24 · A1 · State Gallery at `/gallery` (debug only): 31 components, 59 states, every state tested on its own (131 tests in all) · `c3c24a3`
 - 2026-10-24 · A1 · A1 check: 30 reference goldens within 0.03–4.52%, plus 31 State Gallery goldens covering every state; A1 boxes ticked · (this commit)
 - 2026-10-25 · Sync · Contract `1.0.0-draft.1` → `1.0.0-draft.5` (API `aura-v1` at `7212276`): `api/openapi.yaml` and `docs/aura/API-CONTRACT.md`, 31 error codes; Prism serves it. The GitHub repo exists (Nathan), so A0's first box is ticked · (this commit)
+- 2026-10-25 · A2 · Generated client (swagger_parser + Retrofit + json_serializable) from draft.5: 10 clients, 53 requests, 119 models; fixed two generator name collisions (`Side`, `Error`); decode test from the spec's examples · (this commit)
