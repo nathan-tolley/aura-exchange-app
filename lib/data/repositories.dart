@@ -35,6 +35,10 @@ final marketRepositoryProvider = Provider<MarketRepository>(
   (ref) => MarketRepository(ref.watch(auraApiProvider)),
 );
 
+final eventsRepositoryProvider = Provider<EventsRepository>(
+  (ref) => EventsRepository(ref.watch(auraApiProvider)),
+);
+
 final tapeRepositoryProvider = Provider<TapeRepository>(
   (ref) => TapeRepository(ref.watch(auraApiProvider)),
 );
@@ -197,6 +201,70 @@ class MarketRepository {
       range: range,
     ),
   );
+}
+
+/// Filing, the rumor, the ruling and the votes (SCREENS.md #11–#17).
+class EventsRepository {
+  EventsRepository(this._api);
+
+  final AuraApi _api;
+
+  /// Files an event. It starts in `SENDING` for its unsend window.
+  Future<Event> file(EventCreate event, IdempotencyKey key) => guardApi(
+    () => _api.events.postEvents(idempotencyKey: key.value, body: event),
+  );
+
+  /// One event, as you're allowed to see it.
+  Future<Event> event(String eventId) =>
+      guardApi(() => _api.events.getEventsEventId(eventId: eventId));
+
+  /// Takes a filing back while it's `SENDING`.
+  Future<Event> unsend(String eventId, IdempotencyKey key) => guardApi(
+    () => _api.events.postEventsEventIdUnsend(
+      eventId: eventId,
+      idempotencyKey: key.value,
+    ),
+  );
+
+  /// Co-sign, cap or withdraw during the rumor.
+  Future<Event> react(String eventId, Kind kind, IdempotencyKey key) =>
+      guardApi(
+        () => _api.events.postEventsEventIdReactions(
+          eventId: eventId,
+          idempotencyKey: key.value,
+          body: EventsEventIdReactionsRequestBody(kind: kind),
+        ),
+      );
+
+  /// The subject's statement during the rumor: no comment, or deny.
+  Future<Event> statement(String eventId, Kind2 kind, IdempotencyKey key) =>
+      guardApi(
+        () => _api.events.postEventsEventIdStatement(
+          eventId: eventId,
+          idempotencyKey: key.value,
+          body: EventsEventIdStatementRequestBody(kind: kind),
+        ),
+      );
+
+  /// Up, down, or take your vote back, on a ruling.
+  Future<Event> vote(String eventId, Direction direction, IdempotencyKey key) =>
+      guardApi(
+        () => _api.events.postEventsEventIdVotes(
+          eventId: eventId,
+          idempotencyKey: key.value,
+          body: EventsEventIdVotesRequestBody(direction: direction),
+        ),
+      );
+
+  /// Confirm, decline or reconsider a news halt.
+  Future<Halt> haltVote(String haltId, Choice choice, IdempotencyKey key) =>
+      guardApi(
+        () => _api.events.postHaltsHaltIdVotes(
+          haltId: haltId,
+          idempotencyKey: key.value,
+          body: HaltsHaltIdVotesRequestBody(choice: choice),
+        ),
+      );
 }
 
 class TapeRepository {

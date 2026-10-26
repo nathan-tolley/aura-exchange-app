@@ -912,6 +912,58 @@ const tradeOffline = ErrorCopy(
 );
 
 // ---------------------------------------------------------------------------
+// File an event and its status (SCREENS.md #11, #12)
+// ---------------------------------------------------------------------------
+
+const whoIsItAbout = "Who's it about?";
+const searchPeople = 'Search friends';
+const whatHappened = 'What happened';
+const whatHappenedPlaceholder =
+    'Stick to what you saw. The Analyst writes the headline.';
+
+/// Who can see who filed (API-CONTRACT.md → Privacy).
+String onlyTheyKnow(String name) =>
+    'Only moderators and $name will know it was you.';
+const onlyModeratorsKnow = 'Only moderators will know it was you.';
+const fileIt = 'File';
+const filingLabel = 'Filing…';
+const writeWhatHappened = 'Write what happened to file it.';
+const selfFilingTitle = "You're filing about yourself";
+const selfFilingBody =
+    'The Analyst treats company-issued news with some skepticism.';
+const discardTitle = 'Discard this filing?';
+const discardBody = "What you wrote won't be kept.";
+const keepWriting = 'Keep writing';
+const discard = 'Discard';
+
+/// Filing while offline.
+const fileOffline = ErrorCopy(
+  title: "You're offline",
+  body: "It wasn't filed. Retry when you're back; it won't file twice.",
+  action: 'Retry',
+);
+String yourFilingAbout(String ticker) => 'Your filing about $ticker';
+const filedLabel = 'Filed';
+const rumorLabel = 'Rumor';
+const rulingLabel = 'Ruling';
+const waiting = 'Waiting';
+String liveUntil(String at) => 'until $at';
+String ruledAt(String at) => 'Ruled $at';
+
+/// The unsend toast: "Filed · goes live in 0:24" (PLAN.md → Quality bar).
+String filedGoesLive(String countdown) => 'Filed · goes live in $countdown';
+const undo = 'Undo';
+const unsentTitle = 'Unsent';
+const unsentBody = "Nobody saw it, and it won't move anything.";
+const haltedForVoteTitle = 'Halted for a group vote';
+String haltedForVoteBody(String at) =>
+    'The group has until $at to confirm, decline or reconsider it.';
+const voidedTitle = 'Voided';
+const voidedBody = "It didn't move the price.";
+const inReviewTitle = 'With the moderators';
+const inReviewBody = 'They check it before anyone else sees it.';
+
+// ---------------------------------------------------------------------------
 // Stock page (SCREENS.md #7, #8)
 // ---------------------------------------------------------------------------
 

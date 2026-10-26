@@ -10,6 +10,8 @@ import 'design/gallery/screen_states.dart';
 import 'design/sheet_route.dart';
 import 'design/tokens.dart';
 import 'design/widgets/aura_tab_bar.dart';
+import 'features/events/event_screen.dart';
+import 'features/events/file_sheet.dart';
 import 'features/home/home_screen.dart';
 import 'features/market/market_screen.dart';
 import 'features/onboarding/create_exchange_screen.dart';
@@ -66,6 +68,8 @@ abstract final class Routes {
 
   static String invite(String code) => '/invite/$code';
   static String stock(String listingId) => '/stock/$listingId';
+  static String fileAbout(String listingId) =>
+      Uri(path: file, queryParameters: {'subject': listingId}).toString();
   static String event(String eventId) => '/events/$eventId';
   static String trade(String listingId, Side side) => Uri(
     path: '/trade/$listingId',
@@ -172,12 +176,21 @@ final List<RouteBase> _routes = [
   // Screens still to come in A4: the background until they're built.
   GoRoute(path: Routes.notifications, builder: (_, _) => const _Pending()),
   GoRoute(path: Routes.settings, builder: (_, _) => const _Pending()),
-  GoRoute(path: Routes.file, builder: (_, _) => const _Pending()),
+  GoRoute(
+    path: Routes.file,
+    pageBuilder: (_, state) => AuraSheetPage(
+      key: state.pageKey,
+      child: FileSheet(subjectId: state.uri.queryParameters['subject']),
+    ),
+  ),
   GoRoute(
     path: '/stock/:id',
     builder: (_, state) => StockScreen(listingId: state.pathParameters['id']!),
   ),
-  GoRoute(path: '/events/:id', builder: (_, _) => const _Pending()),
+  GoRoute(
+    path: '/events/:id',
+    builder: (_, state) => EventScreen(eventId: state.pathParameters['id']!),
+  ),
   GoRoute(
     path: '/trade/:listingId',
     pageBuilder: (_, state) => AuraSheetPage(

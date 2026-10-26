@@ -13,6 +13,7 @@ import '../../design/tokens.dart';
 import '../../design/widgets/aura_skeleton.dart';
 import '../../format/time.dart';
 import '../../router.dart';
+import '../events/file_sheet.dart';
 import '../shared/top_bar.dart';
 import '../system/load_failure.dart';
 import '../trade/trade_screen.dart';
@@ -146,7 +147,7 @@ class _StockScreenState extends ConsumerState<StockScreen> {
       onRange: (r) => setState(() => _range = r),
       onTab: (t) => setState(() => _tab = t),
       onEvent: (e) => context.push(Routes.event(e)),
-      onFile: () => context.push(Routes.file),
+      onFile: () => openFiling(context, subjectId: id),
       onTrade: offline ? null : _trade,
       toast: _toast,
     );

@@ -9,6 +9,7 @@ import '../../data/me.dart';
 import '../../design/widgets/aura_tab_bar.dart';
 import '../../format/time.dart';
 import '../../router.dart';
+import '../events/file_sheet.dart';
 import '../system/load_failure.dart';
 import 'home_loading_view.dart';
 import 'home_model.dart';
@@ -87,7 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       hidden: _hidden,
       onBell: onBell,
       onToggleHidden: () => setState(() => _hidden = !_hidden),
-      onFile: () => context.push(Routes.file),
+      onFile: () => openFiling(context),
       onTrade: () => goTab(context, AuraTab.market),
       onRetry: () => ref.read(marketProvider(exchangeId).notifier).refresh(),
       onRow: (id) => context.push(Routes.stock(id)),

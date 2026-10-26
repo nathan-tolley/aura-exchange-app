@@ -11,8 +11,9 @@ import '../../features/stock/short_view.dart';
 import '../../features/stock/stock_header.dart';
 import '../../features/system/exchange_down_view.dart';
 import '../../features/trade/trade_sheet_view.dart';
-import '../../l10n/strings.dart';
+import '../../l10n/strings.dart' show stockLine;
 import '../widgets/aura_status_chip.dart';
+import 'fixtures/events.dart';
 import 'fixtures/frames.dart';
 import 'fixtures/market.dart';
 import 'fixtures/onboarding.dart';
@@ -191,6 +192,18 @@ final List<GalleryScreen> screenStates = [
   GalleryScreen('S10e', 'Trade, resting order', (_) => tradeResting()),
   GalleryScreen('S10f', 'Trade, getting a price', (_) => tradeQuoting()),
   GalleryScreen('S10g', 'Trade, offline', (_) => tradeNoNetwork()),
+  GalleryScreen('S11a', 'File an event, pick subject', (_) => fileSubject()),
+  GalleryScreen('S11b', 'File an event, compose', (_) => fileCompose()),
+  GalleryScreen('S11c', 'File an event, about yourself', (_) => fileSelf()),
+  GalleryScreen('S11d', 'File an event, daily limit', (_) => fileLimit()),
+  GalleryScreen('S11e', 'File an event, discard', (_) => fileDiscard()),
+  GalleryScreen('S11f', 'File an event, nothing typed', (_) => fileEmpty()),
+  GalleryScreen('S12a', 'Your filing, sending', (_) => filingSending()),
+  GalleryScreen('S12b', 'Your filing, rumor live', (_) => filingRumor()),
+  GalleryScreen('S12c', 'Your filing, ruled', (_) => filingRuled()),
+  GalleryScreen('S12d', 'Your filing, halted', (_) => filingHalted()),
+  GalleryScreen('S12e', 'Your filing, voided', (_) => filingVoided()),
+  GalleryScreen('S12f', 'Your filing, unsent', (_) => filingUnsent()),
   GalleryScreen(
     'W05',
     'Trade sheet, rejected',

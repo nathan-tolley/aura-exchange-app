@@ -35,6 +35,8 @@ class AuraTextField extends StatelessWidget {
     this.autofillHints,
     this.inputFormatters,
     this.focusNode,
+    this.minLines = 1,
+    this.maxLines = 1,
   });
 
   /// "Email", "Name", "Ticker". Also what VoiceOver calls the field.
@@ -65,6 +67,11 @@ class AuraTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final FocusNode? focusNode;
 
+  /// More than 1 makes a box that grows from [minLines] to [maxLines]: an
+  /// event's text.
+  final int minLines;
+  final int maxLines;
+
   @override
   Widget build(BuildContext context) {
     // Start from the ambient style so the field keeps the app's sans; input
@@ -94,8 +101,10 @@ class AuraTextField extends StatelessWidget {
           label: label,
           hint: note,
           child: Container(
-            height: 48,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+            height: maxLines > 1 ? null : 48,
+            padding: maxLines > 1
+                ? const EdgeInsets.symmetric(horizontal: 14, vertical: 12)
+                : const EdgeInsets.symmetric(horizontal: 14),
             decoration: BoxDecoration(
               color: AuraSheetScope.raised(context),
               borderRadius: BorderRadius.circular(AuraRadius.md),
@@ -132,8 +141,12 @@ class AuraTextField extends StatelessWidget {
                     autofillHints: autofillHints,
                     inputFormatters: inputFormatters,
                     keyboardAppearance: Brightness.dark,
-                    autocorrect: false,
-                    enableSuggestions: false,
+                    minLines: minLines,
+                    maxLines: maxLines,
+                    // Prose gets the keyboard's help; addresses and
+                    // tickers don't.
+                    autocorrect: maxLines > 1,
+                    enableSuggestions: maxLines > 1,
                   ),
                 ),
               ],
