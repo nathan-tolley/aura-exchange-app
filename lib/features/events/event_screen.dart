@@ -10,6 +10,7 @@ import '../../api/generated/export.dart' hide Freshness;
 import '../../api/stream.dart';
 import '../../data/freshness.dart';
 import '../../data/lifecycle.dart';
+import '../../data/listing_data.dart';
 import '../../data/live_market.dart';
 import '../../data/me.dart';
 import '../../data/repositories.dart';
@@ -20,6 +21,9 @@ import '../../format/time.dart';
 import '../../router.dart';
 import '../shared/top_bar.dart';
 import '../system/load_failure.dart';
+import '../stock/stock_screen.dart';
+import 'about_you_models.dart';
+import 'about_you_views.dart';
 import 'filing_status.dart';
 
 /// One event (`GET /events/{id}`), refetched on resume and whenever the
@@ -92,11 +96,89 @@ class _EventScreenState extends ConsumerState<EventScreen> {
         !now.isBefore(until)) {
       Future.microtask(() => ref.invalidate(eventProvider(widget.eventId)));
     }
-    final model = filingStatusModel(e, zone: zone, now: now);
-    return FilingStatusView(
-      model: model,
+    if (e.isMine) {
+      return FilingStatusView(
+        model: filingStatusModel(e, zone: zone, now: now),
+        onClose: close,
+        onUndo: _unsendProblem == null ? _unsend : null,
+      );
+    }
+    // Halted for a vote: the stock page is where the vote is (W10).
+    if (e.status == EventStatus.halted) {
+      return StockScreen(listingId: e.subject.id);
+    }
+    final market = exchangeId == null
+        ? null
+        : ref.watch(marketProvider(exchangeId)).value;
+    final listing = ref.watch(listingProvider(e.subject.id)).value;
+    final freshness =
+        market?.freshness ??
+        (listing == null
+            ? Freshness(asOf: now, marketState: MarketState.closed)
+            : Freshness(
+                asOf: listing.asOf,
+                marketState: listing.marketState,
+                nextChangeAt: listing.nextChangeAt,
+              ));
+    final events = ref.read(eventsRepositoryProvider);
+    Future<void> act(Future<Object?> Function(IdempotencyKey key) call) async {
+      try {
+        await call(IdempotencyKey());
+      } on ApiError {
+        // The refetch below shows where it stands; a failed tap leaves it.
+      }
+      ref.invalidate(eventProvider(widget.eventId));
+    }
+
+    if (e.status == EventStatus.rumor) {
+      if (e.isAboutMe) {
+        return RumorAboutYouView(
+          model: rumorAboutYouModel(
+            event: e,
+            market: freshness,
+            zone: zone,
+            now: now,
+          ),
+          onClose: close,
+          onRespond: (i) => switch (i) {
+            0 => act((k) => events.statement(e.id, Kind2.noComment, k)),
+            1 => act((k) => events.statement(e.id, Kind2.deny, k)),
+            _ => close(),
+          },
+        );
+      }
+      return RumorView(
+        model: rumorModel(event: e, market: freshness, zone: zone, now: now),
+        onClose: close,
+        onReact: (kind) => act((k) => events.react(e.id, kind, k)),
+      );
+    }
+    if (e.isAboutMe && e.ruling != null && listing != null) {
+      return RulingOnYouView(
+        model: rulingOnYouModel(
+          event: e,
+          listing: listing,
+          market: freshness,
+          superInjunctionsLeft:
+              ref.watch(currentMembershipProvider)?.superInjunctionsLeft ?? 0,
+          zone: zone,
+          now: now,
+        ),
+        onClose: close,
+      );
+    }
+    return RulingView(
+      model: rulingModel(
+        event: e,
+        market: freshness,
+        holdsStock: listing?.myPosition != null,
+        zone: zone,
+        now: now,
+      ),
       onClose: close,
-      onUndo: _unsendProblem == null ? _unsend : null,
+      onVote: (i) => act(
+        (k) => events.vote(e.id, i == 0 ? Direction.up : Direction.down, k),
+      ),
     );
   }
 }

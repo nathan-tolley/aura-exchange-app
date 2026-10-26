@@ -463,7 +463,7 @@ const _miaEvent = '33333333-0000-4000-8000-000000000001';
 
 /// W10: $MIA halted at 4:51 pm for a +22 merger ruling; 4 of 6 have voted
 /// and the vote closes in 24:10.
-(ListingDetail, EventSummary) haltedMia() {
+(ListingDetail, EventSummary) haltedMia({String? mine}) {
   final event = <String, Object?>{
     'id': _miaEvent,
     'subject': {
@@ -522,7 +522,7 @@ const _miaEvent = '33333333-0000-4000-8000-000000000001';
         'decline': 1,
         'reconsider': 1,
         'eligible': 6,
-        'mine': null,
+        'mine': mine,
         'reward': '100.00',
       },
       'ifConfirmedMovePct': '16.20',
@@ -534,8 +534,8 @@ const _miaEvent = '33333333-0000-4000-8000-000000000001';
   return (listing, EventSummary.fromJson(event));
 }
 
-HaltedStockModel halted() {
-  final (listing, event) = haltedMia();
+HaltedStockModel halted({String? mine}) {
+  final (listing, event) = haltedMia(mine: mine);
   return haltedStockModel(
     listing: listing,
     event: event,

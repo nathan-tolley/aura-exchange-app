@@ -964,6 +964,52 @@ const inReviewTitle = 'With the moderators';
 const inReviewBody = 'They check it before anyone else sees it.';
 
 // ---------------------------------------------------------------------------
+// Rumor, ruling and the news-halt vote (SCREENS.md #13, #15, #17)
+// ---------------------------------------------------------------------------
+
+/// "Unconfirmed report · 9:37 pm".
+String unconfirmedReport(String at) => 'Unconfirmed report · $at';
+const rumorPublicExplainer =
+    'The Analyst rules when the rumor closes. Until then, anyone can back '
+    'it or call it.';
+const caps = 'Caps';
+const didItHappen = 'Did it happen?';
+const iSawIt = 'I saw it';
+const iSawItNote = "Co-sign it. You'll be an insider on it until after it rules.";
+const didntHappen = "Didn't happen";
+const didntHappenNote = 'Cap it. It counts for less if it rules.';
+const takeItBack = 'Take it back';
+const takeItBackNote = 'Withdraw your call while the rumor is open';
+const yourCall = 'Your call';
+
+/// The insider notice (PLAN.md → Rumor phase).
+String insiderTitle(String at) => "You're an insider on this until $at";
+String insiderBody(String ticker) =>
+    "Don't trade $ticker until then. It's on record that you knew.";
+
+/// "Ruled · 9:52 pm".
+String ruledLine(String at) => 'Ruled · $at';
+const correctionTitle = 'Correction';
+const storyHiddenTitle = 'Story hidden';
+const storyHiddenBody =
+    'A super-injunction hid the story. The price hit stays.';
+const theAnalyst = 'The Analyst';
+const groupVoteHeading = 'Was it worth it?';
+const voteUp = 'Vote it up';
+const voteUpNote = 'It deserved a bigger move';
+const voteDown = 'Vote it down';
+const voteDownNote = 'It deserved a smaller one';
+const yourVoteLabel = 'Your vote';
+String votingClosesAt(String at) => 'Voting closes $at';
+const votingClosed = 'Voting has closed';
+String conflictedNote(String ticker) =>
+    'You hold $ticker, so your vote shows as conflicted.';
+const confirmedTitle = 'The group confirmed it';
+const declinedTitle = 'The group declined it';
+const reconsideredTitle = 'The group sent it back';
+const reconsideredBody = "The Analyst ruled once more, and that's final.";
+
+// ---------------------------------------------------------------------------
 // Stock page (SCREENS.md #7, #8)
 // ---------------------------------------------------------------------------
 
@@ -1322,8 +1368,11 @@ const respondNoCommentNote = 'Shows on the tape. Changes nothing.';
 const respondDeny = 'Deny it';
 
 /// "If it's confirmed, the hit is 20% bigger".
-String denyNote(Decimal penaltyPct) =>
-    "If it's confirmed, the hit is ${penaltyPct.abs()}% bigger";
+/// The deny row's risk. The size comes from the server (contract request
+/// #9); without it the note says so without a number.
+String denyNote(Decimal? penaltyPct) => penaltyPct == null
+    ? "If it's confirmed, the hit is bigger"
+    : "If it's confirmed, the hit is ${penaltyPct.abs()}% bigger";
 const risky = 'Risky';
 const respondNothing = 'Say nothing';
 
@@ -1350,8 +1399,11 @@ String indicatedFrom(Decimal previousClose) =>
     'From ${formatMoney(previousClose)} · indicated, not traded yet';
 
 /// "The Analyst · Downgrade · target A$96.00".
-String analystSource(String ratingChange, Decimal target) =>
-    'The Analyst · $ratingChange · target ${formatMoney(target)}';
+String analystSource(String? ratingChange, Decimal target) => [
+  'The Analyst',
+  ?ratingChange,
+  'target ${formatMoney(target)}',
+].join(' · ');
 const statAnalyst = 'Analyst';
 
 /// "3 co-signs".
@@ -1368,8 +1420,11 @@ const postStatementNote = 'Runs on the tape next to the story';
 const superInjunction = 'Super-injunction';
 const superInjunctionNote = 'Hides the story · the price hit stays';
 
-/// "2 of 3 left".
-String leftOf(int left, int of) => '$left of $of left';
+
+/// "2 of 3 left", or "2 left" when the season's allowance isn't known
+/// (contract request #9).
+String leftOf(int left, int? of) =>
+    of == null ? '$left left' : '$left of $of left';
 const appealRuling = 'Appeal';
 const appealNote = 'The admin reviews it';
 

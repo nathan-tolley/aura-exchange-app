@@ -1,6 +1,8 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../api/generated/models/kind.dart';
+
 import '../../design/icons.dart';
 import '../../design/text.dart';
 import '../../design/tokens.dart';
@@ -9,11 +11,13 @@ import '../../design/widgets/aura_avatar.dart';
 import '../../design/widgets/aura_hero_card.dart';
 import '../../design/widgets/aura_impact_disc.dart';
 import '../../design/widgets/aura_nav_card.dart';
+import '../../design/widgets/aura_price_change.dart';
 import '../../design/widgets/aura_quote_card.dart';
 import '../../design/widgets/aura_receipt.dart';
 import '../../design/widgets/aura_section_header.dart';
 import '../../design/widgets/aura_stat_card.dart';
 import '../../design/widgets/aura_status_chip.dart';
+import '../shared/banner_model.dart';
 import '../shared/top_bar.dart';
 
 /// A row that leads somewhere: a choice, an action, a related story.
@@ -157,6 +161,163 @@ class SecChargeModel {
   final AuraReceiptRow total;
   final List<RowModel> actions;
   final String footer;
+}
+
+/// A rumor about someone else (SCREENS.md #13).
+@immutable
+class RumorModel {
+  const RumorModel({
+    required this.chip,
+    required this.subject,
+    required this.teaser,
+    required this.explainer,
+    required this.stats,
+    required this.respondTitle,
+    required this.responses,
+    required this.reactions,
+    this.banner,
+  });
+
+  final ChipModel chip;
+  final SubjectModel subject;
+  final String teaser;
+  final String explainer;
+  final List<(String, String)> stats;
+
+  /// You're an insider on it.
+  final BannerModel? banner;
+  final String respondTitle;
+  final List<RowModel> responses;
+
+  /// What each row of [responses] sends.
+  final List<Kind> reactions;
+}
+
+/// A ruling, as everyone sees it (SCREENS.md #15).
+@immutable
+class RulingModel {
+  const RulingModel({
+    required this.chip,
+    required this.subject,
+    required this.noteSource,
+    required this.stats,
+    required this.votes,
+    this.banner,
+    this.headline,
+    this.note,
+    this.movePct,
+    this.voteTitle,
+    this.voteStatus,
+    this.voteNote,
+  });
+
+  final ChipModel chip;
+  final SubjectModel subject;
+  final BannerModel? banner;
+  final String? headline;
+  final String? note;
+  final String noteSource;
+  final Decimal? movePct;
+  final List<(String, String)> stats;
+  final String? voteTitle;
+
+  /// "Voting closes 11:52 pm".
+  final String? voteStatus;
+
+  /// Up, down; empty once voting has closed.
+  final List<RowModel> votes;
+
+  /// "You hold $JAKE, so your vote shows as conflicted."
+  final String? voteNote;
+}
+
+class RumorView extends StatelessWidget {
+  const RumorView({super.key, required this.model, this.onClose, this.onReact});
+
+  final RumorModel model;
+  final VoidCallback? onClose;
+  final ValueChanged<Kind>? onReact;
+
+  @override
+  Widget build(BuildContext context) {
+    final m = model;
+    return _AboutYouScaffold(
+      chip: m.chip,
+      onClose: onClose,
+      children: [
+        const SizedBox(height: 11),
+        _Subject(m.subject),
+        const SizedBox(height: 27),
+        Text(m.teaser, style: AuraType.headline),
+        const SizedBox(height: 9),
+        Text(m.explainer, style: _small),
+        const SizedBox(height: 23),
+        _Stats(m.stats),
+        if (m.banner case final banner?) ...[
+          const SizedBox(height: 20),
+          ModelBanner(banner),
+        ],
+        const SizedBox(height: 24),
+        AuraSectionHeader(m.respondTitle),
+        _Rows(
+          m.responses,
+          onTap: onReact == null ? null : (i) => onReact!(m.reactions[i]),
+        ),
+      ],
+    );
+  }
+}
+
+class RulingView extends StatelessWidget {
+  const RulingView({super.key, required this.model, this.onClose, this.onVote});
+
+  final RulingModel model;
+  final VoidCallback? onClose;
+
+  /// Up (0) or down (1).
+  final ValueChanged<int>? onVote;
+
+  @override
+  Widget build(BuildContext context) {
+    final m = model;
+    return _AboutYouScaffold(
+      chip: m.chip,
+      onClose: onClose,
+      children: [
+        const SizedBox(height: 11),
+        _Subject(m.subject),
+        if (m.banner case final banner?) ...[
+          const SizedBox(height: 20),
+          ModelBanner(banner),
+        ],
+        if (m.headline case final headline?) ...[
+          const SizedBox(height: 27),
+          Text(headline, style: AuraType.headline),
+        ],
+        if (m.movePct case final move?) ...[
+          const SizedBox(height: 10),
+          AuraPriceChange(pct: move),
+        ],
+        if (m.note case final note?) ...[
+          const SizedBox(height: 16),
+          AuraQuoteCard(quote: note, source: m.noteSource),
+        ],
+        if (m.stats.isNotEmpty) ...[
+          const SizedBox(height: 23),
+          _Stats(m.stats),
+        ],
+        if (m.voteTitle case final title?) ...[
+          const SizedBox(height: 24),
+          AuraSectionHeader(title, statusLabel: m.voteStatus),
+          _Rows(m.votes, onTap: onVote),
+          if (m.voteNote case final note?) ...[
+            const SizedBox(height: 10),
+            auraLiftFootnote(Text(note, style: _meta)),
+          ],
+        ],
+      ],
+    );
+  }
 }
 
 class RumorAboutYouView extends StatelessWidget {

@@ -105,7 +105,8 @@ Build these against Prism first, then switch to the real API as each endpoint la
   - *2026-10-25: `TradeSheet` over the stock page, driven by `TradeFlow`: S09a–f and S10a–g in the gallery with goldens, W05 (rejected cash) and W06 (requote) reached live. Tested against a fake server: a fill, Retry after offline reusing the trade's key, a stale quote requoting with `previousQuoteId` and a new key, the fix setting the allowed quantity, a resting limit order.*
 - [ ] File an event (compose, pick subject, receipts upload, self-filing note, daily limit, discard) → filing status (SENDING with a 30 s unsend, RUMOR, RULED, HALTED, VOIDED)
   - *2026-10-25: built except receipts upload (S11a–f, S12a–f in the gallery with goldens). Photo receipts need the `image_picker` plugin, a question for Nathan; the box stays open until they're in.*
-- [ ] Rumor (teaser, co-sign or cap, insider notice, countdown) · ruling (votes, conflicted, correction) · news-halt vote (countdown, result)
+- [x] Rumor (teaser, co-sign or cap, insider notice, countdown) · ruling (votes, conflicted, correction) · news-halt vote (countdown, result)
+  - *2026-10-25: S13a–c, S15a–e and S17a–b in the gallery with goldens, plus W01, W02 and W10 driven by live events. `/events/:id` chooses your filing, about you, halted (the stock page) or the public view. W02's statement, super-injunction and appeal rows aren't wired yet (NOTES.md).*
 - [ ] Tape (all, filtered, empty, unread) · notifications inbox (grouped by stock, quiet hours, empty)
 - [ ] Portfolio (positions and cash, open orders, empty) · margin warning sheet · liquidated receipt
 - [ ] You (listing, stats, super-injunctions left) · settings (notification prefs, quiet hours, opt out of being listed)

@@ -4,10 +4,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../api/client.dart';
+import '../../api/errors.dart';
+
 import '../../api/generated/export.dart' hide Freshness;
 import '../../data/freshness.dart';
 import '../../data/listing_data.dart';
 import '../../data/live_market.dart';
+import '../../data/repositories.dart';
 import '../../data/me.dart';
 import '../../design/tokens.dart';
 import '../../design/widgets/aura_skeleton.dart';
@@ -109,6 +113,16 @@ class _StockScreenState extends ConsumerState<StockScreen> {
           now: now,
         ),
         onBack: back,
+        onVote: (choice) async {
+          try {
+            await ref
+                .read(eventsRepositoryProvider)
+                .haltVote(halt.id, Choice.fromJson(choice), IdempotencyKey());
+          } on ApiError {
+            // The refetch shows where the vote stands.
+          }
+          ref.invalidate(listingProvider(id));
+        },
       );
     }
 

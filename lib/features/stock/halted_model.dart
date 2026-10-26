@@ -46,18 +46,21 @@ HaltedStockModel haltedStockModel({
         icon: AuraIcons.vote,
         title: voteConfirm,
         subtitle: voteConfirmNote(impact),
+        mine: vote?.mine?.json == 'CONFIRM',
       ),
-      const HaltOption(
+      HaltOption(
         choice: 'DECLINE',
         icon: AuraIcons.close,
         title: voteDecline,
         subtitle: voteDeclineNote,
+        mine: vote?.mine?.json == 'DECLINE',
       ),
-      const HaltOption(
+      HaltOption(
         choice: 'RECONSIDER',
         icon: AuraIcons.gavel,
         title: voteReconsider,
         subtitle: voteReconsiderNote,
+        mine: vote?.mine?.json == 'RECONSIDER',
       ),
     ],
     footnote: vote == null ? '' : votingPays(Decimal.parse(vote.reward)),
