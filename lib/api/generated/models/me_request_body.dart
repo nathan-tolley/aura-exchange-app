@@ -14,6 +14,7 @@ class MeRequestBody {
   
   factory MeRequestBody.fromJson(Map<String, Object?> json) => _$MeRequestBodyFromJson(json);
   
+  @JsonKey(includeIfNull: false)
   final String? displayName;
 
   Map<String, Object?> toJson() => _$MeRequestBodyToJson(this);

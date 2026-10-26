@@ -20,5 +20,5 @@ Map<String, dynamic> _$OrderCreateToJson(OrderCreate instance) =>
       'type': instance.type,
       'quantity': instance.quantity,
       'triggerPrice': instance.triggerPrice,
-      'positionId': instance.positionId,
+      'positionId': ?instance.positionId,
     };

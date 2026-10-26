@@ -36,6 +36,7 @@ class Portfolio {
   final MarketState marketState;
 
   /// When marketState next changes
+  @JsonKey(includeIfNull: true)
   final DateTime? nextChangeAt;
   final String exchangeId;
 

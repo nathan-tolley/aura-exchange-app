@@ -19,5 +19,5 @@ Map<String, dynamic> _$ExchangeCreateToJson(ExchangeCreate instance) =>
     <String, dynamic>{
       'name': instance.name,
       'timezone': instance.timezone,
-      'hours': instance.hours,
+      'hours': ?instance.hours,
     };

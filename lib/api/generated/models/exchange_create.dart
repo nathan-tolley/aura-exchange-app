@@ -20,6 +20,7 @@ class ExchangeCreate {
   
   final String name;
   final String timezone;
+  @JsonKey(includeIfNull: false)
   final MarketHours? hours;
 
   Map<String, Object?> toJson() => _$ExchangeCreateToJson(this);

@@ -5,7 +5,10 @@ import 'package:timezone/timezone.dart' as tz;
 import '../api/errors.dart';
 import '../api/generated/models/badge.dart';
 import '../api/generated/models/error_code.dart';
+import '../api/generated/models/event_status.dart';
+import '../api/generated/models/tape_item_type.dart';
 import '../api/generated/models/halt_reason.dart';
+import '../api/generated/models/order_type.dart';
 import '../api/generated/models/side.dart';
 import '../format/change.dart';
 import '../format/money.dart';
@@ -524,6 +527,214 @@ ErrorCopy offlineBanner(
 );
 
 // ---------------------------------------------------------------------------
+// Sign in (SCREENS.md #1)
+// ---------------------------------------------------------------------------
+
+const signInTitle = 'Sign in to Aura Exchange';
+const signInBody =
+    "Enter your email and we'll send you a 6-digit code. There's no password.";
+const emailLabel = 'Email';
+const emailPlaceholder = 'you@example.com';
+const sendCode = 'Send code';
+const sendingCode = 'Sending…';
+const enterYourEmail = 'Enter your email to get a code.';
+
+/// Under the first button: what Aura Bucks are (PLAN.md → Consent and
+/// safety), before anyone signs up.
+const playMoneyNote = 'Aura Bucks are play money, never bought or cashed out.';
+const checkYourEmail = 'Check your email';
+String codeSentTo(String email) => 'We sent a 6-digit code to $email.';
+String newCodeSentTo(String email) =>
+    'We sent a new code to $email. Use the latest email.';
+const sendNewCode = 'Send a new code';
+const signIn = 'Sign in';
+const checkingCode = 'Checking…';
+const enterTheCode = 'Enter the 6 digits from the email.';
+const sendNewCodeFirst = 'Send a new code first.';
+const useDifferentEmail = 'Use a different email';
+
+/// Signing in while offline: the W11 banner, worded for sign-in.
+const signInOffline = ErrorCopy(
+  title: "You're offline",
+  body: 'Signing in needs a connection. Retry when you have one.',
+  action: 'Retry',
+);
+
+/// A field note from an error's copy: "That code isn't right. You have 2
+/// more tries."
+String noteFrom(ErrorCopy copy) => ['${copy.title}.', ?copy.body].join(' ');
+
+// ---------------------------------------------------------------------------
+// Create an exchange (SCREENS.md #4)
+// ---------------------------------------------------------------------------
+
+const createTitle = 'Start an exchange';
+const createBody =
+    "An exchange is one friend group's market. Everyone in it can be "
+    'listed, and nothing in it leaves it.';
+const exchangeNameLabel = 'Name';
+const exchangeNamePlaceholder = 'The Group Chat';
+const exchangeNameHelp = 'Everyone in it sees this name.';
+const exchangeNameLength = 'Use 2 to 40 characters.';
+const continueLabel = 'Continue';
+const nameItFirst = 'Name it to continue.';
+const gotAnInvite = 'Got an invite? Open the link your friend sent.';
+const whenItTradesTitle = 'When it trades';
+const whenItTradesBody =
+    'Every time on the exchange is on its clock, so everyone sees the same '
+    'open and close.';
+const timezoneLabel = 'Timezone';
+
+/// "Australia/Sydney · 9:41 pm there".
+String zoneSubtitle(String iana, String clock) => '$iana · $clock there';
+const change = 'Change';
+const selected = 'Selected';
+const tradingHoursLabel = 'Trading hours';
+const standardHours =
+    'Pre-market, regular and after-hours sessions start at the standard '
+    'times. The admin can change them later.';
+const createExchange = 'Create exchange';
+const creatingExchange = 'Creating…';
+const youllBeAdmin = "You'll be its admin.";
+
+/// Creating while offline: the W11 banner, worded for this step.
+const createOffline = ErrorCopy(
+  title: "You're offline",
+  body: 'Creating an exchange needs a connection. Retry when you have one.',
+  action: 'Retry',
+);
+const inviteTitle = 'Invite your friends';
+
+/// The market opens at the server's `minListingsToOpen`.
+String inviteBody(int minListings) =>
+    'The market opens when $minListings people are listed. Anyone with this '
+    'link can join and list.';
+const inviteLinkLabel = 'Invite link';
+const inviteCodeLabel = 'Code';
+const inviteExpiresLabel = 'Expires';
+const copyLink = 'Copy link';
+const linkCopied = 'Link copied';
+const makingTheLink = 'The link is still being made.';
+const noLinkYet = 'No link yet. Retry above.';
+
+/// Making a link while offline.
+const inviteOffline = ErrorCopy(
+  title: "You're offline",
+  body: 'The invite link needs a connection. Retry when you have one.',
+  action: 'Retry',
+);
+const waitingTitle = 'Waiting for friends';
+
+/// "The Group Chat opens when 3 people are listed. 0 of 3 so far."
+String waitingBody(String name, int listed, int minListings) =>
+    '$name opens when $minListings people are listed. '
+    '$listed of $minListings so far.';
+const statMembers = 'Members';
+const statListed = 'Listed';
+const statOpens = 'Opens';
+const statCloses = 'Closes';
+const listYourself = 'List yourself';
+const youPickTickerNext = 'You pick your ticker next.';
+
+// ---------------------------------------------------------------------------
+// Join an exchange (SCREENS.md #2)
+// ---------------------------------------------------------------------------
+
+const yourInvite = 'Your invite';
+String joinTitle(String exchange) => 'Join $exchange';
+
+/// "7 people are in it, 6 listed. You'll pick your ticker after you join."
+String joinBody(int members, int listed) =>
+    '$members ${members == 1 ? 'person is' : 'people are'} in it, '
+    '$listed listed. You pick your ticker after you join.';
+const listedHeading = 'Listed';
+const nobodyListedYet = "Nobody's listed yet. You could be first.";
+const joinTheExchange = 'Join the exchange';
+const joiningLabel = 'Joining…';
+String inviteCode(String code) => 'Invite $code';
+const inviteDoesntWork = "This invite link doesn't work";
+const inviteDoesntWorkBody =
+    'Check the link, or ask whoever sent it for a new one.';
+String exchangeIsFull(String exchange) => '$exchange is full';
+const startAnExchange = 'Start an exchange';
+
+/// Joining while offline.
+const joinOffline = ErrorCopy(
+  title: "You're offline",
+  body: 'Joining needs a connection. Retry when you have one.',
+  action: 'Retry',
+);
+
+// ---------------------------------------------------------------------------
+// Your IPO (SCREENS.md #3)
+// ---------------------------------------------------------------------------
+
+const ipoTitle = 'Your IPO';
+
+/// "Listing makes you a stock on The Group Chat. ..."; "this exchange" when
+/// its name couldn't be loaded.
+String ipoBody(String? exchange) =>
+    'Listing makes you a stock on ${exchange ?? 'this exchange'}. Your '
+    'friends can buy you, short you and file events about you.';
+const ifYouList = 'If you list';
+const whoTradesYou = 'Who trades you';
+const everyoneButYou = 'Everyone but you';
+const whatMovesYou = 'What moves you';
+const whatTheGroupFiles = 'What the group files';
+const changingYourMind = 'Changing your mind';
+const optOutInSettings = 'Opt out any time in Settings';
+const theAnalystRoastsEvents =
+    'The Analyst roasts what happened, never who you are.';
+const chooseTicker = 'Choose a ticker';
+const pickTickerTitle = 'Pick your ticker';
+const pickTickerBody = "3 to 5 letters. It's how the tape will name you.";
+const tickerLabel = 'Ticker';
+const tickerPlaceholder = 'NAME';
+const tickerLength = '3 to 5 letters.';
+String tickerChecking(String ticker) => 'Checking $ticker…';
+String tickerFree(String ticker) => '$ticker is free.';
+String tickerTaken(String ticker) => '$ticker is taken.';
+String useTicker(String ticker) => 'Use $ticker';
+const tickerCantCheck = "Can't check it while you're offline.";
+String listMeAs(String ticker) => 'List me as $ticker';
+const listMe = 'List me';
+const listing = 'Listing…';
+const pickFreeTicker = 'Pick a free ticker first.';
+const yourConsent =
+    'This is your consent to be listed. You can opt out in Settings.';
+
+/// Listing while offline.
+const ipoOffline = ErrorCopy(
+  title: "You're offline",
+  body: 'Listing needs a connection. Retry when you have one.',
+  action: 'Retry',
+);
+String listedTitle(String ticker) => "You're listed as $ticker";
+
+/// "The market opens at 3 listings. 1 of 3 so far."
+String listedBody(int listed, int minListings) => listed >= minListings
+    ? '$listed listed, so trading has started.'
+    : 'The market opens at $minListings listings. $listed of $minListings '
+          'so far.';
+const openTheExchange = 'Open the exchange';
+
+// ---------------------------------------------------------------------------
+// Launch problems (SCREENS.md #24)
+// ---------------------------------------------------------------------------
+
+/// Offline before anything loaded: there are no old numbers to stamp.
+const offlineAtLaunchTitle = "You're offline";
+const offlineAtLaunchBody =
+    'Aura Exchange needs a connection to load your exchange. Your cash and '
+    'positions are safe.';
+
+/// The app is sideloaded, so there's no store to send you to.
+const checkAgain = 'Check again';
+const updateFootnote = 'Install the new build, then open the app again';
+const somethingWentWrongBody = 'Try again in a moment.';
+const signOut = 'Sign out';
+
+// ---------------------------------------------------------------------------
 // Home (W09, W11, W12)
 // ---------------------------------------------------------------------------
 
@@ -541,6 +752,10 @@ const nobodyToSearch = 'Nobody to search yet';
 /// The tag after a name in a row: a ruling waiting for the open, then your
 /// own position.
 const tagRuled = 'Ruled';
+const tagHalted = 'Halted';
+const tagDelisted = 'Delisted';
+const tagRumor = 'Rumor';
+const tagYou = 'You';
 const tagHolding = 'Holding';
 const tagShort = 'Short';
 
@@ -599,8 +814,409 @@ const almost = 'Almost';
 const nudge = 'Nudge';
 const inviteSomeone = 'Invite someone';
 const inviteSomeoneNote = 'Anyone with the link can list';
+
+/// An IPO-day row for someone already listed: "Listed as $MIA".
+String listedAs(String ticker) => 'Listed as $ticker';
 const firstOnTheTape = 'First thing on the tape';
 const analystAtTheOpen = 'The Analyst · when the market opens';
+
+// ---------------------------------------------------------------------------
+// Market list (SCREENS.md #6)
+// ---------------------------------------------------------------------------
+
+const allStocks = 'All stocks';
+String resultsCount(int n) => '$n ${n == 1 ? 'result' : 'results'}';
+String nobodyMatches(String query) => 'Nobody matches “$query”';
+const searchByNameOrTicker = 'Search by name or ticker.';
+const haltedExchangeWide = 'Halted · exchange-wide';
+
+/// The whole exchange halted (`marketState: HALTED`).
+ErrorCopy exchangeHaltedBanner(
+  DateTime? resumesAt,
+  tz.Location zone, {
+  required DateTime now,
+}) => ErrorCopy(
+  title: 'Trading is halted exchange-wide',
+  body: resumesAt == null
+      ? 'Prices hold where they are until it resumes.'
+      : 'Prices hold where they are until '
+            '${formatMoment(resumesAt, zone, now: now)}.',
+);
+
+// ---------------------------------------------------------------------------
+// Trade sheet and outcomes, beyond W05 and W06 (SCREENS.md #9, #10)
+// ---------------------------------------------------------------------------
+
+/// "Slide to buy 12 $ANNA", "Slide to short 12 $JAKE".
+String slideToTrade(Side side, Decimal quantity, String ticker) =>
+    'Slide to ${_verb(side).toLowerCase()} ${formatQuantity(quantity)} '
+    '${formatTicker(ticker)}';
+const gettingNewPrice = 'Getting a new price…';
+const gettingPrice = 'Getting a price…';
+const liquidationPriceLabel = 'Liquidation price';
+const collateralHeldLabel = 'Collateral held';
+const limitPriceLabel = 'Limit price';
+const stopPriceLabel = 'Stop price';
+
+/// What a limit or stop does, under its price field.
+String limitNote(Side side, String ticker) => side == Side.buy
+    ? 'Buys when ${formatTicker(ticker)} trades at this price or lower.'
+    : 'Sells when ${formatTicker(ticker)} trades at this price or higher.';
+String stopNote(String ticker) =>
+    'Sells your ${formatTicker(ticker)} if it falls to this price.';
+const enterAPrice = 'Enter a price to place the order.';
+const slideToPlaceOrder = 'Slide to place the order';
+const placingOrder = 'Placing…';
+
+/// The filled receipt's title: "Bought 12 $ANNA".
+String filledTitle(Side side, Decimal quantity, String ticker) =>
+    '${switch (side) {
+      Side.buy => 'Bought',
+      Side.sell => 'Sold',
+      Side.short => 'Shorted',
+      Side.cover => 'Covered',
+      Side.$unknown => 'Traded',
+    }} ${formatQuantity(quantity)} ${formatTicker(ticker)}';
+const filledPrice = 'Price';
+const filledShares = 'Shares';
+const filledFee = 'Fee';
+String filledTotal(Side side) =>
+    side == Side.sell || side == Side.short ? 'Received' : 'Paid';
+const cashAfterLabel = 'Your cash now';
+const done = 'Done';
+const setStopLoss = 'Set a stop-loss';
+const orderPlacedTitle = 'Order placed';
+
+/// "Resting at A$95.00. It fills when $ANNA trades there."
+String restingBody(Decimal price, String ticker) =>
+    'Resting at ${formatMoney(price)}. It fills when ${formatTicker(ticker)} '
+    'trades there.';
+const orderTypeLabel = 'Type';
+String orderTypeWord(OrderType type) => switch (type) {
+  OrderType.limitBuy => 'Limit buy',
+  OrderType.limitSell => 'Limit sell',
+  OrderType.stopLoss => 'Stop-loss',
+  OrderType.takeProfit => 'Take-profit',
+  OrderType.$unknown => 'Order',
+};
+const triggerLabel = 'Fills at';
+const reservedLabel = 'Held from your cash';
+const cancelOrder = 'Cancel the order';
+const orderCanceled = 'Order canceled';
+
+/// Trading while offline.
+const tradeOffline = ErrorCopy(
+  title: "You're offline",
+  body: "Nothing was traded. Retry when you're back; it won't trade twice.",
+  action: 'Retry',
+);
+
+// ---------------------------------------------------------------------------
+// File an event and its status (SCREENS.md #11, #12)
+// ---------------------------------------------------------------------------
+
+const whoIsItAbout = "Who's it about?";
+const searchPeople = 'Search friends';
+const whatHappened = 'What happened';
+const whatHappenedPlaceholder =
+    'Stick to what you saw. The Analyst writes the headline.';
+
+/// Who can see who filed (API-CONTRACT.md → Privacy).
+String onlyTheyKnow(String name) =>
+    'Only moderators and $name will know it was you.';
+const onlyModeratorsKnow = 'Only moderators will know it was you.';
+const fileIt = 'File';
+const filingLabel = 'Filing…';
+const writeWhatHappened = 'Write what happened to file it.';
+const selfFilingTitle = "You're filing about yourself";
+const selfFilingBody =
+    'The Analyst treats company-issued news with some skepticism.';
+const discardTitle = 'Discard this filing?';
+const discardBody = "What you wrote won't be kept.";
+const keepWriting = 'Keep writing';
+const discard = 'Discard';
+
+/// Filing while offline.
+const fileOffline = ErrorCopy(
+  title: "You're offline",
+  body: "It wasn't filed. Retry when you're back; it won't file twice.",
+  action: 'Retry',
+);
+String yourFilingAbout(String ticker) => 'Your filing about $ticker';
+const filedLabel = 'Filed';
+const rumorLabel = 'Rumor';
+const rulingLabel = 'Ruling';
+const waiting = 'Waiting';
+String liveUntil(String at) => 'until $at';
+String ruledAt(String at) => 'Ruled $at';
+
+/// The unsend toast: "Filed · goes live in 0:24" (PLAN.md → Quality bar).
+String filedGoesLive(String countdown) => 'Filed · goes live in $countdown';
+const undo = 'Undo';
+const unsentTitle = 'Unsent';
+const unsentBody = "Nobody saw it, and it won't move anything.";
+const haltedForVoteTitle = 'Halted for a group vote';
+String haltedForVoteBody(String at) =>
+    'The group has until $at to confirm, decline or reconsider it.';
+const voidedTitle = 'Voided';
+const voidedBody = "It didn't move the price.";
+const inReviewTitle = 'With the moderators';
+const inReviewBody = 'They check it before anyone else sees it.';
+
+// ---------------------------------------------------------------------------
+// Rumor, ruling and the news-halt vote (SCREENS.md #13, #15, #17)
+// ---------------------------------------------------------------------------
+
+/// "Unconfirmed report · 9:37 pm".
+String unconfirmedReport(String at) => 'Unconfirmed report · $at';
+const rumorPublicExplainer =
+    'The Analyst rules when the rumor closes. Until then, anyone can back '
+    'it or call it.';
+const caps = 'Caps';
+const didItHappen = 'Did it happen?';
+const iSawIt = 'I saw it';
+const iSawItNote =
+    "Co-sign it. You'll be an insider on it until after it rules.";
+const didntHappen = "Didn't happen";
+const didntHappenNote = 'Cap it. It counts for less if it rules.';
+const takeItBack = 'Take it back';
+const takeItBackNote = 'Withdraw your call while the rumor is open';
+const yourCall = 'Your call';
+
+/// The insider notice (PLAN.md → Rumor phase).
+String insiderTitle(String at) => "You're an insider on this until $at";
+String insiderBody(String ticker) =>
+    "Don't trade $ticker until then. It's on record that you knew.";
+
+/// "Ruled · 9:52 pm".
+String ruledLine(String at) => 'Ruled · $at';
+const correctionTitle = 'Correction';
+const storyHiddenTitle = 'Story hidden';
+const storyHiddenBody =
+    'A super-injunction hid the story. The price hit stays.';
+const theAnalyst = 'The Analyst';
+const groupVoteHeading = 'Was it worth it?';
+const voteUp = 'Vote it up';
+const voteUpNote = 'It deserved a bigger move';
+const voteDown = 'Vote it down';
+const voteDownNote = 'It deserved a smaller one';
+const yourVoteLabel = 'Your vote';
+String votingClosesAt(String at) => 'Voting closes $at';
+const votingClosed = 'Voting has closed';
+String conflictedNote(String ticker) =>
+    'You hold $ticker, so your vote shows as conflicted.';
+const confirmedTitle = 'The group confirmed it';
+const declinedTitle = 'The group declined it';
+const reconsideredTitle = 'The group sent it back';
+const reconsideredBody = "The Analyst ruled once more, and that's final.";
+
+// ---------------------------------------------------------------------------
+// Tape and notifications (SCREENS.md #18, #19)
+// ---------------------------------------------------------------------------
+
+const tapeFilterLabel = 'Show';
+const tapeFilterAll = 'All';
+
+/// The Tape tab's filters and the item types each one shows.
+const tapeFilters = {
+  tapeFilterAll: null,
+  'Rulings': 'RULING,CORRECTION',
+  'Rumors': 'RUMOR',
+  'Halts': 'HALT,HALT_RESULT',
+  'Trades': 'WHALE,LIQUIDATION',
+};
+const tapeEmptyBody = 'It fills up as the group files events.';
+const tapeFilteredEmptyTitle = 'Nothing like that yet';
+const tapeFilteredEmptyBody = 'The rest of the tape is under All.';
+const showOlder = 'Show older';
+const notificationsTitle = 'Notifications';
+const noNotifications = 'No notifications';
+const noNotificationsBody =
+    'Rulings about you, your fills and margin warnings land here.';
+const theExchange = 'The exchange';
+
+/// Quiet hours on: "Quiet hours until 7:00 am".
+String quietHoursUntil(String end) => 'Quiet hours until $end';
+const quietHoursBody = 'Nothing buzzes until then. It all waits in here.';
+
+// ---------------------------------------------------------------------------
+// Portfolio (SCREENS.md #20, #21, #22)
+// ---------------------------------------------------------------------------
+
+const netWorthToday = 'Net worth · today';
+const statCash = 'Cash';
+const statHeldForOrders = 'Held for orders';
+const statSeason = 'This season';
+const positionsHeading = 'Positions';
+const openOrdersHeading = 'Open orders';
+const noPositionsTitle = 'No positions yet';
+const noPositionsBody =
+    'Your portfolio is all cash. Very conservative. Buy or short a friend '
+    'to get started.';
+const browseTheMarket = 'Browse the market';
+
+/// "12 shares", "Short 60".
+String longQuantity(Decimal quantity) =>
+    '${formatQuantity(quantity)} ${quantity == Decimal.one ? 'share' : 'shares'}';
+const tagLiquidated = 'Liquidated';
+
+/// "Limit buy 12 $ANNA".
+String orderTitle(OrderType type, Decimal quantity, String ticker) =>
+    '${orderTypeWord(type)} ${formatQuantity(quantity)} '
+    '${formatTicker(ticker)}';
+
+/// "Fills at A$118.00 · A$1,437.24 held".
+String orderSubtitle(Decimal trigger, Decimal held) =>
+    'Fills at ${formatMoney(trigger)} · ${formatMoney(held)} held';
+const cancelLabel = 'Cancel';
+const cancelingOrder = 'Canceling…';
+const cancelOrderTitle = 'Cancel this order?';
+const cancelOrderBody = 'What it held goes back to your cash.';
+const keepIt = 'Keep it';
+
+/// The portfolio's margin banner: "At 130% collateral; the minimum is
+/// 125%."
+String marginBannerBody(Decimal ratioPct, Decimal minimumPct) =>
+    "It's at ${_pct(ratioPct)} collateral; the minimum is "
+    '${_pct(minimumPct)}.';
+const seeIt = 'See it';
+
+// ---------------------------------------------------------------------------
+// You and Settings (SCREENS.md #30, #31)
+// ---------------------------------------------------------------------------
+
+const yourStockToday = 'Your stock · today';
+const statSeasonHigh = 'Season high';
+const statSeasonLow = 'Season low';
+const statSuperInjunctions = 'Super-injunctions';
+const yourStockPage = 'Your stock page';
+const yourStockPageNote = 'Its chart, events and tape';
+const settingsTitle = 'Settings';
+const settingsNote = 'Notifications, quiet hours, your listing';
+const notListedTitle = "You're not listed";
+const notListedBody = 'List yourself and the group can trade you.';
+const notificationsHeading = 'Notifications';
+const notifyRumors = 'Rumors about you';
+const notifyRumorsNote = 'The moment one is filed';
+const notifyRulings = 'Rulings about you';
+const notifyHalts = 'Halt votes';
+const notifyFills = 'Order fills';
+const notifyMoves = 'Big moves in what you hold';
+
+/// "When one moves 5% or more".
+String notifyMovesNote(Decimal pct) =>
+    'When one moves ${pct.abs().round(scale: 2)}% or more';
+const notifyAlerts = 'Price alerts';
+const notifyBells = 'Opening and closing bells';
+const notifyMargin = 'Margin warnings and liquidations';
+const notifyMarginNote = "Always on: it's about your money.";
+const quietHoursLabel = 'Quiet hours';
+
+/// "10:00 pm to 7:00 am".
+String quietHoursRange(String start, String end) => '$start to $end';
+const quietHoursOff = 'Off';
+const inboxOnlyNote =
+    'Push comes later. For now these decide what reaches your inbox.';
+const yourListingHeading = 'Your listing';
+const optOut = 'Opt out of being listed';
+const optOutNote = 'Holders are cashed out at the last price';
+const accountHeading = 'Account';
+const signOutNote = 'This phone only';
+const delistTitle = 'Delist yourself?';
+
+/// What opting out does, from the contract's own words.
+String delistBody(String exchange) =>
+    'You stop being a stock on $exchange. Everyone holding you is cashed out '
+    'at the last price.';
+const slideToDelist = 'Slide to delist yourself';
+const stayListed = 'Stay listed';
+const savingFailed = "That setting didn't save. It's back to how it was.";
+
+
+// ---------------------------------------------------------------------------
+
+const chartRange = 'Chart range';
+const chartRanges = ['1D', '1W', '1M', 'SZN'];
+const tabOverview = 'Overview';
+const tabTape = 'Tape';
+const tabAnalyst = 'Analyst';
+const stockTabs = [tabOverview, tabTape, tabAnalyst];
+const statOpen = 'Open';
+const statPrevClose = 'Prev close';
+const statDayRange = 'Day range';
+const statVolume = 'Volume';
+const statShortInterest = 'Short interest';
+const notYet = 'Not yet';
+const eventsHeading = 'Events';
+const noEventsYet = 'No events yet';
+String noEventsYetBody(String name) =>
+    "Nothing's been filed about $name. When something happens, file it.";
+const nothingOnTapeYet = 'Nothing on the tape yet';
+String nothingOnTapeBody(String ticker) =>
+    'Rulings and big trades in $ticker show up here.';
+const noAnalystNote = 'No coverage yet';
+const noAnalystNoteBody = 'The Analyst writes a note after the first ruling.';
+const indicated = 'indicated';
+const short = 'Short';
+const shortMore = 'Short more';
+const coverLabel = 'Cover';
+const youCantTradeYourself = "This is you. You can't trade your own stock.";
+const delistedNoTrading = "Delisted stocks don't trade.";
+const offlineNoTrading = "Trading waits until you're back online.";
+const closedOrdersNote = 'Orders you set now fill at the opening price.';
+
+/// "A rumor about $MIA is pending".
+String rumorPendingTitle(String ticker) => 'A rumor about $ticker is pending';
+const rumorPendingBody =
+    'The Analyst rules on it soon. Read it before you trade.';
+const readIt = 'Read it';
+
+/// "$SAM is delisted".
+String delistedTitle(String ticker) => '$ticker is delisted';
+String delistedBody(String name, Decimal price) =>
+    '$name opted out. Holders were cashed out at the last price, '
+    '${formatMoney(price)}.';
+
+/// The status word for an event on the stock page (API-CONTRACT.md → One
+/// status vocabulary).
+String eventStatusWord(EventStatus status) => switch (status) {
+  EventStatus.sending => 'Sending',
+  EventStatus.rumor => 'Unconfirmed',
+  EventStatus.ruling => 'Ruling',
+  EventStatus.ruled => 'Ruled',
+  EventStatus.halted => 'Halted',
+  EventStatus.review => 'In review',
+  EventStatus.voided => 'Voided',
+  EventStatus.canceled => 'Unsent',
+  EventStatus.hidden => 'Story hidden',
+  EventStatus.$unknown => 'Updated',
+};
+
+/// What a tape item is, in its source line: "$JAKE · Ruling · 2 h ago".
+String tapeTypeWord(TapeItemType type) => switch (type) {
+  TapeItemType.ipo => 'IPO',
+  TapeItemType.rumor => 'Rumor',
+  TapeItemType.ruling => 'Ruling',
+  TapeItemType.halt => 'Halt',
+  TapeItemType.haltResult => 'Halt result',
+  TapeItemType.whale => 'Big trade',
+  TapeItemType.liquidation => 'Liquidation',
+  TapeItemType.correction => 'Correction',
+  TapeItemType.bell => 'Bell',
+  TapeItemType.sec => 'SEC',
+  TapeItemType.earnings => 'Earnings',
+  TapeItemType.rating => 'Rating',
+  TapeItemType.fed => 'The Fed',
+  TapeItemType.split => 'Split',
+  TapeItemType.chapter11 => 'Chapter 11',
+  TapeItemType.bankruptcy => 'Chapter 7',
+  TapeItemType.delisting => 'Delisting',
+  _ => 'News',
+};
+
+/// "Buy · target A$130.00", under the Analyst's note.
+String analystRatingSource(String rating, Decimal target) =>
+    'The Analyst · $rating · target ${formatMoney(target)}';
 
 // ---------------------------------------------------------------------------
 // Trade sheet (W05, W06)
@@ -874,8 +1490,11 @@ const respondNoCommentNote = 'Shows on the tape. Changes nothing.';
 const respondDeny = 'Deny it';
 
 /// "If it's confirmed, the hit is 20% bigger".
-String denyNote(Decimal penaltyPct) =>
-    "If it's confirmed, the hit is ${penaltyPct.abs()}% bigger";
+/// The deny row's risk. The size comes from the server (contract request
+/// #9); without it the note says so without a number.
+String denyNote(Decimal? penaltyPct) => penaltyPct == null
+    ? "If it's confirmed, the hit is bigger"
+    : "If it's confirmed, the hit is ${penaltyPct.abs()}% bigger";
 const risky = 'Risky';
 const respondNothing = 'Say nothing';
 
@@ -902,8 +1521,8 @@ String indicatedFrom(Decimal previousClose) =>
     'From ${formatMoney(previousClose)} · indicated, not traded yet';
 
 /// "The Analyst · Downgrade · target A$96.00".
-String analystSource(String ratingChange, Decimal target) =>
-    'The Analyst · $ratingChange · target ${formatMoney(target)}';
+String analystSource(String? ratingChange, Decimal target) =>
+    ['The Analyst', ?ratingChange, 'target ${formatMoney(target)}'].join(' · ');
 const statAnalyst = 'Analyst';
 
 /// "3 co-signs".
@@ -920,8 +1539,10 @@ const postStatementNote = 'Runs on the tape next to the story';
 const superInjunction = 'Super-injunction';
 const superInjunctionNote = 'Hides the story · the price hit stays';
 
-/// "2 of 3 left".
-String leftOf(int left, int of) => '$left of $of left';
+/// "2 of 3 left", or "2 left" when the season's allowance isn't known
+/// (contract request #9).
+String leftOf(int left, int? of) =>
+    of == null ? '$left left' : '$left of $of left';
 const appealRuling = 'Appeal';
 const appealNote = 'The admin reviews it';
 

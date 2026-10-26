@@ -14,6 +14,6 @@ Traders _$TradersFromJson(Map<String, dynamic> json) => Traders(
 );
 
 Map<String, dynamic> _$TradersToJson(Traders instance) => <String, dynamic>{
-  'listing': instance.listing,
-  'netWorth': instance.netWorth,
+  'listing': ?instance.listing,
+  'netWorth': ?instance.netWorth,
 };

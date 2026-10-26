@@ -32,6 +32,7 @@ class ListingSummary {
   final String id;
   final String ticker;
   final String displayName;
+  @JsonKey(includeIfNull: true)
   final String? avatarUrl;
 
   /// Price, decimal string, 2 dp
@@ -50,6 +51,7 @@ class ListingSummary {
 
   /// Your own listing: never tradeable by you
   final bool isMine;
+  @JsonKey(includeIfNull: true)
   final MyPosition? myPosition;
 
   Map<String, Object?> toJson() => _$ListingSummaryToJson(this);

@@ -49,6 +49,7 @@ class Event {
   final String exchangeId;
   final ListingRef subject;
   final EventStatus status;
+  @JsonKey(includeIfNull: true)
   final ListingRef? author;
 
   /// You filed it
@@ -58,22 +59,32 @@ class Event {
   final String teaser;
 
   /// Hidden (null) from everyone but the author and moderators until RULED
+  @JsonKey(includeIfNull: true)
   final String? text;
   final List<Receipt> receipts;
+  @JsonKey(includeIfNull: true)
   final DateTime? happenedAt;
   final DateTime createdAt;
 
   /// End of the 30-second SENDING window
+  @JsonKey(includeIfNull: true)
   final DateTime? unsendUntil;
+  @JsonKey(includeIfNull: true)
   final DateTime? rumorEndsAt;
   final Reactions reactions;
+  @JsonKey(includeIfNull: true)
   final EventSubjectStatement? subjectStatement;
 
   /// Set when you are an insider on this event (author or co-signer)
+  @JsonKey(includeIfNull: true)
   final DateTime? insiderUntil;
+  @JsonKey(includeIfNull: true)
   final Ruling? ruling;
+  @JsonKey(includeIfNull: true)
   final Halt? halt;
+  @JsonKey(includeIfNull: true)
   final Votes? votes;
+  @JsonKey(includeIfNull: true)
   final Appeal? appeal;
 
   Map<String, Object?> toJson() => _$EventToJson(this);

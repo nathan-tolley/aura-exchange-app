@@ -22,6 +22,7 @@ class Votes {
   
   final int up;
   final int down;
+  @JsonKey(includeIfNull: true)
   final Mine3? mine;
   final DateTime closesAt;
 

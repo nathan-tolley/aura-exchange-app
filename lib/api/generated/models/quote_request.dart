@@ -26,6 +26,7 @@ class QuoteRequest {
   final String quantity;
 
   /// Set when requoting, so the response can show the difference
+  @JsonKey(includeIfNull: false)
   final String? previousQuoteId;
 
   Map<String, Object?> toJson() => _$QuoteRequestToJson(this);

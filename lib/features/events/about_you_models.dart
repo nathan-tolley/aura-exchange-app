@@ -6,6 +6,7 @@ import '../../api/generated/export.dart' hide Freshness;
 import '../../data/freshness.dart';
 import '../../design/icons.dart';
 import '../../design/tone.dart';
+import '../../design/widgets/aura_banner.dart';
 import '../../design/widgets/aura_receipt.dart';
 import '../../design/widgets/aura_status_chip.dart';
 import '../../format/change.dart';
@@ -13,6 +14,8 @@ import '../../format/countdown.dart';
 import '../../format/money.dart';
 import '../../format/time.dart';
 import '../../l10n/strings.dart';
+import '../../format/ticker.dart';
+import '../shared/banner_model.dart';
 import 'about_you_views.dart';
 
 /// The market chip at the top right: "Closed · opens 7:00 am" while closed.
@@ -47,8 +50,8 @@ SubjectModel _subject(Event event, String subtitle, {int? impact}) =>
 RumorAboutYouModel rumorAboutYouModel({
   required Event event,
   required Freshness market,
-  required Decimal denialPenaltyPct,
   required tz.Location zone,
+  Decimal? denialPenaltyPct,
   required DateTime now,
 }) {
   final left = (event.rumorEndsAt ?? now).difference(now);
@@ -93,10 +96,10 @@ RulingOnYouModel rulingOnYouModel({
   required Event event,
   required ListingDetail listing,
   required Freshness market,
-  required String ratingChange,
   required int superInjunctionsLeft,
-  required int superInjunctionsPerSeason,
   required tz.Location zone,
+  String? ratingChange,
+  int? superInjunctionsPerSeason,
   required DateTime now,
 }) {
   final ruling = event.ruling!;
@@ -252,5 +255,167 @@ SecChargeModel secChargeModel({
       ),
     ],
     footer: stayClean(c.cleanWindowMinutes),
+  );
+}
+
+/// A rumor about someone else (SCREENS.md #13), on W01's layout: the
+/// teaser, the countdown to the ruling, the co-signs and caps, the insider
+/// notice once you've backed it, and your call.
+RumorModel rumorModel({
+  required Event event,
+  required Freshness market,
+  required tz.Location zone,
+  required DateTime now,
+}) {
+  final left = (event.rumorEndsAt ?? now).difference(now);
+  final mine = event.reactions.mine;
+  final insider = event.insiderUntil;
+  final ticker = formatTicker(event.subject.ticker);
+  return RumorModel(
+    chip: marketChip(market, zone, now: now),
+    subject: _subject(
+      event,
+      unconfirmedReport(formatClock(event.createdAt, zone)),
+    ),
+    teaser: event.teaser,
+    explainer: rumorPublicExplainer,
+    stats: [
+      (rulingIn, formatCountdown(left.isNegative ? Duration.zero : left)),
+      (coSigns, '${event.reactions.cosigns}'),
+      (caps, '${event.reactions.caps}'),
+    ],
+    banner: insider == null
+        ? null
+        : BannerModel(
+            tone: AuraBannerTone.rumor,
+            title: insiderTitle(formatMoment(insider, zone, now: now)),
+            body: insiderBody(ticker),
+          ),
+    respondTitle: didItHappen,
+    responses: [
+      RowModel(
+        icon: AuraIcons.vote,
+        title: iSawIt,
+        subtitle: iSawItNote,
+        trailing: mine == Mine2.cosign ? yourCall : null,
+      ),
+      RowModel(
+        icon: AuraIcons.close,
+        title: didntHappen,
+        subtitle: didntHappenNote,
+        trailing: mine == Mine2.cap ? yourCall : null,
+      ),
+      if (mine != null)
+        const RowModel(
+          icon: AuraIcons.back,
+          title: takeItBack,
+          subtitle: takeItBackNote,
+        ),
+    ],
+    reactions: [Kind.cosign, Kind.cap, if (mine != null) Kind.withdraw],
+  );
+}
+
+/// A ruling, as everyone sees it (SCREENS.md #15), on W02's layout: the
+/// headline and impact, the Analyst's note, how it was weighted, the group's
+/// verdict on a halt, a correction after an appeal, and the up/down vote
+/// while it's open (with the conflicted note when you hold the stock).
+RulingModel rulingModel({
+  required Event event,
+  required Freshness market,
+  required bool holdsStock,
+  required tz.Location zone,
+  required DateTime now,
+}) {
+  final ruling = event.ruling;
+  final votes = event.votes;
+  final ticker = formatTicker(event.subject.ticker);
+  final open = votes != null && votes.closesAt.isAfter(now);
+  final hidden = event.status == EventStatus.hidden;
+  final correction = ruling?.correction;
+  final BannerModel? banner = event.status == EventStatus.voided
+      ? const BannerModel(
+          tone: AuraBannerTone.neutral,
+          title: voidedTitle,
+          body: voidedBody,
+        )
+      : hidden
+      ? const BannerModel(
+          tone: AuraBannerTone.neutral,
+          title: storyHiddenTitle,
+          body: storyHiddenBody,
+        )
+      : correction != null
+      ? BannerModel(
+          tone: AuraBannerTone.neutral,
+          title: correctionTitle,
+          body: correction,
+        )
+      : switch (event.halt?.status) {
+          HaltStatus.confirmed => const BannerModel(
+            tone: AuraBannerTone.neutral,
+            title: confirmedTitle,
+          ),
+          HaltStatus.declined => const BannerModel(
+            tone: AuraBannerTone.neutral,
+            title: declinedTitle,
+            body: voidedBody,
+          ),
+          HaltStatus.reconsidered => const BannerModel(
+            tone: AuraBannerTone.neutral,
+            title: reconsideredTitle,
+            body: reconsideredBody,
+          ),
+          _ => null,
+        };
+  return RulingModel(
+    chip: marketChip(market, zone, now: now),
+    subject: _subject(
+      event,
+      ruling == null
+          ? unconfirmedReport(formatClock(event.createdAt, zone))
+          : ruledLine(formatClock(ruling.ruledAt, zone)),
+      impact: hidden ? null : ruling?.impactFinal,
+    ),
+    banner: banner,
+    headline: hidden ? null : ruling?.headline ?? event.teaser,
+    note: hidden || ruling == null ? null : quoted(ruling.analystNote),
+    noteSource: theAnalyst,
+    movePct: ruling == null ? null : Decimal.parse(ruling.priceMovePct),
+    stats: ruling == null
+        ? const []
+        : [
+            (statAnalyst, formatImpact(ruling.impactAnalyst)),
+            (
+              coSignCount(event.reactions.cosigns),
+              multiplier(Decimal.parse(ruling.multipliers.cosign)),
+            ),
+            (groupVote, voteScore(votes?.up ?? 0, votes?.down ?? 0)),
+          ],
+    voteTitle: votes == null ? null : groupVoteHeading,
+    voteStatus: votes == null
+        ? null
+        : open
+        ? votingClosesAt(formatMoment(votes.closesAt, zone, now: now))
+        : votingClosed,
+    votes: open
+        ? [
+            RowModel(
+              icon: AuraIcons.plus,
+              title: voteUp,
+              subtitle: voteUpNote,
+              trailing: votes.mine == Mine3.up ? yourVoteLabel : null,
+            ),
+            RowModel(
+              icon: AuraIcons.minus,
+              title: voteDown,
+              subtitle: voteDownNote,
+              trailing: votes.mine == Mine3.down ? yourVoteLabel : null,
+            ),
+          ]
+        : const [],
+    voteNote: open && (votes.conflicted || holdsStock)
+        ? conflictedNote(ticker)
+        : null,
   );
 }

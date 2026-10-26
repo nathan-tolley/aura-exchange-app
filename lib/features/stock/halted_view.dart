@@ -10,6 +10,7 @@ import '../../design/widgets/aura_impact_disc.dart';
 import '../../design/widgets/aura_nav_card.dart';
 import '../../design/widgets/aura_section_header.dart';
 import '../../design/widgets/aura_status_chip.dart';
+import '../../l10n/strings.dart' show yourVoteLabel;
 import '../shared/action_bar.dart';
 import 'stock_header.dart';
 
@@ -21,6 +22,7 @@ class HaltOption {
     required this.icon,
     required this.title,
     required this.subtitle,
+    this.mine = false,
   });
 
   /// The contract's word: `CONFIRM`, `DECLINE`, `RECONSIDER`.
@@ -30,6 +32,9 @@ class HaltOption {
 
   /// The consequence: "The ruling stands at +22".
   final String subtitle;
+
+  /// Your vote: "Your vote" on its row. You can change it until it closes.
+  final bool mine;
 }
 
 /// A stock page while its stock is halted for a news vote (W10).
@@ -168,6 +173,7 @@ class HaltedStockView extends StatelessWidget {
                             icon: option.icon,
                             title: option.title,
                             subtitle: option.subtitle,
+                            trailing: option.mine ? yourVoteLabel : null,
                             onTap: onVote == null
                                 ? null
                                 : () => onVote!(option.choice),

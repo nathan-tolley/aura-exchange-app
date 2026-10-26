@@ -22,6 +22,7 @@ class Health {
   final HealthStatus status;
   final DateTime serverTime;
   final int minBuild;
+  @JsonKey(includeIfNull: true)
   final DateTime? lastGoodUpdate;
 
   Map<String, Object?> toJson() => _$HealthToJson(this);

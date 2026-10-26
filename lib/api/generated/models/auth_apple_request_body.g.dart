@@ -17,5 +17,5 @@ Map<String, dynamic> _$AuthAppleRequestBodyToJson(
   AuthAppleRequestBody instance,
 ) => <String, dynamic>{
   'identityToken': instance.identityToken,
-  'displayName': instance.displayName,
+  'displayName': ?instance.displayName,
 };

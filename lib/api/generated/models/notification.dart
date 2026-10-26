@@ -26,9 +26,11 @@ class Notification {
   final String id;
   final NotificationType type;
   final DateTime at;
+  @JsonKey(includeIfNull: true)
   final DateTime? readAt;
   final String title;
   final String body;
+  @JsonKey(includeIfNull: true)
   final String? listingId;
 
   /// aura:// route the app opens

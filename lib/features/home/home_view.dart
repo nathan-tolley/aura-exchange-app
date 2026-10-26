@@ -135,9 +135,9 @@ class HomeIpo {
     required this.title,
     required this.aside,
     required this.rows,
-    required this.teaserLabel,
-    required this.teaser,
-    required this.teaserSource,
+    this.teaserLabel = firstOnTheTape,
+    this.teaser,
+    this.teaserSource = analystAtTheOpen,
   });
 
   /// "1 of 3 listed".
@@ -148,8 +148,9 @@ class HomeIpo {
   final List<HomeIpoRow> rows;
   final String teaserLabel;
 
-  /// The Analyst's line, from the server as-is; the view quotes it.
-  final String teaser;
+  /// The Analyst's line, from the server as-is; the view quotes it. Left
+  /// out when the tape has nothing yet.
+  final String? teaser;
   final String teaserSource;
 }
 
@@ -177,6 +178,8 @@ class HomeView extends StatelessWidget {
   const HomeView({
     super.key,
     required this.model,
+    this.hidden = false,
+    this.unread = 0,
     this.onBell,
     this.onToggleHidden,
     this.onFile,
@@ -190,6 +193,12 @@ class HomeView extends StatelessWidget {
   });
 
   final HomeViewModel model;
+
+  /// Net worth hidden behind the eye button.
+  final bool hidden;
+
+  /// Unread notifications: the bell's dot, and the count for VoiceOver.
+  final int unread;
   final VoidCallback? onBell;
   final VoidCallback? onToggleHidden;
   final VoidCallback? onFile;
@@ -230,7 +239,10 @@ class HomeView extends StatelessWidget {
                   ),
                   AuraIconButton(
                     icon: AuraIcons.bell,
-                    label: 'Notifications',
+                    label: unread == 0
+                        ? 'Notifications'
+                        : 'Notifications, $unread unread',
+                    badge: unread > 0,
                     onPressed: onBell,
                   ),
                 ],
@@ -251,6 +263,7 @@ class HomeView extends StatelessWidget {
                   period: m.seasonAbs == null ? null : 'this season',
                   note: m.heroNote,
                   hideable: m.hideable,
+                  hidden: hidden,
                   onToggleHidden: onToggleHidden,
                 ),
               ),
@@ -294,7 +307,9 @@ class HomeView extends StatelessWidget {
                     'Watchlist',
                     status: watchlist.asOf == null ? null : AuraStatus.delayed,
                     statusLabel: watchlist.asOf,
-                    action: watchlist.asOf == null ? 'Edit' : null,
+                    action: watchlist.asOf == null && onEditWatchlist != null
+                        ? 'Edit'
+                        : null,
                     onAction: onEditWatchlist,
                   ),
                 ),
@@ -401,15 +416,17 @@ class _Ipo extends StatelessWidget {
               ),
           ],
         ),
-        const SizedBox(height: 26),
-        auraLiftFootnote(
-          Text(
-            ipo.teaserLabel,
-            style: AuraType.footnote.copyWith(color: AuraColors.inkTertiary),
+        if (ipo.teaser case final teaser?) ...[
+          const SizedBox(height: 26),
+          auraLiftFootnote(
+            Text(
+              ipo.teaserLabel,
+              style: AuraType.footnote.copyWith(color: AuraColors.inkTertiary),
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        AuraQuoteCard(quote: quoted(ipo.teaser), source: ipo.teaserSource),
+          const SizedBox(height: 8),
+          AuraQuoteCard(quote: quoted(teaser), source: ipo.teaserSource),
+        ],
       ],
     );
   }

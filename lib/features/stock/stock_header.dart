@@ -17,6 +17,7 @@ class StockHeader extends StatelessWidget {
     this.statusLabel,
     required this.line,
     required this.price,
+    this.approx = false,
     this.changeAbs,
     this.changePct,
     this.changePeriod,
@@ -31,6 +32,9 @@ class StockHeader extends StatelessWidget {
   /// "$ANNA · Anna", "$MIA · Mia · last trade 4:51 pm".
   final String line;
   final Decimal price;
+
+  /// An indicated price that hasn't traded yet (the opening gap): "≈".
+  final bool approx;
 
   /// The day's move under the price (W07): `↑ +10.40 (+10.21%) today`.
   final Decimal? changeAbs;
@@ -59,7 +63,7 @@ class StockHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 5),
-              AuraMoney(price, size: AuraMoneySize.display),
+              AuraMoney(price, size: AuraMoneySize.display, approx: approx),
               if (changeAbs != null || changePct != null) ...[
                 const SizedBox(height: 6),
                 AuraPriceChange(

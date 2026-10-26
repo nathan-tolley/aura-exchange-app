@@ -7,7 +7,9 @@ import '../tone.dart';
 import '../widgets/aura_avatar.dart';
 import '../widgets/aura_banner.dart';
 import '../widgets/aura_button.dart';
+import '../widgets/aura_chart.dart';
 import '../widgets/aura_chart_tooltip.dart';
+import '../widgets/aura_code_field.dart';
 import '../widgets/aura_countdown.dart';
 import '../widgets/aura_empty_state.dart';
 import '../widgets/aura_hero_card.dart';
@@ -16,6 +18,7 @@ import '../widgets/aura_icon_tile.dart';
 import '../widgets/aura_impact_disc.dart';
 import '../widgets/aura_money.dart';
 import '../widgets/aura_nav_card.dart';
+import '../widgets/aura_news_row.dart';
 import '../widgets/aura_price_change.dart';
 import '../widgets/aura_quote_card.dart';
 import '../widgets/aura_range_bar.dart';
@@ -24,6 +27,7 @@ import '../widgets/aura_search_field.dart';
 import '../widgets/aura_section_header.dart';
 import '../widgets/aura_segmented_control.dart';
 import '../widgets/aura_sheet.dart';
+import '../widgets/aura_skeleton.dart';
 import '../widgets/aura_slide_to_confirm.dart';
 import '../widgets/aura_sparkline.dart';
 import '../widgets/aura_stat_card.dart';
@@ -34,7 +38,9 @@ import '../widgets/aura_tab_bar.dart';
 import '../widgets/aura_tabs.dart';
 import '../widgets/aura_tag.dart';
 import '../widgets/aura_tape.dart';
+import '../widgets/aura_text_field.dart';
 import '../widgets/aura_toast.dart';
+import '../widgets/aura_toggle_row.dart';
 import 'gallery_screen.dart';
 
 Decimal _d(String s) => Decimal.parse(s);
@@ -375,6 +381,83 @@ final List<GallerySection> componentStates = [
       ),
     ),
   ]),
+  GallerySection('TextField', [
+    GalleryState(
+      'Empty, with help',
+      (_) => const _LiveTextField(
+        label: 'Email',
+        placeholder: 'you@example.com',
+        note: "We'll email you a 6-digit code. No password.",
+      ),
+    ),
+    GalleryState(
+      'Filled',
+      (_) => const _LiveTextField(label: 'Email', text: 'nathan@example.com'),
+    ),
+    GalleryState(
+      'A problem (glyph in down)',
+      (_) => const _LiveTextField(
+        label: 'Email',
+        text: 'nathan@example',
+        note: "That email address doesn't look right. Check it and try again.",
+        noteTone: AuraTone.down,
+      ),
+    ),
+    GalleryState(
+      'Ticker, with a prefix',
+      (_) => const _LiveTextField(
+        label: 'Ticker',
+        prefix: r'$',
+        text: 'NATE',
+        note: '3 to 5 letters. This is how the tape will name you.',
+      ),
+    ),
+    GalleryState(
+      'Disabled',
+      (_) => const _LiveTextField(
+        label: 'Email',
+        text: 'nathan@example.com',
+        enabled: false,
+      ),
+    ),
+    GalleryState(
+      'Read-only (an invite link)',
+      (_) => const _LiveTextField(
+        label: 'Invite link',
+        text: 'https://aura.example/i/JAKE-7F2K',
+        readOnly: true,
+      ),
+    ),
+    GalleryState(
+      'Inside a sheet',
+      (_) => const AuraSheet(
+        title: 'Name your exchange',
+        children: [
+          _LiveTextField(label: 'Name', placeholder: 'The Group Chat'),
+        ],
+      ),
+    ),
+  ]),
+  GallerySection('CodeField', [
+    GalleryState(
+      'Empty, the first cell marked',
+      (_) => const _LiveCodeField(note: 'We sent it to nathan@example.com.'),
+    ),
+    GalleryState('Part-way', (_) => const _LiveCodeField(text: '482')),
+    GalleryState('Complete', (_) => const _LiveCodeField(text: '482913')),
+    GalleryState(
+      'Wrong code (glyph in down)',
+      (_) => const _LiveCodeField(
+        text: '482914',
+        note: "That code isn't right. You have 2 more tries.",
+        noteTone: AuraTone.down,
+      ),
+    ),
+    GalleryState(
+      'Checking (disabled)',
+      (_) => const _LiveCodeField(text: '482913', enabled: false),
+    ),
+  ]),
   GallerySection('SectionHeader', [
     GalleryState('Plain', (_) => const AuraSectionHeader('Your moves')),
     GalleryState(
@@ -454,6 +537,41 @@ final List<GallerySection> componentStates = [
       ]),
     ),
   ]),
+  GallerySection('Chart', [
+    GalleryState(
+      '1D, up on the previous close, with a ruling',
+      (_) => AuraChart(
+        points: _chartPoints(_anna),
+        previousClose: _d('116.31'),
+        markers: [
+          AuraChartMarker(
+            at: _chartStart.add(const Duration(minutes: 90)),
+            label: '+22 ruling',
+            tone: AuraTone.up,
+          ),
+        ],
+      ),
+    ),
+    GalleryState(
+      'Scrubbing onto a ruling',
+      (_) => AuraChart(
+        points: _chartPoints(_jakeChart),
+        previousClose: _d('112.40'),
+        markers: [
+          AuraChartMarker(
+            at: _chartStart.add(const Duration(minutes: 45)),
+            label: '−18 ruling',
+            tone: AuraTone.down,
+          ),
+        ],
+        scrubbing: 3,
+      ),
+    ),
+    GalleryState(
+      'No trades yet',
+      (_) => const AuraChart(points: [], height: 120),
+    ),
+  ]),
   GallerySection('ChartTooltip', [
     GalleryState(
       'Ruling up, ruling down, rumor, plain',
@@ -520,6 +638,10 @@ final List<GallerySection> componentStates = [
           ),
         ],
       ),
+    ),
+    GalleryState(
+      'Not traded yet (an invite preview)',
+      (_) => const AuraStockRow(ticker: r'$ANNA', name: 'Anna'),
     ),
   ]),
   GallerySection('HeroCard', [
@@ -604,6 +726,28 @@ final List<GallerySection> componentStates = [
             onTap: _tap,
           ),
         ],
+      ),
+    ),
+  ]),
+  GallerySection('NewsRow', [
+    GalleryState(
+      'A ruling, with the move it caused',
+      (_) => AuraNewsRow(
+        source: r'$JAKE · Ruling · 2 h ago',
+        headline:
+            'Jake indicated sharply lower after overnight “who is this” '
+            'incident',
+        movePct: _d('-12.19'),
+        onTap: _tap,
+      ),
+    ),
+    GalleryState(
+      'Unread, no move',
+      (_) => const AuraNewsRow(
+        source: r'$MIA · Rumor · 4 min ago',
+        headline: 'Unconfirmed: reports of a late-night karaoke incident.',
+        unread: true,
+        onTap: _tap,
       ),
     ),
   ]),
@@ -698,6 +842,27 @@ final List<GallerySection> componentStates = [
       (_) => const AuraIconTile(AuraIcons.alert, size: 52, tone: AuraTone.warn),
     ),
   ]),
+  GallerySection('Skeleton', [
+    GalleryState(
+      'A row, a title and a paragraph (still with Reduce Motion)',
+      (_) => const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 16,
+        children: [
+          AuraSkeletonText(style: AuraType.title, width: 180),
+          AuraSkeletonText(style: AuraType.body, lines: 3),
+          AuraSkeleton(height: 48, radius: AuraRadius.md),
+        ],
+      ),
+    ),
+    GalleryState(
+      'Inside a sheet',
+      (_) => const AuraSheet(
+        title: 'Loading',
+        children: [AuraSkeleton(height: 48, radius: AuraRadius.md)],
+      ),
+    ),
+  ]),
   GallerySection('EmptyState', [
     GalleryState(
       'No positions',
@@ -714,6 +879,29 @@ final List<GallerySection> componentStates = [
       (_) => const AuraEmptyState(
         title: 'Nothing on the tape yet',
         body: 'It fills up as the group files events.',
+      ),
+    ),
+  ]),
+  GallerySection('ToggleRow', [
+    GalleryState(
+      'On and off (live)',
+      (_) => const Column(
+        children: [
+          _LiveToggle(
+            title: 'Rumors about you',
+            subtitle: 'The moment one is filed',
+            start: true,
+          ),
+          _LiveToggle(title: 'Order fills', start: false),
+        ],
+      ),
+    ),
+    GalleryState(
+      'Disabled, saying why',
+      (_) => const AuraToggleRow(
+        title: 'Margin warnings',
+        subtitle: 'Always on while you hold a short',
+        value: true,
       ),
     ),
   ]),
@@ -914,5 +1102,128 @@ class _LiveTabBarState extends State<_LiveTabBar> {
     active: _active,
     tapeBadge: _active != AuraTab.tape,
     onSelect: (t) => setState(() => _active = t),
+  );
+}
+
+/// A text field that keeps what's typed into it, for the gallery.
+class _LiveTextField extends StatefulWidget {
+  const _LiveTextField({
+    required this.label,
+    this.text,
+    this.placeholder,
+    this.prefix,
+    this.note,
+    this.noteTone = AuraTone.neutral,
+    this.enabled = true,
+    this.readOnly = false,
+  });
+
+  final String label;
+  final String? text;
+  final String? placeholder;
+  final String? prefix;
+  final String? note;
+  final AuraTone noteTone;
+  final bool enabled;
+  final bool readOnly;
+
+  @override
+  State<_LiveTextField> createState() => _LiveTextFieldState();
+}
+
+class _LiveTextFieldState extends State<_LiveTextField> {
+  late final _controller = TextEditingController(text: widget.text);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AuraTextField(
+    label: widget.label,
+    controller: _controller,
+    placeholder: widget.placeholder,
+    prefix: widget.prefix,
+    note: widget.note,
+    noteTone: widget.noteTone,
+    enabled: widget.enabled,
+    readOnly: widget.readOnly,
+  );
+}
+
+/// A code field that keeps what's typed into it, for the gallery.
+class _LiveCodeField extends StatefulWidget {
+  const _LiveCodeField({
+    this.text = '',
+    this.note,
+    this.noteTone = AuraTone.neutral,
+    this.enabled = true,
+  });
+
+  final String text;
+  final String? note;
+  final AuraTone noteTone;
+  final bool enabled;
+
+  @override
+  State<_LiveCodeField> createState() => _LiveCodeFieldState();
+}
+
+class _LiveCodeFieldState extends State<_LiveCodeField> {
+  late final _controller = TextEditingController(text: widget.text);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AuraCodeField(
+    controller: _controller,
+    note: widget.note,
+    noteTone: widget.noteTone,
+    enabled: widget.enabled,
+  );
+}
+
+final _chartStart = DateTime.utc(2026, 10, 24);
+
+List<AuraChartPoint> _chartPoints(List<double> prices) => [
+  for (final (i, p) in prices.indexed)
+    AuraChartPoint(
+      _chartStart.add(Duration(minutes: 15 * i)),
+      Decimal.parse(p.toStringAsFixed(2)),
+    ),
+];
+
+const _jakeChart = [
+  112.4, 112.2, 112.5, 104.0, 103.6, 103.0, //
+  103.4, 104.2, 105.1, 104.6, 104.9, 101.9,
+];
+
+/// A toggle row that flips, for the gallery.
+class _LiveToggle extends StatefulWidget {
+  const _LiveToggle({required this.title, required this.start, this.subtitle});
+
+  final String title;
+  final String? subtitle;
+  final bool start;
+
+  @override
+  State<_LiveToggle> createState() => _LiveToggleState();
+}
+
+class _LiveToggleState extends State<_LiveToggle> {
+  late bool _on = widget.start;
+
+  @override
+  Widget build(BuildContext context) => AuraToggleRow(
+    title: widget.title,
+    subtitle: widget.subtitle,
+    value: _on,
+    onChanged: (v) => setState(() => _on = v),
   );
 }

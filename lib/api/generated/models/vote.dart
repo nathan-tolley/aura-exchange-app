@@ -25,6 +25,7 @@ class Vote {
   final int decline;
   final int reconsider;
   final int eligible;
+  @JsonKey(includeIfNull: true)
   final Mine? mine;
 
   /// Paid to each voter when it closes

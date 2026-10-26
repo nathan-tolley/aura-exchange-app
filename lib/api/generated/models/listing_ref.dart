@@ -22,6 +22,7 @@ class ListingRef {
   /// Always uppercase with $
   final String ticker;
   final String displayName;
+  @JsonKey(includeIfNull: true)
   final String? avatarUrl;
 
   Map<String, Object?> toJson() => _$ListingRefToJson(this);

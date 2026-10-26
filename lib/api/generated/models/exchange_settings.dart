@@ -18,8 +18,11 @@ class ExchangeSettings {
   
   factory ExchangeSettings.fromJson(Map<String, Object?> json) => _$ExchangeSettingsFromJson(json);
   
+  @JsonKey(includeIfNull: false)
   final String? name;
+  @JsonKey(includeIfNull: false)
   final MarketHours? hours;
+  @JsonKey(includeIfNull: false)
   final bool? quietDecay;
 
   Map<String, Object?> toJson() => _$ExchangeSettingsToJson(this);

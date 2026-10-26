@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/client.dart';
+import '../api/errors.dart';
 import '../api/generated/aura_api.dart';
 import '../api/session.dart';
 
@@ -39,6 +40,27 @@ final auraClientProvider = Provider<AuraClient>((ref) {
 final auraApiProvider = Provider<AuraApi>(
   (ref) => ref.watch(auraClientProvider).api,
 );
+
+/// The `UPDATE_REQUIRED` that stopped this build, from any request; null
+/// while the build is accepted. The app shows the update screen over
+/// everything while it's set.
+final updateRequiredProvider = NotifierProvider<UpdateRequired, ApiError?>(
+  UpdateRequired.new,
+);
+
+class UpdateRequired extends Notifier<ApiError?> {
+  @override
+  ApiError? build() {
+    final notifier = ref.watch(auraClientProvider).updateRequired;
+    void follow() => state = notifier.value;
+    notifier.addListener(follow);
+    ref.onDispose(() => notifier.removeListener(follow));
+    return notifier.value;
+  }
+
+  /// Check again: clear it, and the next request finds out.
+  void clear() => ref.read(auraClientProvider).updateRequired.value = null;
+}
 
 final authSessionProvider = Provider<AuthSession>(
   (ref) => ref.watch(auraClientProvider).session,

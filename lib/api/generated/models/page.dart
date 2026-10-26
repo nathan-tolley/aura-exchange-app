@@ -14,6 +14,7 @@ class Page {
   
   factory Page.fromJson(Map<String, Object?> json) => _$PageFromJson(json);
   
+  @JsonKey(includeIfNull: true)
   final String? nextCursor;
 
   Map<String, Object?> toJson() => _$PageToJson(this);

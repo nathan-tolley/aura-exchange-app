@@ -5,11 +5,13 @@ import '../../api/errors.dart';
 import '../../api/generated/export.dart' hide Freshness;
 import '../../data/freshness.dart';
 import '../../data/live_market.dart';
-import '../../design/tone.dart';
+import '../../design/icons.dart';
 import '../../design/widgets/aura_banner.dart';
 import '../../design/widgets/aura_tape.dart';
 import '../../format/ticker.dart';
 import '../../l10n/strings.dart';
+import '../shared/listing_tag.dart';
+import '../system/exchange_down_model.dart';
 import 'home_view.dart';
 
 /// Builds Home from the API's payloads: the live market (with freshness),
@@ -52,8 +54,12 @@ HomeViewModel homeViewModel({
           now: now,
         )
       : null;
+  final problem = market.problem;
+  final down = problem != null && isExchangeDown(problem);
   final offlineCopy = offline
       ? offlineBanner(freshness.asOf, zone, now: now)
+      : down
+      ? errorCopy(problem)
       : null;
 
   return HomeViewModel(
@@ -80,12 +86,15 @@ HomeViewModel homeViewModel({
     heroNote: ipo?.heroNote,
     hideable: ipo == null,
     actions: ipo == null
-        ? HomeActions(trade: closed ? setAnOrder : trade, enabled: !offline)
+        ? HomeActions(
+            trade: closed ? setAnOrder : trade,
+            enabled: !offline && !down,
+          )
         : null,
     offlineBanner: offlineCopy == null
         ? null
         : HomeBanner(
-            tone: AuraBannerTone.offline,
+            tone: down ? AuraBannerTone.down : AuraBannerTone.offline,
             title: offlineCopy.title,
             body: offlineCopy.body,
             action: offlineCopy.action,
@@ -113,18 +122,7 @@ HomeViewModel homeViewModel({
 
 HomeRow _row(LiveListing listing) {
   final s = listing.summary;
-  final (tag, tone) = switch (s) {
-    _ when s.badges.contains(Badge.queuedForOpen) => (tagRuled, AuraTone.warn),
-    ListingSummary(myPosition: MyPosition(side: PositionSide.long)) => (
-      tagHolding,
-      AuraTone.neutral,
-    ),
-    ListingSummary(myPosition: MyPosition(side: PositionSide.short)) => (
-      tagShort,
-      AuraTone.neutral,
-    ),
-    _ => (null, AuraTone.neutral),
-  };
+  final (tag, tone) = listingTag(listing);
   return HomeRow(
     id: s.id,
     ticker: formatTicker(s.ticker),
@@ -148,3 +146,52 @@ class HomeIpoInput {
   final String heroNote;
   final HomeIpo section;
 }
+
+/// The watchlist until it can be edited (`/v1` has no endpoint for its
+/// order): every listing but yours, the ones you hold or short first, then
+/// the market's order.
+List<String> defaultWatchlist(LiveMarket market) {
+  final others = [
+    for (final l in market.listings)
+      if (!l.summary.isMine) l,
+  ];
+  return [
+    for (final l in others)
+      if (l.summary.myPosition != null) l.summary.id,
+    for (final l in others)
+      if (l.summary.myPosition == null) l.summary.id,
+  ];
+}
+
+/// IPO day (W12) from what `/v1` has: who's listed besides you (from the
+/// market) and the way to invite. Members who joined but haven't listed,
+/// and invites nobody has opened, aren't in the contract yet (contract
+/// request #11), so W12's "Joined · picking a ticker" and "Invited 2 h ago"
+/// rows can't be shown. The invite row is always last.
+HomeIpoInput homeIpoInput({
+  required LiveMarket market,
+  required int listed,
+  required int minListings,
+  String? teaser,
+}) => HomeIpoInput(
+  heroNote: ipoHeroNote(minListings),
+  section: HomeIpo(
+    title: listedOf(listed, minListings),
+    aside: cantTradeYourself,
+    rows: [
+      for (final l in market.listings)
+        if (!l.summary.isMine)
+          HomeIpoRow(
+            icon: AuraIcons.you,
+            title: l.summary.displayName,
+            subtitle: listedAs(formatTicker(l.summary.ticker)),
+          ),
+      const HomeIpoRow(
+        icon: AuraIcons.plus,
+        title: inviteSomeone,
+        subtitle: inviteSomeoneNote,
+      ),
+    ],
+    teaser: teaser,
+  ),
+);

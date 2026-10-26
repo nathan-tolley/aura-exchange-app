@@ -18,6 +18,10 @@ swagger_parser:
   # still parse them rather than throw.
   unknown_enum_value: true
   enums_to_json: true
+  # The contract's optional fields are absent, not null: an optional field
+  # left null is omitted from a request (ExchangeCreate.hours, a quote's
+  # limitPrice), while a required nullable one is still sent as null.
+  include_if_null: true
   mark_files_as_generated: true
   # swagger_parser 1.45 de-duplicates names case-sensitively, so a component
   # and an inline schema named after a property can both generate as one

@@ -93,18 +93,30 @@ Each screen is driven by fixtures identical to the reference data. These prove t
 
 Build these against Prism first, then switch to the real API as each endpoint lands (`ROADMAP.md` in the API repo).
 
-- [ ] Onboarding: sign in (email code: sent, wrong, expired, offline) · join from invite (`aura://invite/CODE`: valid, expired, full) · your IPO (consent, ticker check, taken, listed) · create an exchange (name, timezone and hours, invite, waiting for friends)
-- [ ] Home (default, loading, IPO day, closed, offline) with the tape, the hero, File an event / Trade, the banner and the watchlist
-- [ ] Market list (sorted, halted rows, search, no results)
-- [ ] Stock page (default, your own stock with no trade bar, halted, closed with indicated price, rumor pending, delisted) with a scrubbable chart and ruling markers; stock overview
-- [ ] Trade sheet (buy, sell, short with liquidation price, cover, limit in extended hours, stop-loss) → outcomes (quote expiring, requote with the difference, rejected cash / size / short cap, filled receipt + toast, resting order)
+- [x] Onboarding: sign in (email code: sent, wrong, expired, offline) · join from invite (`aura://invite/CODE`: valid, expired, full) · your IPO (consent, ticker check, taken, listed) · create an exchange (name, timezone and hours, invite, waiting for friends)
+  - *2026-10-25: all built over one `OnboardingScaffold` (the W08/W13 pattern), 26 states in the State Gallery with goldens (S01a–e, S02a–f, S03a–f, S04a–i), plus the launch problems (S24a–d). Flows run end to end through the real router against a fake server: sign in from scratch, create an exchange through to your IPO, and an invite link while signed out (sign in, join, IPO). Against Prism, sign-in works through `/auth/email/verify`; `/me` then waits on contract request #5 (a "…" in Prism's example token). Against the live API the browser is blocked by CORS (contract request #10). New: `AuraTextField`, `AuraCodeField`, `AuraSkeleton`; `AuraStockRow` without a price.*
+- [x] Home (default, loading, IPO day, closed, offline) with the tape, the hero, File an event / Trade, the banner and the watchlist
+  - *2026-10-25: `HomeScreen` over the live market, the portfolio and the exchange. Default and loading are new goldens (S05a, S05b); closed, offline and IPO day are W09, W11, W12. Driven end to end against a fake server (numbers, skeletons first, IPO day, offline at launch with Try again). IPO day's joined and invited rows wait on contract request #11; the watchlist's order has no endpoint, so it's positions first.*
+- [x] Market list (sorted, halted rows, search, no results)
+  - *2026-10-25: the Market tab, S06a–f in the gallery with goldens (plus loading and offline). Sorted by today's change; search on names and tickers; one banner by severity; shared row tags and market chip.*
+- [x] Stock page (default, your own stock with no trade bar, halted, closed with indicated price, rumor pending, delisted) with a scrubbable chart and ruling markers; stock overview
+  - *2026-10-25: `StockScreen` (`/stock/:id`): S07a–i and S08b in the gallery with goldens (default, your own, closed with indicated price, rumor pending, delisted, offline, chart loading, tape, analyst; the overview with no events), W10 when halted for a vote. `AuraChart` scrubs with a tooltip and a haptic at rulings; ranges 1D/1W/1M/SZN; the price follows the exchange's ticks.*
+- [x] Trade sheet (buy, sell, short with liquidation price, cover, limit in extended hours, stop-loss) → outcomes (quote expiring, requote with the difference, rejected cash / size / short cap, filled receipt + toast, resting order)
+  - *2026-10-25: `TradeSheet` over the stock page, driven by `TradeFlow`: S09a–f and S10a–g in the gallery with goldens, W05 (rejected cash) and W06 (requote) reached live. Tested against a fake server: a fill, Retry after offline reusing the trade's key, a stale quote requoting with `previousQuoteId` and a new key, the fix setting the allowed quantity, a resting limit order.*
 - [ ] File an event (compose, pick subject, receipts upload, self-filing note, daily limit, discard) → filing status (SENDING with a 30 s unsend, RUMOR, RULED, HALTED, VOIDED)
-- [ ] Rumor (teaser, co-sign or cap, insider notice, countdown) · ruling (votes, conflicted, correction) · news-halt vote (countdown, result)
-- [ ] Tape (all, filtered, empty, unread) · notifications inbox (grouped by stock, quiet hours, empty)
-- [ ] Portfolio (positions and cash, open orders, empty) · margin warning sheet · liquidated receipt
-- [ ] You (listing, stats, super-injunctions left) · settings (notification prefs, quiet hours, opt out of being listed)
-- [ ] App-wide: closed / halted / offline banners, the update-required screen, the exchange-down screen, skeleton loading everywhere
+  - *2026-10-25: built except receipts upload (S11a–f, S12a–f in the gallery with goldens). Photo receipts need the `image_picker` plugin, a question for Nathan; the box stays open until they're in.*
+- [x] Rumor (teaser, co-sign or cap, insider notice, countdown) · ruling (votes, conflicted, correction) · news-halt vote (countdown, result)
+  - *2026-10-25: S13a–c, S15a–e and S17a–b in the gallery with goldens, plus W01, W02 and W10 driven by live events. `/events/:id` chooses your filing, about you, halted (the stock page) or the public view. W02's statement, super-injunction and appeal rows aren't wired yet (NOTES.md).*
+- [x] Tape (all, filtered, empty, unread) · notifications inbox (grouped by stock, quiet hours, empty)
+  - *2026-10-25: the Tape tab and `/notifications`, S18a–e and S19a–d in the gallery with goldens; live tape and notifications from the stream; the bell's unread badge and the tape dot on Home.*
+- [x] Portfolio (positions and cash, open orders, empty) · margin warning sheet · liquidated receipt
+  - *2026-10-26: the Portfolio tab (S20a–e with goldens), W07 live from your short, Cover at a quantity. W08 is built and in the gallery (A3) but can only be fed live once contract request #7 sends a liquidation's settlement; until then a liquidated position opens its stock page.*
+- [x] You (listing, stats, super-injunctions left) · settings (notification prefs, quiet hours, opt out of being listed)
+  - *2026-10-26: the You tab and `/settings`, S30a–c and S31a–e in the gallery with goldens; prefs save as you toggle and revert if they fail; opting out ends in the slide.*
+- [x] App-wide: closed / halted / offline banners, the update-required screen, the exchange-down screen, skeleton loading everywhere
+  - *2026-10-26: banners by severity on every price screen; the update screen over everything on any `UPDATE_REQUIRED`; W13 or the problem screen when a first load fails, a down banner (S23a) when the exchange goes down after numbers were shown; skeletons on every screen that loads.*
 - **Check:** every state is reachable in the State Gallery and has a golden. Each flow works end to end against Prism, and then against the real API.
+  - *2026-10-26: partly passes. Every built state is in the State Gallery with a golden: 119 screen states (S01–S31 plus the 13 drawn W screens, which stay within A3's diffs) and all 38 components. Every flow runs end to end through the real router and repositories against a fake server in widget tests (sign in, create an exchange, invite, join from a link, IPO, Home, trade with requote and retry, file and unsend, rumors, rulings and votes, tape, inbox, portfolio, settings, the update takeover): 639 tests, analyze clean. Against Prism in Chrome, sign-in works through `/auth/email/verify`, and everything after it stops at `/me` because Prism's example token can't be sent in a header (contract request #5). Against the live API, Chrome is blocked by CORS (contract request #10). Still open: photo receipts when filing (they need the `image_picker` plugin: Nathan's call), and W02's statement, super-injunction and appeal actions.*
 
 ## A5: On the phone
 

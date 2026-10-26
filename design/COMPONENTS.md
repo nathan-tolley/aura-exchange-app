@@ -203,6 +203,17 @@ Today's path in a row, with a dotted midline.
 
 Preview: [Sparkline.png](reference/components/Sparkline.png)
 
+## AuraChart
+
+The stock page's chart (DESIGN.md → Charts), drawn with a `CustomPainter`.
+
+- Provide `points` ([{at, price}], oldest first); optional `previousClose` (the dotted `ink-faint` line on 1D), `markers` ([{at, label, tone}]: rulings as small `ink` dots ringed in `bg`), `trend` (defaults to last vs previous close), `height` (180), `onScrub`.
+- One 1.5pt line in `up` or `down` by the range's direction. No fill, no glow, no axes.
+- A finger on it shows a 1pt `ink-tertiary` crosshair, an `ink` dot ringed in `bg` and an `AuraChartTooltip` above the point ("−18 ruling" on a marker), snapping to points with a light haptic at each ruling.
+- With nothing to draw, it says so ("No trades yet"). VoiceOver hears the range's move.
+
+Added in A4 (2026-10-25) for the stock page; no separate preview.
+
 ## AuraChartTooltip
 
 The floating price label on a chart point, with an optional badge for the event behind it.
@@ -217,6 +228,8 @@ Preview: [ChartTooltip.png](reference/components/ChartTooltip.png)
 The row for one listing in watchlists, the market list and search results: avatar, ticker, name and tag, sparkline, price and change, on a hairline.
 
 - Provide `ticker`, `name`, `price`, `pct`, `abs`; optional `initial`, `tag`, `tagTone`, `points`.
+- Before a listing has traded (an invite's preview of who's listed), leave out `price`, `pct` and `abs`: the row shows who, not what they trade at. (A4, 2026-10-25.)
+- The sparkline's 72pt stays even without `points`, so prices line up in a mixed list; `sparkline: false` drops it in a list with none (the Portfolio's positions).
 - 64pt tall with a `line` divider. Tap opens the stock page; long-press opens quick trade.
 - Rows sort by what the list is for: the market by % change, a watchlist by the member's order.
 
@@ -241,6 +254,15 @@ A list of tappable rows (`NavRow`): a bare glyph, title, subtitle, optional trai
 - Rows are actions or destinations, never settings toggles.
 
 Preview: [NavCard.png](reference/components/NavCard.png)
+
+## AuraNewsRow
+
+One thing on the tape, in a list: the Tape tab, a stock's tape, the notifications inbox.
+
+- Provide `source` ("$JAKE · Ruling · 2 h ago") and `headline` (the Analyst's, as the server wrote it); optional `movePct` (the move it caused, as a `PriceChange` on the source line), `unread` (a small `ink` dot), `onTap`.
+- The headline is the serif at 17/24 in `ink`: it's the Analyst speaking. Hairline under each row, no box.
+
+Added in A4 (2026-10-25) for the tape; no separate preview.
 
 ## AuraQuoteCard
 
@@ -287,6 +309,46 @@ A glyph on a `raised` rounded square (`md` radius). It heads an empty state (44p
 - Decorative: the title beside it says what it means.
 
 Added in A3 (2026-10-25), extracted from `AuraEmptyState`; no separate preview.
+
+## AuraTextField
+
+A labelled single-line field for the few things the app asks you to type: an email, an exchange's name, a ticker.
+
+- Provide `label` (above the field, and its VoiceOver name); optional `placeholder`, `prefix` (`$` for a ticker, in `ink-tertiary`), `note` and `noteTone`, `readOnly` (an invite link: full ink and selectable).
+- The search field's shape at form height (48pt): `raised` (`raised-2` inside sheets), `md` corners, body text with no tracking.
+- The note under it is help in `ink-tertiary`, or a problem: `noteTone: 'down'` or `'warn'` colors only its glyph, and the words stay `ink-secondary` (color is information). A field never gets a colored outline.
+
+Added in A4 (2026-10-25) for sign-in and onboarding; no separate preview.
+
+## AuraCodeField
+
+The 6-digit sign-in code: one `raised` cell per digit, the digit in the `price` style (big numbers are light), a short `ink` bar in the next empty cell.
+
+- Provide `controller`; optional `onCompleted` (fires when the last digit lands, so there's no Submit), `note` and `noteTone` (as in `TextField`), `enabled`.
+- Typing, pasting and iOS's one-time-code autofill go into one hidden field, so a pasted code fills every cell.
+- VoiceOver hears "Sign-in code, 6 digits" and the note.
+
+Added in A4 (2026-10-25) for sign-in; no separate preview.
+
+## AuraSkeleton
+
+Where content is loading, at the content's real size: `raised` blocks (`raised-2` inside sheets) that breathe slowly, and hold still with Reduce Motion. Never a full-screen spinner.
+
+- Provide `height`, optional `width` (fills by default) and `radius` (6; `md` for a field or banner, `full` for an avatar).
+- `AuraSkeletonText` stands in for lines of text: a block at the style's cap height on its line height, the last line shorter.
+- Decorative for VoiceOver; the screen says it's loading.
+
+Added in A4 (2026-10-25) for loading states; no separate preview.
+
+## AuraToggleRow
+
+A setting that's on or off: title, what it does, and a switch on the right, on a hairline like every row. Nav rows stay actions and destinations; this is the one row that's a setting.
+
+- Provide `title`, `value`, optional `subtitle` and `onChanged` (null disables it, and the subtitle says why).
+- The switch is `ink` with a `bg` knob when on, `raised-2` with an `ink-secondary` knob when off. Never up/down color.
+- A light haptic when it flips; VoiceOver hears it as a toggle with its state.
+
+Added in A4 (2026-10-26) for Settings; no separate preview.
 
 ## AuraToast
 

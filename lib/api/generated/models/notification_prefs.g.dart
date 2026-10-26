@@ -20,8 +20,8 @@ NotificationPrefs _$NotificationPrefsFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$NotificationPrefsToJson(NotificationPrefs instance) =>
     <String, dynamic>{
-      'holdingMovedPct': instance.holdingMovedPct,
-      'quietHours': instance.quietHours,
-      'bells': instance.bells,
-      'disabledTypes': instance.disabledTypes,
+      'holdingMovedPct': ?instance.holdingMovedPct,
+      'quietHours': ?instance.quietHours,
+      'bells': ?instance.bells,
+      'disabledTypes': ?instance.disabledTypes,
     };

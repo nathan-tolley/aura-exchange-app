@@ -47,6 +47,9 @@ class AuraSearchField extends StatelessWidget {
           ),
           Expanded(
             child: CupertinoTextField.borderless(
+              // Without a decoration, a disabled field paints
+              // Cupertino's own disabled fill over ours.
+              decoration: const BoxDecoration(),
               controller: controller,
               onChanged: onChanged,
               onSubmitted: onSubmitted,

@@ -16,6 +16,6 @@ ExchangesExchangeIdFedRequestBody _$ExchangesExchangeIdFedRequestBodyFromJson(
 Map<String, dynamic> _$ExchangesExchangeIdFedRequestBodyToJson(
   ExchangesExchangeIdFedRequestBody instance,
 ) => <String, dynamic>{
-  'borrowRateDailyPct': instance.borrowRateDailyPct,
-  'allowance': instance.allowance,
+  'borrowRateDailyPct': ?instance.borrowRateDailyPct,
+  'allowance': ?instance.allowance,
 };

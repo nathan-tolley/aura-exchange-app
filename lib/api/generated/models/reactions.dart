@@ -20,6 +20,7 @@ class Reactions {
   
   final int cosigns;
   final int caps;
+  @JsonKey(includeIfNull: true)
   final Mine2? mine;
 
   Map<String, Object?> toJson() => _$ReactionsToJson(this);

@@ -42,10 +42,13 @@ class Order {
   /// Aura Bucks, decimal string, 2 dp
   final String reservedCash;
   final DateTime createdAt;
+  @JsonKey(includeIfNull: true)
   final DateTime? filledAt;
 
   /// Price, decimal string, 2 dp
+  @JsonKey(includeIfNull: true)
   final String? fillPrice;
+  @JsonKey(includeIfNull: true)
   final String? rejectCode;
 
   Map<String, Object?> toJson() => _$OrderToJson(this);

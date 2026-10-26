@@ -18,6 +18,6 @@ Map<String, dynamic> _$ReceiptToJson(Receipt instance) => <String, dynamic>{
   'id': instance.id,
   'kind': instance.kind,
   'url': instance.url,
-  'width': instance.width,
-  'height': instance.height,
+  'width': ?instance.width,
+  'height': ?instance.height,
 };

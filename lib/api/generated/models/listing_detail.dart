@@ -56,10 +56,12 @@ class ListingDetail {
   final MarketState marketState;
 
   /// When marketState next changes
+  @JsonKey(includeIfNull: true)
   final DateTime? nextChangeAt;
   final String id;
   final String ticker;
   final String displayName;
+  @JsonKey(includeIfNull: true)
   final String? avatarUrl;
 
   /// Price, decimal string, 2 dp
@@ -78,12 +80,14 @@ class ListingDetail {
 
   /// Your own listing: never tradeable by you
   final bool isMine;
+  @JsonKey(includeIfNull: true)
   final MyPosition? myPosition;
 
   /// Price, decimal string, 2 dp
   final String prevClose;
 
   /// Price, decimal string, 2 dp
+  @JsonKey(includeIfNull: true)
   final String? open;
 
   /// Price, decimal string, 2 dp
@@ -108,13 +112,18 @@ class ListingDetail {
   final String borrowFeeDailyPct;
 
   /// Price, decimal string, 2 dp
+  @JsonKey(includeIfNull: true)
   final String? indicatedPrice;
 
   /// Percent units, decimal string, 2 dp (−12.19 = −12.19%)
+  @JsonKey(includeIfNull: true)
   final String? indicatedChangePct;
+  @JsonKey(includeIfNull: true)
   final Halt? halt;
+  @JsonKey(includeIfNull: true)
   final DateTime? lastTradeAt;
   final List<EventSummary> events;
+  @JsonKey(includeIfNull: true)
   final Analyst? analyst;
 
   Map<String, Object?> toJson() => _$ListingDetailToJson(this);

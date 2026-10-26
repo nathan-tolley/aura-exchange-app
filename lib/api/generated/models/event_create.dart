@@ -21,7 +21,9 @@ class EventCreate {
   final String exchangeId;
   final String subjectListingId;
   final String text;
+  @JsonKey(includeIfNull: false)
   final List<String>? receiptIds;
+  @JsonKey(includeIfNull: false)
   final DateTime? happenedAt;
 
   Map<String, Object?> toJson() => _$EventCreateToJson(this);
