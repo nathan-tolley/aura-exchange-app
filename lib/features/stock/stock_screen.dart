@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +15,7 @@ import '../../format/time.dart';
 import '../../router.dart';
 import '../shared/top_bar.dart';
 import '../system/load_failure.dart';
+import '../trade/trade_screen.dart';
 import 'halted_model.dart';
 import 'halted_view.dart';
 import 'stock_model.dart';
@@ -33,6 +36,28 @@ class StockScreen extends ConsumerStatefulWidget {
 class _StockScreenState extends ConsumerState<StockScreen> {
   String _range = '1D';
   StockTab _tab = StockTab.overview;
+  String? _toast;
+  Timer? _toastTimer;
+
+  @override
+  void dispose() {
+    _toastTimer?.cancel();
+    super.dispose();
+  }
+
+  /// Opens the trade sheet; after a fill or an order, says so for 4 s.
+  Future<void> _trade(StockAction action) async {
+    final result = await context.push<Object?>(
+      Routes.trade(widget.listingId, action.side),
+    );
+    final message = tradeToast(result);
+    if (message == null || !mounted) return;
+    _toastTimer?.cancel();
+    setState(() => _toast = message);
+    _toastTimer = Timer(const Duration(seconds: 4), () {
+      if (mounted) setState(() => _toast = null);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +147,8 @@ class _StockScreenState extends ConsumerState<StockScreen> {
       onTab: (t) => setState(() => _tab = t),
       onEvent: (e) => context.push(Routes.event(e)),
       onFile: () => context.push(Routes.file),
-      onTrade: offline ? null : (a) => context.push(Routes.trade(id, a.side)),
+      onTrade: offline ? null : _trade,
+      toast: _toast,
     );
   }
 }

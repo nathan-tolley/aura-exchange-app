@@ -14,6 +14,7 @@ import '../../design/widgets/aura_segmented_control.dart';
 import '../../design/widgets/aura_skeleton.dart';
 import '../../design/widgets/aura_stat_card.dart';
 import '../../design/widgets/aura_tabs.dart';
+import '../../design/widgets/aura_toast.dart';
 import '../../l10n/strings.dart';
 import '../shared/action_bar.dart';
 import '../shared/banner_model.dart';
@@ -35,6 +36,7 @@ class StockPageView extends StatelessWidget {
     this.onEvent,
     this.onFile,
     this.onTrade,
+    this.toast,
   });
 
   final StockPageModel model;
@@ -49,6 +51,9 @@ class StockPageView extends StatelessWidget {
 
   /// Null while trading is off (offline); the note says why.
   final ValueChanged<StockAction>? onTrade;
+
+  /// What just happened, above the trade bar: "Bought 12 $ANNA".
+  final String? toast;
 
   @override
   Widget build(BuildContext context) {
@@ -137,6 +142,13 @@ class StockPageView extends StatelessWidget {
             )
           else if (m.note case final note?)
             ActionBar(actions: const [], note: note, backed: true),
+          if (toast case final message?)
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 128,
+              child: AuraToast(message: message),
+            ),
         ],
       ),
     );

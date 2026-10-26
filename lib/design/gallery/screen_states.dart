@@ -17,6 +17,7 @@ import 'fixtures/frames.dart';
 import 'fixtures/market.dart';
 import 'fixtures/onboarding.dart';
 import 'fixtures/stock.dart';
+import 'fixtures/trade.dart';
 import 'screen_fixtures.dart';
 
 /// A screen in one of its states, built from fixtures. The State Gallery
@@ -173,6 +174,23 @@ final List<GalleryScreen> screenStates = [
     (_) => _home(homeIpoDay()),
     reference: 'W12-EmptyExchange',
   ),
+  GalleryScreen('S09a', 'Trade sheet, buy', (_) => tradeBuy()),
+  GalleryScreen('S09b', 'Trade sheet, sell', (_) => tradeSell()),
+  GalleryScreen(
+    'S09c',
+    'Trade sheet, short with liquidation price',
+    (_) => tradeShort(),
+  ),
+  GalleryScreen('S09d', 'Trade sheet, cover', (_) => tradeCover()),
+  GalleryScreen('S09e', 'Trade sheet, limit order', (_) => tradeLimit()),
+  GalleryScreen('S09f', 'Trade sheet, stop-loss', (_) => tradeStopLoss()),
+  GalleryScreen('S10a', 'Trade, quote expiring', (_) => tradeExpiring()),
+  GalleryScreen('S10b', 'Trade, rejected size', (_) => tradeTooLarge()),
+  GalleryScreen('S10c', 'Trade, rejected short cap', (_) => tradeShortCap()),
+  GalleryScreen('S10d', 'Trade, filled', (_) => tradeFilled()),
+  GalleryScreen('S10e', 'Trade, resting order', (_) => tradeResting()),
+  GalleryScreen('S10f', 'Trade, getting a price', (_) => tradeQuoting()),
+  GalleryScreen('S10g', 'Trade, offline', (_) => tradeNoNetwork()),
   GalleryScreen(
     'W05',
     'Trade sheet, rejected',

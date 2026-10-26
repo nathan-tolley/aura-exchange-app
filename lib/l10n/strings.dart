@@ -8,6 +8,7 @@ import '../api/generated/models/error_code.dart';
 import '../api/generated/models/event_status.dart';
 import '../api/generated/models/tape_item_type.dart';
 import '../api/generated/models/halt_reason.dart';
+import '../api/generated/models/order_type.dart';
 import '../api/generated/models/side.dart';
 import '../format/change.dart';
 import '../format/money.dart';
@@ -840,6 +841,74 @@ ErrorCopy exchangeHaltedBanner(
       ? 'Prices hold where they are until it resumes.'
       : 'Prices hold where they are until '
             '${formatMoment(resumesAt, zone, now: now)}.',
+);
+
+// ---------------------------------------------------------------------------
+// Trade sheet and outcomes, beyond W05 and W06 (SCREENS.md #9, #10)
+// ---------------------------------------------------------------------------
+
+/// "Slide to buy 12 $ANNA", "Slide to short 12 $JAKE".
+String slideToTrade(Side side, Decimal quantity, String ticker) =>
+    'Slide to ${_verb(side).toLowerCase()} ${formatQuantity(quantity)} '
+    '${formatTicker(ticker)}';
+const gettingNewPrice = 'Getting a new price…';
+const gettingPrice = 'Getting a price…';
+const liquidationPriceLabel = 'Liquidation price';
+const collateralHeldLabel = 'Collateral held';
+const limitPriceLabel = 'Limit price';
+const stopPriceLabel = 'Stop price';
+
+/// What a limit or stop does, under its price field.
+String limitNote(Side side, String ticker) => side == Side.buy
+    ? 'Buys when ${formatTicker(ticker)} trades at this price or lower.'
+    : 'Sells when ${formatTicker(ticker)} trades at this price or higher.';
+String stopNote(String ticker) =>
+    'Sells your ${formatTicker(ticker)} if it falls to this price.';
+const enterAPrice = 'Enter a price to place the order.';
+const slideToPlaceOrder = 'Slide to place the order';
+const placingOrder = 'Placing…';
+
+/// The filled receipt's title: "Bought 12 $ANNA".
+String filledTitle(Side side, Decimal quantity, String ticker) =>
+    '${switch (side) {
+      Side.buy => 'Bought',
+      Side.sell => 'Sold',
+      Side.short => 'Shorted',
+      Side.cover => 'Covered',
+      Side.$unknown => 'Traded',
+    }} ${formatQuantity(quantity)} ${formatTicker(ticker)}';
+const filledPrice = 'Price';
+const filledShares = 'Shares';
+const filledFee = 'Fee';
+String filledTotal(Side side) =>
+    side == Side.sell || side == Side.short ? 'Received' : 'Paid';
+const cashAfterLabel = 'Your cash now';
+const done = 'Done';
+const setStopLoss = 'Set a stop-loss';
+const orderPlacedTitle = 'Order placed';
+
+/// "Resting at A$95.00. It fills when $ANNA trades there."
+String restingBody(Decimal price, String ticker) =>
+    'Resting at ${formatMoney(price)}. It fills when ${formatTicker(ticker)} '
+    'trades there.';
+const orderTypeLabel = 'Type';
+String orderTypeWord(OrderType type) => switch (type) {
+  OrderType.limitBuy => 'Limit buy',
+  OrderType.limitSell => 'Limit sell',
+  OrderType.stopLoss => 'Stop-loss',
+  OrderType.takeProfit => 'Take-profit',
+  OrderType.$unknown => 'Order',
+};
+const triggerLabel = 'Fills at';
+const reservedLabel = 'Held from your cash';
+const cancelOrder = 'Cancel the order';
+const orderCanceled = 'Order canceled';
+
+/// Trading while offline.
+const tradeOffline = ErrorCopy(
+  title: "You're offline",
+  body: "Nothing was traded. Retry when you're back; it won't trade twice.",
+  action: 'Retry',
 );
 
 // ---------------------------------------------------------------------------

@@ -246,4 +246,23 @@ class TradingRepository {
   Future<Portfolio> portfolio(String exchangeId) => guardApi(
     () => _api.trading.getExchangesExchangeIdPortfolio(exchangeId: exchangeId),
   );
+
+  /// A limit, stop-loss or take-profit order. It rests until its trigger
+  /// price trades.
+  Future<Order> placeOrder(OrderCreate order, IdempotencyKey key) => guardApi(
+    () => _api.trading.postOrders(idempotencyKey: key.value, body: order),
+  );
+
+  /// Cancels a resting order.
+  Future<Order> cancelOrder(String orderId, IdempotencyKey key) => guardApi(
+    () => _api.trading.deleteOrdersOrderId(
+      orderId: orderId,
+      idempotencyKey: key.value,
+    ),
+  );
+
+  /// One position, with its margin detail when it's a short.
+  Future<Position> position(String positionId) => guardApi(
+    () => _api.trading.getPositionsPositionId(positionId: positionId),
+  );
 }

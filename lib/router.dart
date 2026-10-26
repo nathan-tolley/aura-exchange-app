@@ -7,6 +7,7 @@ import 'api/generated/export.dart';
 import 'data/me.dart';
 import 'design/gallery/gallery_screen.dart';
 import 'design/gallery/screen_states.dart';
+import 'design/sheet_route.dart';
 import 'design/tokens.dart';
 import 'design/widgets/aura_tab_bar.dart';
 import 'features/home/home_screen.dart';
@@ -17,6 +18,7 @@ import 'features/onboarding/join_screen.dart';
 import 'features/onboarding/sign_in_screen.dart';
 import 'features/stock/stock_screen.dart';
 import 'features/system/boot_screen.dart';
+import 'features/trade/trade_screen.dart';
 
 /// Every screen is a route, so `aura://` deep links land on real screens
 /// (`aura://invite/JAKE-7F2K` arrives as `/invite/JAKE-7F2K`). The redirect
@@ -176,7 +178,16 @@ final List<RouteBase> _routes = [
     builder: (_, state) => StockScreen(listingId: state.pathParameters['id']!),
   ),
   GoRoute(path: '/events/:id', builder: (_, _) => const _Pending()),
-  GoRoute(path: '/trade/:listingId', builder: (_, _) => const _Pending()),
+  GoRoute(
+    path: '/trade/:listingId',
+    pageBuilder: (_, state) => AuraSheetPage(
+      key: state.pageKey,
+      child: TradeSheet(
+        listingId: state.pathParameters['listingId']!,
+        side: Side.fromJson(state.uri.queryParameters['side'] ?? 'BUY'),
+      ),
+    ),
+  ),
   StatefulShellRoute.indexedStack(
     builder: (context, state, shell) => shell,
     branches: [
