@@ -35,6 +35,10 @@ final marketRepositoryProvider = Provider<MarketRepository>(
   (ref) => MarketRepository(ref.watch(auraApiProvider)),
 );
 
+final tapeRepositoryProvider = Provider<TapeRepository>(
+  (ref) => TapeRepository(ref.watch(auraApiProvider)),
+);
+
 final tradingRepositoryProvider = Provider<TradingRepository>(
   (ref) => TradingRepository(ref.watch(auraApiProvider)),
 );
@@ -184,6 +188,30 @@ class MarketRepository {
   /// One stock page.
   Future<ListingDetail> listing(String listingId) => guardApi(
     () => _api.marketData.getListingsListingId(listingId: listingId),
+  );
+}
+
+class TapeRepository {
+  TapeRepository(this._api);
+
+  final AuraApi _api;
+
+  /// The tape, newest first: everything, one listing's, or some types
+  /// (comma-separated `TapeItemType` values).
+  Future<GetExchangesExchangeIdTapeResponse> tape(
+    String exchangeId, {
+    String? listingId,
+    String? types,
+    String? cursor,
+    int limit = 30,
+  }) => guardApi(
+    () => _api.tape.getExchangesExchangeIdTape(
+      exchangeId: exchangeId,
+      listingId: listingId,
+      types: types,
+      cursor: cursor,
+      limit: limit,
+    ),
   );
 }
 

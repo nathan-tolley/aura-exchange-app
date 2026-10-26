@@ -9,6 +9,7 @@ import 'design/gallery/gallery_screen.dart';
 import 'design/gallery/screen_states.dart';
 import 'design/tokens.dart';
 import 'design/widgets/aura_tab_bar.dart';
+import 'features/home/home_screen.dart';
 import 'features/onboarding/create_exchange_screen.dart';
 import 'features/onboarding/ipo_screen.dart';
 import 'features/onboarding/join_screen.dart';
@@ -55,8 +56,12 @@ abstract final class Routes {
   static const portfolio = '/portfolio';
   static const you = '/you';
   static const gallery = '/gallery';
+  static const notifications = '/notifications';
+  static const settings = '/settings';
+  static const file = '/file';
 
   static String invite(String code) => '/invite/$code';
+  static String stock(String listingId) => '/stock/$listingId';
 
   /// The tab roots, in tab-bar order.
   static const tabs = [home, market, tape, portfolio, you];
@@ -155,6 +160,11 @@ final List<RouteBase> _routes = [
     path: '/invite/:code',
     builder: (_, state) => JoinScreen(code: state.pathParameters['code']!),
   ),
+  // Screens still to come in A4: the background until they're built.
+  GoRoute(path: Routes.notifications, builder: (_, _) => const _Pending()),
+  GoRoute(path: Routes.settings, builder: (_, _) => const _Pending()),
+  GoRoute(path: Routes.file, builder: (_, _) => const _Pending()),
+  GoRoute(path: '/stock/:id', builder: (_, _) => const _Pending()),
   StatefulShellRoute.indexedStack(
     builder: (context, state, shell) => shell,
     branches: [
@@ -163,7 +173,10 @@ final List<RouteBase> _routes = [
           routes: [
             GoRoute(
               path: Routes.tabs[tab.index],
-              builder: (_, _) => _Pending(tab: tab),
+              builder: (_, _) => switch (tab) {
+                AuraTab.home => const HomeScreen(),
+                _ => _Pending(tab: tab),
+              },
             ),
           ],
         ),

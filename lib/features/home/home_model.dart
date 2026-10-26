@@ -5,6 +5,7 @@ import '../../api/errors.dart';
 import '../../api/generated/export.dart' hide Freshness;
 import '../../data/freshness.dart';
 import '../../data/live_market.dart';
+import '../../design/icons.dart';
 import '../../design/tone.dart';
 import '../../design/widgets/aura_banner.dart';
 import '../../design/widgets/aura_tape.dart';
@@ -148,3 +149,52 @@ class HomeIpoInput {
   final String heroNote;
   final HomeIpo section;
 }
+
+/// The watchlist until it can be edited (`/v1` has no endpoint for its
+/// order): every listing but yours, the ones you hold or short first, then
+/// the market's order.
+List<String> defaultWatchlist(LiveMarket market) {
+  final others = [
+    for (final l in market.listings)
+      if (!l.summary.isMine) l,
+  ];
+  return [
+    for (final l in others)
+      if (l.summary.myPosition != null) l.summary.id,
+    for (final l in others)
+      if (l.summary.myPosition == null) l.summary.id,
+  ];
+}
+
+/// IPO day (W12) from what `/v1` has: who's listed besides you (from the
+/// market) and the way to invite. Members who joined but haven't listed,
+/// and invites nobody has opened, aren't in the contract yet (contract
+/// request #11), so W12's "Joined · picking a ticker" and "Invited 2 h ago"
+/// rows can't be shown. The invite row is always last.
+HomeIpoInput homeIpoInput({
+  required LiveMarket market,
+  required int listed,
+  required int minListings,
+  String? teaser,
+}) => HomeIpoInput(
+  heroNote: ipoHeroNote(minListings),
+  section: HomeIpo(
+    title: listedOf(listed, minListings),
+    aside: cantTradeYourself,
+    rows: [
+      for (final l in market.listings)
+        if (!l.summary.isMine)
+          HomeIpoRow(
+            icon: AuraIcons.you,
+            title: l.summary.displayName,
+            subtitle: listedAs(formatTicker(l.summary.ticker)),
+          ),
+      const HomeIpoRow(
+        icon: AuraIcons.plus,
+        title: inviteSomeone,
+        subtitle: inviteSomeoneNote,
+      ),
+    ],
+    teaser: teaser,
+  ),
+);

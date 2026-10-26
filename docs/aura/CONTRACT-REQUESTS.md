@@ -119,3 +119,16 @@ So the browser blocks every call, and the preview can't sign in against the real
 This changes no shapes; it's a server setting, but it decides whether the preview can reach the API, so it's written here.
 
 **Meanwhile.** The preview runs against Prism. Against the live API, sign-in is checked from a script (same requests, no browser) and on the phone once Nathan runs iOS release.
+
+## 11. Who's joined and who's been invited (2026-10-25 · open)
+
+**What's missing.** W12 (Home on IPO day) lists the people the market is waiting for: "Mia · Joined · picking a ticker" (a member who hasn't listed yet) and "Jake · Invited 2 h ago · hasn't opened it" (an invite nobody has used), each with a nudge. `/v1` only has the listed members (the market's listings) and the counts (`Exchange.memberCount`, `listedCount`). There's no list of members, and no list of the invites an exchange has sent.
+
+**Ask (additive), either of:**
+- **A.** `GET /exchanges/{id}/members` → `{ items: [{ membershipId, displayName, joinedAt, listing: ListingRef | null }] }`, and `GET /exchanges/{id}/invites` → `{ items: [{ code, createdAt, expiresAt, openedAt | null, acceptedAt | null, invitedName | null }] }`. Preferred.
+- **B.** On `Exchange`, while `listedCount < minListingsToOpen`, a `waitingOn` array with the same fields.
+
+A "Nudge" would also need somewhere to go (a notification to that member), which can wait.
+
+**Meanwhile.** IPO day shows who's listed besides you (from the market) and Invite someone; the joined-but-unlisted and invited rows are left out. W12's golden keeps its drawn rows through a fixture.
+

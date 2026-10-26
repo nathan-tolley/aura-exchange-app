@@ -807,6 +807,9 @@ const almost = 'Almost';
 const nudge = 'Nudge';
 const inviteSomeone = 'Invite someone';
 const inviteSomeoneNote = 'Anyone with the link can list';
+
+/// An IPO-day row for someone already listed: "Listed as $MIA".
+String listedAs(String ticker) => 'Listed as $ticker';
 const firstOnTheTape = 'First thing on the tape';
 const analystAtTheOpen = 'The Analyst · when the market opens';
 

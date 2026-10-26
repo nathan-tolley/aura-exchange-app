@@ -182,6 +182,64 @@ HomeViewModel homeClosed() {
   );
 }
 
+/// Home, default: the market open and live, your watchlist as the app
+/// orders it by default (positions first).
+HomeViewModel homeOpen() {
+  final market = LiveMarket.from(
+    _market(
+      marketState: 'OPEN',
+      asOf: fixtureNow,
+      listings: [
+        _listing(
+          _anna,
+          r'$ANNA',
+          'Anna',
+          '124.10',
+          '7.79',
+          '6.70',
+          sparkline: _annaPoints,
+          position: 'LONG',
+        ),
+        _listing(
+          _jake,
+          r'$JAKE',
+          'Jake',
+          '101.90',
+          '-10.50',
+          '-9.34',
+          sparkline: _jakeOffline,
+          position: 'SHORT',
+        ),
+        _listing(_nate, r'$NATE', 'Nate', '100.00', '0.00', '0.00', mine: true),
+        _listing(
+          _eli,
+          r'$ELI',
+          'Eli',
+          '87.55',
+          '-2.15',
+          '-2.40',
+          sparkline: _eliPoints,
+        ),
+      ],
+    ),
+  );
+  return homeViewModel(
+    market: market,
+    portfolio: _portfolio(
+      netWorth: '12486.20',
+      seasonAbs: '2486.20',
+      seasonPct: '24.86',
+      asOf: fixtureNow,
+      marketState: 'OPEN',
+    ),
+    liveness: liveness(market.freshness, connected: true, now: fixtureNow),
+    watchlist: defaultWatchlist(market),
+    season: 1,
+    zone: sydney,
+    now: fixtureNow,
+  );
+}
+
 /// W11: Home with no connection since 9:41 pm.
 HomeViewModel homeOffline() {
   final now = fixtureNow.add(const Duration(minutes: 7));

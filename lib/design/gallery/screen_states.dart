@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../features/events/about_you_views.dart';
+import '../../features/home/home_loading_view.dart';
 import '../../features/home/home_view.dart';
 import '../../features/portfolio/bankruptcy_view.dart';
 import '../../features/portfolio/liquidated_view.dart';
@@ -101,6 +102,25 @@ final List<GalleryScreen> screenStates = [
   ),
   GalleryScreen('S24c', 'Launch, unknown error', (_) => launchUnknown()),
   GalleryScreen('S24d', 'Launch, exchange down', (_) => launchExchangeDown()),
+  // No watchlist editor yet, so no Edit link (as the live screen).
+  GalleryScreen(
+    'S05a',
+    'Home, default',
+    (_) => HomeView(
+      model: homeOpen(),
+      onBell: _noop,
+      onToggleHidden: _noop,
+      onFile: _noop,
+      onTrade: _noop,
+      onRow: (_) {},
+      onTab: (_) {},
+    ),
+  ),
+  GalleryScreen(
+    'S05b',
+    'Home, loading',
+    (_) => HomeLoadingView(onBell: _noop, onTab: (_) {}),
+  ),
   GalleryScreen(
     'W09',
     'Home, closed',
