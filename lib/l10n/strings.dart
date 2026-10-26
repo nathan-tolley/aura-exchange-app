@@ -975,7 +975,8 @@ const rumorPublicExplainer =
 const caps = 'Caps';
 const didItHappen = 'Did it happen?';
 const iSawIt = 'I saw it';
-const iSawItNote = "Co-sign it. You'll be an insider on it until after it rules.";
+const iSawItNote =
+    "Co-sign it. You'll be an insider on it until after it rules.";
 const didntHappen = "Didn't happen";
 const didntHappenNote = 'Cap it. It counts for less if it rules.';
 const takeItBack = 'Take it back';
@@ -1008,6 +1009,35 @@ const confirmedTitle = 'The group confirmed it';
 const declinedTitle = 'The group declined it';
 const reconsideredTitle = 'The group sent it back';
 const reconsideredBody = "The Analyst ruled once more, and that's final.";
+
+// ---------------------------------------------------------------------------
+// Tape and notifications (SCREENS.md #18, #19)
+// ---------------------------------------------------------------------------
+
+const tapeFilterLabel = 'Show';
+const tapeFilterAll = 'All';
+
+/// The Tape tab's filters and the item types each one shows.
+const tapeFilters = {
+  tapeFilterAll: null,
+  'Rulings': 'RULING,CORRECTION',
+  'Rumors': 'RUMOR',
+  'Halts': 'HALT,HALT_RESULT',
+  'Trades': 'WHALE,LIQUIDATION',
+};
+const tapeEmptyBody = 'It fills up as the group files events.';
+const tapeFilteredEmptyTitle = 'Nothing like that yet';
+const tapeFilteredEmptyBody = 'The rest of the tape is under All.';
+const showOlder = 'Show older';
+const notificationsTitle = 'Notifications';
+const noNotifications = 'No notifications';
+const noNotificationsBody =
+    'Rulings about you, your fills and margin warnings land here.';
+const theExchange = 'The exchange';
+
+/// Quiet hours on: "Quiet hours until 7:00 am".
+String quietHoursUntil(String end) => 'Quiet hours until $end';
+const quietHoursBody = 'Nothing buzzes until then. It all waits in here.';
 
 // ---------------------------------------------------------------------------
 // Stock page (SCREENS.md #7, #8)
@@ -1399,11 +1429,8 @@ String indicatedFrom(Decimal previousClose) =>
     'From ${formatMoney(previousClose)} · indicated, not traded yet';
 
 /// "The Analyst · Downgrade · target A$96.00".
-String analystSource(String? ratingChange, Decimal target) => [
-  'The Analyst',
-  ?ratingChange,
-  'target ${formatMoney(target)}',
-].join(' · ');
+String analystSource(String? ratingChange, Decimal target) =>
+    ['The Analyst', ?ratingChange, 'target ${formatMoney(target)}'].join(' · ');
 const statAnalyst = 'Analyst';
 
 /// "3 co-signs".
@@ -1419,7 +1446,6 @@ const postStatement = 'Post a statement';
 const postStatementNote = 'Runs on the tape next to the story';
 const superInjunction = 'Super-injunction';
 const superInjunctionNote = 'Hides the story · the price hit stays';
-
 
 /// "2 of 3 left", or "2 left" when the season's allowance isn't known
 /// (contract request #9).

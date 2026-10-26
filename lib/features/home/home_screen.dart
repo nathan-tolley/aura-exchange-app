@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../data/exchange_data.dart';
 import '../../data/freshness.dart';
+import '../../data/inbox_data.dart';
 import '../../data/live_market.dart';
 import '../../data/me.dart';
 import '../../design/widgets/aura_tab_bar.dart';
@@ -73,6 +74,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       season: e.season.number,
       zone: zone,
       now: now,
+      tapeUnread: switch ((
+        ref.watch(latestTapeProvider(exchangeId)).value?.at,
+        ref.watch(tapeSeenProvider),
+      )) {
+        (final latest?, final seen?) => latest.isAfter(seen),
+        _ => false,
+      },
       ipo: ipoDay
           ? homeIpoInput(
               market: m,
@@ -86,6 +94,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return HomeView(
       model: model,
       hidden: _hidden,
+      unread: ref.watch(unreadNotificationsProvider(exchangeId)),
       onBell: onBell,
       onToggleHidden: () => setState(() => _hidden = !_hidden),
       onFile: () => openFiling(context),

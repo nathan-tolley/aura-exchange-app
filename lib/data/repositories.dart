@@ -116,6 +116,36 @@ class MeRepository {
   /// You and your memberships: which exchanges you're in, and whether you're
   /// listed in each.
   Future<Me> me() => guardApi(_api.me.getMe);
+
+  /// The inbox (push comes later), newest first.
+  Future<GetMeNotificationsResponse> notifications({
+    String? exchangeId,
+    String? cursor,
+  }) => guardApi(
+    () => _api.me.getMeNotifications(exchangeId: exchangeId, cursor: cursor),
+  );
+
+  /// Marks everything up to [upTo] read.
+  Future<void> markRead(DateTime upTo, IdempotencyKey key) => guardApi(
+    () => _api.me.postMeNotificationsRead(
+      idempotencyKey: key.value,
+      body: MeNotificationsReadRequestBody(upTo: upTo),
+    ),
+  );
+
+  /// What you're notified about, and quiet hours.
+  Future<NotificationPrefs> prefs() => guardApi(_api.me.getMeNotificationPrefs);
+
+  /// Changes what you're notified about.
+  Future<NotificationPrefs> setPrefs(
+    NotificationPrefs prefs,
+    IdempotencyKey key,
+  ) => guardApi(
+    () => _api.me.patchMeNotificationPrefs(
+      idempotencyKey: key.value,
+      body: prefs,
+    ),
+  );
 }
 
 /// Exchanges, invites and your IPO: everything onboarding needs.

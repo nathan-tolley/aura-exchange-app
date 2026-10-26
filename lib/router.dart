@@ -20,6 +20,7 @@ import 'features/onboarding/join_screen.dart';
 import 'features/onboarding/sign_in_screen.dart';
 import 'features/stock/stock_screen.dart';
 import 'features/system/boot_screen.dart';
+import 'features/tape/tape_screen.dart';
 import 'features/trade/trade_screen.dart';
 
 /// Every screen is a route, so `aura://` deep links land on real screens
@@ -174,7 +175,7 @@ final List<RouteBase> _routes = [
     builder: (_, state) => JoinScreen(code: state.pathParameters['code']!),
   ),
   // Screens still to come in A4: the background until they're built.
-  GoRoute(path: Routes.notifications, builder: (_, _) => const _Pending()),
+  GoRoute(path: Routes.notifications, builder: (_, _) => const InboxScreen()),
   GoRoute(path: Routes.settings, builder: (_, _) => const _Pending()),
   GoRoute(
     path: Routes.file,
@@ -212,6 +213,7 @@ final List<RouteBase> _routes = [
               builder: (_, _) => switch (tab) {
                 AuraTab.home => const HomeScreen(),
                 AuraTab.market => const MarketScreen(),
+                AuraTab.tape => const TapeScreen(),
                 _ => _Pending(tab: tab),
               },
             ),

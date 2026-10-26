@@ -18,6 +18,7 @@ import 'fixtures/frames.dart';
 import 'fixtures/market.dart';
 import 'fixtures/onboarding.dart';
 import 'fixtures/stock.dart';
+import 'fixtures/tape.dart';
 import 'fixtures/trade.dart';
 import 'screen_fixtures.dart';
 
@@ -214,6 +215,15 @@ final List<GalleryScreen> screenStates = [
   GalleryScreen('S15e', 'Ruling, voided', (_) => rulingVoided()),
   GalleryScreen('S17a', 'Halt vote, your vote', (_) => haltYourVote()),
   GalleryScreen('S17b', 'Halt vote, result', (_) => haltResult()),
+  GalleryScreen('S18a', 'Tape, all with unread', (_) => tapeAll()),
+  GalleryScreen('S18b', 'Tape, filtered', (_) => tapeFiltered()),
+  GalleryScreen('S18c', 'Tape, empty', (_) => tapeEmpty()),
+  GalleryScreen('S18d', 'Tape, filter empty', (_) => tapeFilteredEmpty()),
+  GalleryScreen('S18e', 'Tape, loading', (_) => tapeLoading()),
+  GalleryScreen('S19a', 'Notifications, by stock', (_) => inboxGrouped()),
+  GalleryScreen('S19b', 'Notifications, quiet hours', (_) => inboxQuiet()),
+  GalleryScreen('S19c', 'Notifications, empty', (_) => inboxEmpty()),
+  GalleryScreen('S19d', 'Notifications, loading', (_) => inboxLoading()),
   GalleryScreen(
     'W05',
     'Trade sheet, rejected',

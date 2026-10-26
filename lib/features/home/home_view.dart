@@ -179,6 +179,7 @@ class HomeView extends StatelessWidget {
     super.key,
     required this.model,
     this.hidden = false,
+    this.unread = 0,
     this.onBell,
     this.onToggleHidden,
     this.onFile,
@@ -195,6 +196,9 @@ class HomeView extends StatelessWidget {
 
   /// Net worth hidden behind the eye button.
   final bool hidden;
+
+  /// Unread notifications: the bell's dot, and the count for VoiceOver.
+  final int unread;
   final VoidCallback? onBell;
   final VoidCallback? onToggleHidden;
   final VoidCallback? onFile;
@@ -235,7 +239,10 @@ class HomeView extends StatelessWidget {
                   ),
                   AuraIconButton(
                     icon: AuraIcons.bell,
-                    label: 'Notifications',
+                    label: unread == 0
+                        ? 'Notifications'
+                        : 'Notifications, $unread unread',
+                    badge: unread > 0,
                     onPressed: onBell,
                   ),
                 ],
