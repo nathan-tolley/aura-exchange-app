@@ -15,6 +15,7 @@ import 'features/onboarding/create_exchange_screen.dart';
 import 'features/onboarding/ipo_screen.dart';
 import 'features/onboarding/join_screen.dart';
 import 'features/onboarding/sign_in_screen.dart';
+import 'features/stock/stock_screen.dart';
 import 'features/system/boot_screen.dart';
 
 /// Every screen is a route, so `aura://` deep links land on real screens
@@ -63,6 +64,11 @@ abstract final class Routes {
 
   static String invite(String code) => '/invite/$code';
   static String stock(String listingId) => '/stock/$listingId';
+  static String event(String eventId) => '/events/$eventId';
+  static String trade(String listingId, Side side) => Uri(
+    path: '/trade/$listingId',
+    queryParameters: {'side': side.json},
+  ).toString();
 
   /// The tab roots, in tab-bar order.
   static const tabs = [home, market, tape, portfolio, you];
@@ -165,7 +171,12 @@ final List<RouteBase> _routes = [
   GoRoute(path: Routes.notifications, builder: (_, _) => const _Pending()),
   GoRoute(path: Routes.settings, builder: (_, _) => const _Pending()),
   GoRoute(path: Routes.file, builder: (_, _) => const _Pending()),
-  GoRoute(path: '/stock/:id', builder: (_, _) => const _Pending()),
+  GoRoute(
+    path: '/stock/:id',
+    builder: (_, state) => StockScreen(listingId: state.pathParameters['id']!),
+  ),
+  GoRoute(path: '/events/:id', builder: (_, _) => const _Pending()),
+  GoRoute(path: '/trade/:listingId', builder: (_, _) => const _Pending()),
   StatefulShellRoute.indexedStack(
     builder: (context, state, shell) => shell,
     branches: [

@@ -16,6 +16,7 @@ import '../widgets/aura_status_chip.dart';
 import 'fixtures/frames.dart';
 import 'fixtures/market.dart';
 import 'fixtures/onboarding.dart';
+import 'fixtures/stock.dart';
 import 'screen_fixtures.dart';
 
 /// A screen in one of its states, built from fixtures. The State Gallery
@@ -128,6 +129,32 @@ final List<GalleryScreen> screenStates = [
   GalleryScreen('S06d', 'Market, no results', (_) => marketNoResults()),
   GalleryScreen('S06e', 'Market, loading', (_) => marketLoading()),
   GalleryScreen('S06f', 'Market, offline', (_) => marketOffline()),
+  GalleryScreen('S07a', 'Stock page, default', (_) => stockDefault()),
+  GalleryScreen('S07b', 'Stock page, your own stock', (_) => stockYours()),
+  GalleryScreen(
+    'S07c',
+    'Stock page, closed with indicated price',
+    (_) => stockClosedIndicated(),
+  ),
+  GalleryScreen(
+    'S07d',
+    'Stock page, rumor pending',
+    (_) => stockRumorPending(),
+  ),
+  GalleryScreen('S07e', 'Stock page, delisted', (_) => stockDelisted()),
+  GalleryScreen('S07f', 'Stock page, offline', (_) => stockOfflineState()),
+  GalleryScreen(
+    'S07g',
+    'Stock page, chart loading',
+    (_) => stockChartLoading(),
+  ),
+  GalleryScreen('S07h', 'Stock page, tape', (_) => stockTape()),
+  GalleryScreen('S07i', 'Stock page, analyst', (_) => stockAnalyst()),
+  GalleryScreen(
+    'S08b',
+    'Stock overview, no events yet',
+    (_) => stockNoEvents(),
+  ),
   GalleryScreen(
     'W09',
     'Home, closed',

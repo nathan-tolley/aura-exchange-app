@@ -5,6 +5,8 @@ import 'package:timezone/timezone.dart' as tz;
 import '../api/errors.dart';
 import '../api/generated/models/badge.dart';
 import '../api/generated/models/error_code.dart';
+import '../api/generated/models/event_status.dart';
+import '../api/generated/models/tape_item_type.dart';
 import '../api/generated/models/halt_reason.dart';
 import '../api/generated/models/side.dart';
 import '../format/change.dart';
@@ -839,6 +841,93 @@ ErrorCopy exchangeHaltedBanner(
       : 'Prices hold where they are until '
             '${formatMoment(resumesAt, zone, now: now)}.',
 );
+
+// ---------------------------------------------------------------------------
+// Stock page (SCREENS.md #7, #8)
+// ---------------------------------------------------------------------------
+
+const chartRange = 'Chart range';
+const chartRanges = ['1D', '1W', '1M', 'SZN'];
+const tabOverview = 'Overview';
+const tabTape = 'Tape';
+const tabAnalyst = 'Analyst';
+const stockTabs = [tabOverview, tabTape, tabAnalyst];
+const statOpen = 'Open';
+const statPrevClose = 'Prev close';
+const statDayRange = 'Day range';
+const statVolume = 'Volume';
+const statShortInterest = 'Short interest';
+const notYet = 'Not yet';
+const eventsHeading = 'Events';
+const noEventsYet = 'No events yet';
+String noEventsYetBody(String name) =>
+    "Nothing's been filed about $name. When something happens, file it.";
+const nothingOnTapeYet = 'Nothing on the tape yet';
+String nothingOnTapeBody(String ticker) =>
+    'Rulings and big trades in $ticker show up here.';
+const noAnalystNote = 'No coverage yet';
+const noAnalystNoteBody = 'The Analyst writes a note after the first ruling.';
+const indicated = 'indicated';
+const short = 'Short';
+const shortMore = 'Short more';
+const coverLabel = 'Cover';
+const youCantTradeYourself = "This is you. You can't trade your own stock.";
+const delistedNoTrading = "Delisted stocks don't trade.";
+const offlineNoTrading = "Trading waits until you're back online.";
+const closedOrdersNote = 'Orders you set now fill at the opening price.';
+
+/// "A rumor about $MIA is pending".
+String rumorPendingTitle(String ticker) => 'A rumor about $ticker is pending';
+const rumorPendingBody =
+    'The Analyst rules on it soon. Read it before you trade.';
+const readIt = 'Read it';
+
+/// "$SAM is delisted".
+String delistedTitle(String ticker) => '$ticker is delisted';
+String delistedBody(String name, Decimal price) =>
+    '$name opted out. Holders were cashed out at the last price, '
+    '${formatMoney(price)}.';
+
+/// The status word for an event on the stock page (API-CONTRACT.md → One
+/// status vocabulary).
+String eventStatusWord(EventStatus status) => switch (status) {
+  EventStatus.sending => 'Sending',
+  EventStatus.rumor => 'Unconfirmed',
+  EventStatus.ruling => 'Ruling',
+  EventStatus.ruled => 'Ruled',
+  EventStatus.halted => 'Halted',
+  EventStatus.review => 'In review',
+  EventStatus.voided => 'Voided',
+  EventStatus.canceled => 'Unsent',
+  EventStatus.hidden => 'Story hidden',
+  EventStatus.$unknown => 'Updated',
+};
+
+/// What a tape item is, in its source line: "$JAKE · Ruling · 2 h ago".
+String tapeTypeWord(TapeItemType type) => switch (type) {
+  TapeItemType.ipo => 'IPO',
+  TapeItemType.rumor => 'Rumor',
+  TapeItemType.ruling => 'Ruling',
+  TapeItemType.halt => 'Halt',
+  TapeItemType.haltResult => 'Halt result',
+  TapeItemType.whale => 'Big trade',
+  TapeItemType.liquidation => 'Liquidation',
+  TapeItemType.correction => 'Correction',
+  TapeItemType.bell => 'Bell',
+  TapeItemType.sec => 'SEC',
+  TapeItemType.earnings => 'Earnings',
+  TapeItemType.rating => 'Rating',
+  TapeItemType.fed => 'The Fed',
+  TapeItemType.split => 'Split',
+  TapeItemType.chapter11 => 'Chapter 11',
+  TapeItemType.bankruptcy => 'Chapter 7',
+  TapeItemType.delisting => 'Delisting',
+  _ => 'News',
+};
+
+/// "Buy · target A$130.00", under the Analyst's note.
+String analystRatingSource(String rating, Decimal target) =>
+    'The Analyst · $rating · target ${formatMoney(target)}';
 
 // ---------------------------------------------------------------------------
 // Trade sheet (W05, W06)

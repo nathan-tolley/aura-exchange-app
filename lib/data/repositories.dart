@@ -189,6 +189,14 @@ class MarketRepository {
   Future<ListingDetail> listing(String listingId) => guardApi(
     () => _api.marketData.getListingsListingId(listingId: listingId),
   );
+
+  /// A stock's chart for a range, with its ruling markers.
+  Future<CandleSeries> candles(String listingId, Range range) => guardApi(
+    () => _api.marketData.getListingsListingIdCandles(
+      listingId: listingId,
+      range: range,
+    ),
+  );
 }
 
 class TapeRepository {

@@ -4,10 +4,10 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A4 → stock page (branch `a4-flows` off `main`)
-- State: in progress; onboarding, Home and the market list are done
+- Step: A4 → trade sheet (branch `a4-flows` off `main`)
+- State: in progress; onboarding, Home, the market list and the stock page are done
 - Plan for A4, one commit each, in this order (Gate 0's path first): (1) shell: router with the sign-in redirect, `/me` and the current exchange, onboarding redirects, the tab shell, the sheet route with the `scrim` barrier, lifecycle (stream stops in the background, screens refetch on resume); (2) sign-in (email, code sent, wrong, expired, offline) with `AuraTextField` + `AuraCodeField`; (3) create an exchange (name, timezone and hours, invite, waiting for friends); (4) join from invite; (5) your IPO; then Home live, market, stock, trade, file, events, tape and notifications, portfolio, you and settings, app-wide states, as ROADMAP.md lists them. Check sign-in against the live API after (2).
-- Next action: the stock page (default, your own stock with no trade bar, halted = W10, closed with indicated price, rumor pending, delisted) with a scrubbable chart (`AuraChart`, new component) and ruling markers, then the stock overview.
+- Next action: the trade sheet over the stock page (`/trade/:listingId?side=`): buy, sell, short with liquidation price, cover, limit in extended hours, stop-loss; then the outcomes (quote expiring, requote = W06, rejected = W05 and variants, filled receipt + toast, resting order).
 - Uncommitted work: none
 - How to compare: `python tool/golden_diff.py diff GOLDEN REFERENCE` gives the share of differing pixels and a side-by-side image (look at it); `bands` lists where content sits, in points, for measuring the drawn screens. Component goldens are 840 px wide and now 0.03–2.81% from their references; screens are 780×1688 (`expectScreen`), Home at about 2%.
 - Lessons: 12.5 pt text goes through `auraLiftFootnote()`. Build screens as a view over a view-model plus a presenter from API payloads; fixtures are API-shaped JSON. `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format lib` or `dart format .`: name your own files. Never write a doc through PowerShell's `Set-Content` (it adds a BOM and mangles non-ASCII); edit with the Edit tool or Python. It reformats the generated token files (the drift test fails) and `lib/api/generated` (123 files); if it happens, rerun `dart run tool/gen_tokens.dart` and `git checkout -- lib/api/generated`.
@@ -76,3 +76,5 @@ One line per finished step: date · step · what · commit.
 - 2026-10-25 · A4 · Home live (S05a default, S05b loading, plus W09/W11/W12 from live data): `HomeScreen`, `portfolioProvider`, `latestTapeProvider`, tape repository, default watchlist, IPO day from the market; contract request #11; Home box ticked · (this commit)
 - 2026-10-25 · A4 · Market list (S06a–f: by change, halted row, search, no results, loading, offline): `marketChip`, `listingTag`, `LoadFailureView`; Market box ticked · (this commit)
 - 2026-10-25 · A4 · Components 36 and 37: `AuraChart` (line, previous close, ruling markers, scrub with crosshair and tooltip, haptic at rulings) and `AuraNewsRow` (a tape item in a list), in COMPONENTS.md and the gallery with goldens · (this commit)
+- 2026-10-25 · A4 · Stock page and overview (S07a–i, S08b; W10 for halted): `StockScreen` over the listing, live ticks and candles; trade bar by position; banners by severity; `ActionBar(backed:)`; Stock page box ticked · (this commit)
+
