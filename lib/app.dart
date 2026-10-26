@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'data/api_providers.dart';
 import 'data/lifecycle.dart';
 import 'design/text.dart';
 import 'design/tokens.dart';
+import 'features/system/problem_view.dart';
 import 'router.dart';
 
 /// The app shell. Graphite is dark only (design/DESIGN.md), and every screen
@@ -53,6 +55,22 @@ class _AuraAppState extends ConsumerState<AuraApp> {
       ),
       debugShowCheckedModeBanner: false,
       routerConfig: ref.watch(routerProvider),
+      // A build the exchange no longer accepts can't do anything, so it
+      // says so over every screen (SCREENS.md #24).
+      builder: (context, child) {
+        final update = ref.watch(updateRequiredProvider);
+        if (update == null) return child!;
+        return DefaultTextStyle(
+          style: auraBaseTextStyle(),
+          child: ProblemView(
+            model: problemModel(update),
+            onAction: () {
+              ref.read(updateRequiredProvider.notifier).clear();
+              ref.read(refetchSignalProvider.notifier).fire();
+            },
+          ),
+        );
+      },
     );
   }
 }

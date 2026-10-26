@@ -11,6 +11,7 @@ import '../../design/widgets/aura_tape.dart';
 import '../../format/ticker.dart';
 import '../../l10n/strings.dart';
 import '../shared/listing_tag.dart';
+import '../system/exchange_down_model.dart';
 import 'home_view.dart';
 
 /// Builds Home from the API's payloads: the live market (with freshness),
@@ -53,8 +54,12 @@ HomeViewModel homeViewModel({
           now: now,
         )
       : null;
+  final problem = market.problem;
+  final down = problem != null && isExchangeDown(problem);
   final offlineCopy = offline
       ? offlineBanner(freshness.asOf, zone, now: now)
+      : down
+      ? errorCopy(problem)
       : null;
 
   return HomeViewModel(
@@ -81,12 +86,15 @@ HomeViewModel homeViewModel({
     heroNote: ipo?.heroNote,
     hideable: ipo == null,
     actions: ipo == null
-        ? HomeActions(trade: closed ? setAnOrder : trade, enabled: !offline)
+        ? HomeActions(
+            trade: closed ? setAnOrder : trade,
+            enabled: !offline && !down,
+          )
         : null,
     offlineBanner: offlineCopy == null
         ? null
         : HomeBanner(
-            tone: AuraBannerTone.offline,
+            tone: down ? AuraBannerTone.down : AuraBannerTone.offline,
             title: offlineCopy.title,
             body: offlineCopy.body,
             action: offlineCopy.action,

@@ -161,6 +161,11 @@ final List<GalleryScreen> screenStates = [
     (_) => stockNoEvents(),
   ),
   GalleryScreen(
+    'S23a',
+    'Home, exchange down after numbers',
+    (_) => _home(homeExchangeDown()),
+  ),
+  GalleryScreen(
     'W09',
     'Home, closed',
     (_) => _home(homeClosed()),

@@ -298,6 +298,82 @@ HomeViewModel homeOffline() {
   );
 }
 
+/// Home with the exchange down since 9:41 pm: the numbers kept and
+/// stamped, a down banner where W11's offline one goes.
+HomeViewModel homeExchangeDown() {
+  final now = fixtureNow.add(const Duration(minutes: 7));
+  final market =
+      LiveMarket.from(
+        _market(
+          marketState: 'OPEN',
+          asOf: fixtureNow,
+          listings: [
+            _listing(
+              _anna,
+              r'$ANNA',
+              'Anna',
+              '124.10',
+              '7.79',
+              '6.70',
+              sparkline: _annaPoints,
+              position: 'LONG',
+            ),
+            _listing(
+              _jake,
+              r'$JAKE',
+              'Jake',
+              '101.90',
+              '-10.50',
+              '-9.34',
+              sparkline: _jakeOffline,
+              position: 'SHORT',
+            ),
+            _listing(
+              _nate,
+              r'$NATE',
+              'Nate',
+              '100.00',
+              '0.00',
+              '0.00',
+              mine: true,
+            ),
+            _listing(
+              _eli,
+              r'$ELI',
+              'Eli',
+              '87.55',
+              '-2.15',
+              '-2.40',
+              sparkline: _eliPoints,
+            ),
+          ],
+        ),
+      ).withProblem(
+        const ApiError(
+          code: 'SERVER',
+          params: {'reference': '7F2K'},
+          retryable: true,
+          action: ApiAction.retry,
+          status: 500,
+        ),
+      );
+  return homeViewModel(
+    market: market,
+    portfolio: _portfolio(
+      netWorth: '12486.20',
+      seasonAbs: '2486.20',
+      seasonPct: '24.86',
+      asOf: fixtureNow,
+      marketState: 'OPEN',
+    ),
+    liveness: liveness(market.freshness, connected: true, now: now),
+    watchlist: [_anna, _jake, _eli],
+    season: 1,
+    zone: sydney,
+    now: now,
+  );
+}
+
 /// W12: the exchange's first day. Only you are listed; it opens at three.
 HomeViewModel homeIpoDay() {
   final market = LiveMarket.from(

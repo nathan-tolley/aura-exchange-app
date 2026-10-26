@@ -14,6 +14,7 @@ import '../home/home_view.dart' show HomeRow;
 import '../shared/banner_model.dart';
 import '../shared/listing_tag.dart';
 import '../shared/market_chip.dart';
+import '../system/exchange_down_model.dart';
 
 /// The Market tab (SCREENS.md #6), worded.
 @immutable
@@ -98,6 +99,16 @@ BannerModel? _banner(
     final copy = offlineBanner(f.asOf, zone, now: now);
     return BannerModel(
       tone: AuraBannerTone.offline,
+      title: copy.title,
+      body: copy.body,
+      action: copy.action,
+    );
+  }
+  final problem = market.problem;
+  if (problem != null && isExchangeDown(problem)) {
+    final copy = errorCopy(problem);
+    return BannerModel(
+      tone: AuraBannerTone.down,
       title: copy.title,
       body: copy.body,
       action: copy.action,

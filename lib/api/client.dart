@@ -111,11 +111,28 @@ class AuraClient {
     dio = _newDio(adapter);
     _refreshDio = _newDio(adapter);
     session = AuthSession(store: tokens, refresher: _refresh);
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (err, handler) {
+          if (err.response?.statusCode == 426) {
+            final error = ApiError.fromResponse(426, err.response?.data);
+            if (error.errorCode == ErrorCode.updateRequired) {
+              updateRequired.value = error;
+            }
+          }
+          handler.next(err);
+        },
+      ),
+    );
     dio.interceptors.add(_AuthInterceptor(session, dio));
     api = AuraApi(dio, baseUrl: config.baseUrl);
   }
 
   final ApiConfig config;
+
+  /// Set when any request is refused with `UPDATE_REQUIRED`: this build is
+  /// older than the exchange accepts, and the app says so over everything.
+  final ValueNotifier<ApiError?> updateRequired = ValueNotifier(null);
   late final Dio dio;
   late final AuraApi api;
   late final AuthSession session;
@@ -173,6 +190,7 @@ class AuraClient {
   void close() {
     dio.close();
     _refreshDio.close();
+    updateRequired.dispose();
     session.dispose();
   }
 }
