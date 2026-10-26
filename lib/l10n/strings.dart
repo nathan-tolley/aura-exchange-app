@@ -1082,7 +1082,57 @@ String marginBannerBody(Decimal ratioPct, Decimal minimumPct) =>
 const seeIt = 'See it';
 
 // ---------------------------------------------------------------------------
-// Stock page (SCREENS.md #7, #8)
+// You and Settings (SCREENS.md #30, #31)
+// ---------------------------------------------------------------------------
+
+const yourStockToday = 'Your stock · today';
+const statSeasonHigh = 'Season high';
+const statSeasonLow = 'Season low';
+const statSuperInjunctions = 'Super-injunctions';
+const yourStockPage = 'Your stock page';
+const yourStockPageNote = 'Its chart, events and tape';
+const settingsTitle = 'Settings';
+const settingsNote = 'Notifications, quiet hours, your listing';
+const notListedTitle = "You're not listed";
+const notListedBody = 'List yourself and the group can trade you.';
+const notificationsHeading = 'Notifications';
+const notifyRumors = 'Rumors about you';
+const notifyRumorsNote = 'The moment one is filed';
+const notifyRulings = 'Rulings about you';
+const notifyHalts = 'Halt votes';
+const notifyFills = 'Order fills';
+const notifyMoves = 'Big moves in what you hold';
+
+/// "When one moves 5% or more".
+String notifyMovesNote(Decimal pct) =>
+    'When one moves ${pct.abs().round(scale: 2)}% or more';
+const notifyAlerts = 'Price alerts';
+const notifyBells = 'Opening and closing bells';
+const notifyMargin = 'Margin warnings and liquidations';
+const notifyMarginNote = "Always on: it's about your money.";
+const quietHoursLabel = 'Quiet hours';
+
+/// "10:00 pm to 7:00 am".
+String quietHoursRange(String start, String end) => '$start to $end';
+const quietHoursOff = 'Off';
+const inboxOnlyNote =
+    'Push comes later. For now these decide what reaches your inbox.';
+const yourListingHeading = 'Your listing';
+const optOut = 'Opt out of being listed';
+const optOutNote = 'Holders are cashed out at the last price';
+const accountHeading = 'Account';
+const signOutNote = 'This phone only';
+const delistTitle = 'Delist yourself?';
+
+/// What opting out does, from the contract's own words.
+String delistBody(String exchange) =>
+    'You stop being a stock on $exchange. Everyone holding you is cashed out '
+    'at the last price.';
+const slideToDelist = 'Slide to delist yourself';
+const stayListed = 'Stay listed';
+const savingFailed = "That setting didn't save. It's back to how it was.";
+
+
 // ---------------------------------------------------------------------------
 
 const chartRange = 'Chart range';

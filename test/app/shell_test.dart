@@ -85,10 +85,11 @@ void main() {
       );
     });
 
-    test('not listed yet: your IPO, after inviting friends', () {
+    test('not listed: free to look around (you can opt out)', () {
       final unlisted = me([membership(listed: false)]);
-      expect(go(Routes.home, me: unlisted), Routes.ipo);
+      expect(go(Routes.home, me: unlisted), isNull);
       expect(go(Routes.ipo, me: unlisted), isNull);
+      expect(go(Routes.boot, me: unlisted), Routes.home);
       expect(go('${Routes.createExchange}/invite', me: unlisted), isNull);
     });
 

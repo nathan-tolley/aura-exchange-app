@@ -21,6 +21,7 @@ import 'fixtures/portfolio.dart';
 import 'fixtures/stock.dart';
 import 'fixtures/tape.dart';
 import 'fixtures/trade.dart';
+import 'fixtures/you.dart';
 import 'screen_fixtures.dart';
 
 /// A screen in one of its states, built from fixtures. The State Gallery
@@ -234,6 +235,14 @@ final List<GalleryScreen> screenStates = [
   GalleryScreen('S20c', 'Portfolio, empty', (_) => portfolioEmpty()),
   GalleryScreen('S20d', 'Portfolio, loading', (_) => portfolioLoading()),
   GalleryScreen('S20e', 'Portfolio, cancel an order', (_) => portfolioCancel()),
+  GalleryScreen('S30a', 'You, listed', (_) => youListed()),
+  GalleryScreen('S30b', 'You, not listed', (_) => youNotListed()),
+  GalleryScreen('S30c', 'You, loading', (_) => youLoading()),
+  GalleryScreen('S31a', 'Settings', (_) => settingsDefault()),
+  GalleryScreen('S31b', 'Settings, quiet hours on', (_) => settingsQuiet()),
+  GalleryScreen('S31c', "Settings, didn't save", (_) => settingsFailed()),
+  GalleryScreen('S31d', 'Settings, loading', (_) => settingsLoading()),
+  GalleryScreen('S31e', 'Settings, opt out', (_) => settingsDelist()),
   GalleryScreen(
     'W05',
     'Trade sheet, rejected',

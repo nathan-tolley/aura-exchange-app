@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/client.dart';
@@ -24,7 +25,10 @@ final authRepositoryProvider = Provider<AuthRepository>(
 );
 
 final meRepositoryProvider = Provider<MeRepository>(
-  (ref) => MeRepository(ref.watch(auraApiProvider)),
+  (ref) => MeRepository(
+    ref.watch(auraApiProvider),
+    ref.watch(auraClientProvider).dio,
+  ),
 );
 
 final exchangesRepositoryProvider = Provider<ExchangesRepository>(
@@ -109,9 +113,13 @@ class AuthRepository {
 }
 
 class MeRepository {
-  MeRepository(this._api);
+  MeRepository(this._api, this._dio);
 
   final AuraApi _api;
+
+  /// The same client the generated API uses (auth, version headers,
+  /// refresh), for the one body the generated model can't write.
+  final Dio _dio;
 
   /// You and your memberships: which exchanges you're in, and whether you're
   /// listed in each.
@@ -136,16 +144,27 @@ class MeRepository {
   /// What you're notified about, and quiet hours.
   Future<NotificationPrefs> prefs() => guardApi(_api.me.getMeNotificationPrefs);
 
-  /// Changes what you're notified about.
+  /// Changes what you're notified about. Quiet hours turn off with an
+  /// explicit `"quietHours": null`, which the generated model leaves out of
+  /// a request (optional fields are omitted when null), so that change is
+  /// sent as JSON directly.
   Future<NotificationPrefs> setPrefs(
     NotificationPrefs prefs,
     IdempotencyKey key,
-  ) => guardApi(
-    () => _api.me.patchMeNotificationPrefs(
-      idempotencyKey: key.value,
-      body: prefs,
-    ),
-  );
+  ) => guardApi(() async {
+    if (prefs.quietHours != null) {
+      return _api.me.patchMeNotificationPrefs(
+        idempotencyKey: key.value,
+        body: prefs,
+      );
+    }
+    final response = await _dio.patch<Map<String, dynamic>>(
+      '/me/notification-prefs',
+      data: {...prefs.toJson(), 'quietHours': null},
+      options: Options(headers: {'Idempotency-Key': key.value}),
+    );
+    return NotificationPrefs.fromJson(response.data!);
+  });
 }
 
 /// Exchanges, invites and your IPO: everything onboarding needs.
@@ -191,6 +210,15 @@ class ExchangesRepository {
     () => _api.exchanges.getExchangesExchangeIdTickersCheck(
       exchangeId: exchangeId,
       ticker: ticker,
+    ),
+  );
+
+  /// Opts you out: delists you, and holders are cashed out at the last
+  /// price.
+  Future<void> delist(String exchangeId, IdempotencyKey key) => guardApi(
+    () => _api.exchanges.deleteExchangesExchangeIdListing(
+      exchangeId: exchangeId,
+      idempotencyKey: key.value,
     ),
   );
 

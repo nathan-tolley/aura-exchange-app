@@ -23,6 +23,7 @@ import 'features/stock/stock_screen.dart';
 import 'features/system/boot_screen.dart';
 import 'features/tape/tape_screen.dart';
 import 'features/trade/trade_screen.dart';
+import 'features/you/you_screen.dart';
 
 /// Every screen is a route, so `aura://` deep links land on real screens
 /// (`aura://invite/JAKE-7F2K` arrives as `/invite/JAKE-7F2K`). The redirect
@@ -90,7 +91,6 @@ abstract final class Routes {
 /// - Signed in, `/me` not loaded yet or failed: `/boot`, which shows the
 ///   failure with Try again.
 /// - In no exchange: create one, unless you're following an invite.
-/// - Not listed in your exchange yet: your IPO.
 /// - Otherwise sign-in and boot forward to where you were going, or Home.
 @visibleForTesting
 String? appRedirect(
@@ -122,7 +122,9 @@ String? appRedirect(
 }
 
 /// Where someone part-way through onboarding has to be, or null when
-/// [location] is fine for them.
+/// [location] is fine for them. Only having no exchange holds you: being
+/// unlisted doesn't, because you can opt out (SCREENS.md #31). Creating and
+/// joining lead into your IPO themselves, and You offers it after.
 String? _onboarding(Uri location, Me me) {
   final path = location.path;
   // An invite can always be followed: it's how you join.
@@ -131,11 +133,6 @@ String? _onboarding(Uri location, Me me) {
     return path.startsWith(Routes.createExchange)
         ? null
         : Routes.createExchange;
-  }
-  if (me.memberships.first.listing == null) {
-    // Creating an exchange ends on inviting friends, before your IPO.
-    if (path.startsWith(Routes.createExchange)) return null;
-    return path == Routes.ipo ? null : Routes.ipo;
   }
   return null;
 }
@@ -178,7 +175,7 @@ final List<RouteBase> _routes = [
   ),
   // Screens still to come in A4: the background until they're built.
   GoRoute(path: Routes.notifications, builder: (_, _) => const InboxScreen()),
-  GoRoute(path: Routes.settings, builder: (_, _) => const _Pending()),
+  GoRoute(path: Routes.settings, builder: (_, _) => const SettingsScreen()),
   GoRoute(
     path: '/positions/:id',
     builder: (_, state) =>
@@ -224,7 +221,7 @@ final List<RouteBase> _routes = [
                 AuraTab.market => const MarketScreen(),
                 AuraTab.tape => const TapeScreen(),
                 AuraTab.portfolio => const PortfolioScreen(),
-                _ => _Pending(tab: tab),
+                AuraTab.you => const YouScreen(),
               },
             ),
           ],
@@ -245,8 +242,12 @@ final List<RouteBase> _routes = [
           builder: (context, state) {
             final id = state.pathParameters['id'];
             final screen = screenStates.where((s) => s.id == id).firstOrNull;
+            // An id that isn't in the gallery: the plain background.
             return screen == null
-                ? const _Pending()
+                ? const ColoredBox(
+                    color: AuraColors.bg,
+                    child: SizedBox.expand(),
+                  )
                 : Builder(builder: screen.build);
           },
         ),
@@ -259,39 +260,6 @@ final List<RouteBase> _routes = [
 void goTab(BuildContext context, AuraTab tab) {
   final shell = StatefulNavigationShell.of(context);
   shell.goBranch(tab.index, initialLocation: tab.index == shell.currentIndex);
-}
-
-/// A route whose screen comes later in A4: the one background, and the tab
-/// bar on a tab root so the shell can be walked.
-class _Pending extends StatelessWidget {
-  const _Pending({this.tab});
-
-  final AuraTab? tab;
-
-  @override
-  Widget build(BuildContext context) {
-    final tab = this.tab;
-    return ColoredBox(
-      color: AuraColors.bg,
-      child: Stack(
-        children: [
-          const SizedBox.expand(),
-          if (tab != null)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 30,
-              child: Center(
-                child: AuraTabBar(
-                  active: tab,
-                  onSelect: (t) => goTab(context, t),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 }
 
 /// Re-runs the redirect when sign-in or `/me` changes.
