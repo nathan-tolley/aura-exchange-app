@@ -10,6 +10,7 @@ import 'design/gallery/screen_states.dart';
 import 'design/tokens.dart';
 import 'design/widgets/aura_tab_bar.dart';
 import 'features/home/home_screen.dart';
+import 'features/market/market_screen.dart';
 import 'features/onboarding/create_exchange_screen.dart';
 import 'features/onboarding/ipo_screen.dart';
 import 'features/onboarding/join_screen.dart';
@@ -175,6 +176,7 @@ final List<RouteBase> _routes = [
               path: Routes.tabs[tab.index],
               builder: (_, _) => switch (tab) {
                 AuraTab.home => const HomeScreen(),
+                AuraTab.market => const MarketScreen(),
                 _ => _Pending(tab: tab),
               },
             ),

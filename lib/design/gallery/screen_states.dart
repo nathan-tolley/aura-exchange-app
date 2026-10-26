@@ -14,6 +14,7 @@ import '../../features/trade/trade_sheet_view.dart';
 import '../../l10n/strings.dart';
 import '../widgets/aura_status_chip.dart';
 import 'fixtures/frames.dart';
+import 'fixtures/market.dart';
 import 'fixtures/onboarding.dart';
 import 'screen_fixtures.dart';
 
@@ -121,6 +122,12 @@ final List<GalleryScreen> screenStates = [
     'Home, loading',
     (_) => HomeLoadingView(onBell: _noop, onTab: (_) {}),
   ),
+  GalleryScreen('S06a', 'Market, by change', (_) => marketSorted()),
+  GalleryScreen('S06b', 'Market, a halted row', (_) => marketHaltedRow()),
+  GalleryScreen('S06c', 'Market, search results', (_) => marketSearch()),
+  GalleryScreen('S06d', 'Market, no results', (_) => marketNoResults()),
+  GalleryScreen('S06e', 'Market, loading', (_) => marketLoading()),
+  GalleryScreen('S06f', 'Market, offline', (_) => marketOffline()),
   GalleryScreen(
     'W09',
     'Home, closed',

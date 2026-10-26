@@ -6,11 +6,11 @@ import '../../api/generated/export.dart' hide Freshness;
 import '../../data/freshness.dart';
 import '../../data/live_market.dart';
 import '../../design/icons.dart';
-import '../../design/tone.dart';
 import '../../design/widgets/aura_banner.dart';
 import '../../design/widgets/aura_tape.dart';
 import '../../format/ticker.dart';
 import '../../l10n/strings.dart';
+import '../shared/listing_tag.dart';
 import 'home_view.dart';
 
 /// Builds Home from the API's payloads: the live market (with freshness),
@@ -114,18 +114,7 @@ HomeViewModel homeViewModel({
 
 HomeRow _row(LiveListing listing) {
   final s = listing.summary;
-  final (tag, tone) = switch (s) {
-    _ when s.badges.contains(Badge.queuedForOpen) => (tagRuled, AuraTone.warn),
-    ListingSummary(myPosition: MyPosition(side: PositionSide.long)) => (
-      tagHolding,
-      AuraTone.neutral,
-    ),
-    ListingSummary(myPosition: MyPosition(side: PositionSide.short)) => (
-      tagShort,
-      AuraTone.neutral,
-    ),
-    _ => (null, AuraTone.neutral),
-  };
+  final (tag, tone) = listingTag(listing);
   return HomeRow(
     id: s.id,
     ticker: formatTicker(s.ticker),

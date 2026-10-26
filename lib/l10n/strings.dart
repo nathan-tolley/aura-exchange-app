@@ -749,6 +749,10 @@ const nobodyToSearch = 'Nobody to search yet';
 /// The tag after a name in a row: a ruling waiting for the open, then your
 /// own position.
 const tagRuled = 'Ruled';
+const tagHalted = 'Halted';
+const tagDelisted = 'Delisted';
+const tagRumor = 'Rumor';
+const tagYou = 'You';
 const tagHolding = 'Holding';
 const tagShort = 'Short';
 
@@ -812,6 +816,29 @@ const inviteSomeoneNote = 'Anyone with the link can list';
 String listedAs(String ticker) => 'Listed as $ticker';
 const firstOnTheTape = 'First thing on the tape';
 const analystAtTheOpen = 'The Analyst · when the market opens';
+
+// ---------------------------------------------------------------------------
+// Market list (SCREENS.md #6)
+// ---------------------------------------------------------------------------
+
+const allStocks = 'All stocks';
+String resultsCount(int n) => '$n ${n == 1 ? 'result' : 'results'}';
+String nobodyMatches(String query) => 'Nobody matches “$query”';
+const searchByNameOrTicker = 'Search by name or ticker.';
+const haltedExchangeWide = 'Halted · exchange-wide';
+
+/// The whole exchange halted (`marketState: HALTED`).
+ErrorCopy exchangeHaltedBanner(
+  DateTime? resumesAt,
+  tz.Location zone, {
+  required DateTime now,
+}) => ErrorCopy(
+  title: 'Trading is halted exchange-wide',
+  body: resumesAt == null
+      ? 'Prices hold where they are until it resumes.'
+      : 'Prices hold where they are until '
+            '${formatMoment(resumesAt, zone, now: now)}.',
+);
 
 // ---------------------------------------------------------------------------
 // Trade sheet (W05, W06)

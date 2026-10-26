@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../api/errors.dart';
 import '../../data/exchange_data.dart';
 import '../../data/freshness.dart';
 import '../../data/live_market.dart';
@@ -10,9 +9,7 @@ import '../../data/me.dart';
 import '../../design/widgets/aura_tab_bar.dart';
 import '../../format/time.dart';
 import '../../router.dart';
-import '../system/exchange_down_model.dart';
-import '../system/exchange_down_view.dart';
-import '../system/problem_view.dart';
+import '../system/load_failure.dart';
 import 'home_loading_view.dart';
 import 'home_model.dart';
 import 'home_view.dart';
@@ -54,27 +51,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final p = portfolio.value;
     final e = exchange.value;
     if (m == null || p == null || e == null) {
-      final failure = [
-        market,
-        portfolio,
-        exchange,
-      ].map((a) => a.isLoading ? null : a.error).nonNulls.firstOrNull;
-      if (failure == null) {
-        return HomeLoadingView(onBell: onBell, onTab: onTab);
+      final failure = firstFailure([market, portfolio, exchange]);
+      if (failure != null) {
+        return LoadFailureView(error: failure, onRetry: retry);
       }
-      final error = failure is ApiError ? failure : const ApiError.unexpected();
-      if (isExchangeDown(error)) {
-        return ExchangeDownView(
-          model: exchangeDownModel(
-            error: error,
-            lastGood: null,
-            zone: exchangeZone('UTC'),
-            now: ref.read(clockProvider),
-          ),
-          onRetry: retry,
-        );
-      }
-      return ProblemView(model: problemModel(error), onAction: retry);
+      return HomeLoadingView(onBell: onBell, onTab: onTab);
     }
 
     final now = ref.watch(clockProvider);
