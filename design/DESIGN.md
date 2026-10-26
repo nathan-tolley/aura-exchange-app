@@ -9,7 +9,7 @@ What's in this folder:
 | File | What it is |
 | --- | --- |
 | `DESIGN.md` | This file: the rules. Read it before building any UI. |
-| `COMPONENTS.md` | The 37 documented components (plus `AuraNavRow` and `AuraActionButton`, covered under NavCard and HeroCard), one Flutter widget each (`Aura<Name>`) |
+| `COMPONENTS.md` | The 38 documented components (plus `AuraNavRow` and `AuraActionButton`, covered under NavCard and HeroCard), one Flutter widget each (`Aura<Name>`) |
 | `aura_tokens.dart` | Colors, spacing, radii, sizes and type styles, generated from `tokens.json`. Copy it to `lib/design/tokens.dart`. |
 | `tokens.json` | The source of truth for tokens |
 | `icons.json` | The 34 line icons as 24-unit SVG paths, which are the exact icons in the references |

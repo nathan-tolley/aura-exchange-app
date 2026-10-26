@@ -40,6 +40,7 @@ import '../widgets/aura_tag.dart';
 import '../widgets/aura_tape.dart';
 import '../widgets/aura_text_field.dart';
 import '../widgets/aura_toast.dart';
+import '../widgets/aura_toggle_row.dart';
 import 'gallery_screen.dart';
 
 Decimal _d(String s) => Decimal.parse(s);
@@ -881,6 +882,29 @@ final List<GallerySection> componentStates = [
       ),
     ),
   ]),
+  GallerySection('ToggleRow', [
+    GalleryState(
+      'On and off (live)',
+      (_) => const Column(
+        children: [
+          _LiveToggle(
+            title: 'Rumors about you',
+            subtitle: 'The moment one is filed',
+            start: true,
+          ),
+          _LiveToggle(title: 'Order fills', start: false),
+        ],
+      ),
+    ),
+    GalleryState(
+      'Disabled, saying why',
+      (_) => const AuraToggleRow(
+        title: 'Margin warnings',
+        subtitle: 'Always on while you hold a short',
+        value: true,
+      ),
+    ),
+  ]),
   GallerySection('Toast', [
     GalleryState(
       'Unsend window',
@@ -1179,3 +1203,27 @@ const _jakeChart = [
   112.4, 112.2, 112.5, 104.0, 103.6, 103.0, //
   103.4, 104.2, 105.1, 104.6, 104.9, 101.9,
 ];
+
+/// A toggle row that flips, for the gallery.
+class _LiveToggle extends StatefulWidget {
+  const _LiveToggle({required this.title, required this.start, this.subtitle});
+
+  final String title;
+  final String? subtitle;
+  final bool start;
+
+  @override
+  State<_LiveToggle> createState() => _LiveToggleState();
+}
+
+class _LiveToggleState extends State<_LiveToggle> {
+  late bool _on = widget.start;
+
+  @override
+  Widget build(BuildContext context) => AuraToggleRow(
+    title: widget.title,
+    subtitle: widget.subtitle,
+    value: _on,
+    onChanged: (v) => setState(() => _on = v),
+  );
+}

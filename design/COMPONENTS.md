@@ -340,6 +340,16 @@ Where content is loading, at the content's real size: `raised` blocks (`raised-2
 
 Added in A4 (2026-10-25) for loading states; no separate preview.
 
+## AuraToggleRow
+
+A setting that's on or off: title, what it does, and a switch on the right, on a hairline like every row. Nav rows stay actions and destinations; this is the one row that's a setting.
+
+- Provide `title`, `value`, optional `subtitle` and `onChanged` (null disables it, and the subtitle says why).
+- The switch is `ink` with a `bg` knob when on, `raised-2` with an `ink-secondary` knob when off. Never up/down color.
+- A light haptic when it flips; VoiceOver hears it as a toggle with its state.
+
+Added in A4 (2026-10-26) for Settings; no separate preview.
+
 ## AuraToast
 
 Brief confirmation after an action, with one undo or follow-up.
