@@ -75,4 +75,4 @@ One line per finished step: date · step · what · commit.
 - 2026-10-25 · A4 · Join from invite (S02a–f: the invite, expired, full, not found, loading, offline); `AuraStockRow` without a price; the exchange you join is selected for the session; flow test from a signed-out invite link through sign-in and joining to your IPO. Onboarding box ticked; 434 tests · (this commit)
 - 2026-10-25 · A4 · Home live (S05a default, S05b loading, plus W09/W11/W12 from live data): `HomeScreen`, `portfolioProvider`, `latestTapeProvider`, tape repository, default watchlist, IPO day from the market; contract request #11; Home box ticked · (this commit)
 - 2026-10-25 · A4 · Market list (S06a–f: by change, halted row, search, no results, loading, offline): `marketChip`, `listingTag`, `LoadFailureView`; Market box ticked · (this commit)
-
+- 2026-10-25 · A4 · Components 36 and 37: `AuraChart` (line, previous close, ruling markers, scrub with crosshair and tooltip, haptic at rulings) and `AuraNewsRow` (a tape item in a list), in COMPONENTS.md and the gallery with goldens · (this commit)

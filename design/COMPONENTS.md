@@ -203,6 +203,17 @@ Today's path in a row, with a dotted midline.
 
 Preview: [Sparkline.png](reference/components/Sparkline.png)
 
+## AuraChart
+
+The stock page's chart (DESIGN.md → Charts), drawn with a `CustomPainter`.
+
+- Provide `points` ([{at, price}], oldest first); optional `previousClose` (the dotted `ink-faint` line on 1D), `markers` ([{at, label, tone}]: rulings as small `ink` dots ringed in `bg`), `trend` (defaults to last vs previous close), `height` (180), `onScrub`.
+- One 1.5pt line in `up` or `down` by the range's direction. No fill, no glow, no axes.
+- A finger on it shows a 1pt `ink-tertiary` crosshair, an `ink` dot ringed in `bg` and an `AuraChartTooltip` above the point ("−18 ruling" on a marker), snapping to points with a light haptic at each ruling.
+- With nothing to draw, it says so ("No trades yet"). VoiceOver hears the range's move.
+
+Added in A4 (2026-10-25) for the stock page; no separate preview.
+
 ## AuraChartTooltip
 
 The floating price label on a chart point, with an optional badge for the event behind it.
@@ -242,6 +253,15 @@ A list of tappable rows (`NavRow`): a bare glyph, title, subtitle, optional trai
 - Rows are actions or destinations, never settings toggles.
 
 Preview: [NavCard.png](reference/components/NavCard.png)
+
+## AuraNewsRow
+
+One thing on the tape, in a list: the Tape tab, a stock's tape, the notifications inbox.
+
+- Provide `source` ("$JAKE · Ruling · 2 h ago") and `headline` (the Analyst's, as the server wrote it); optional `movePct` (the move it caused, as a `PriceChange` on the source line), `unread` (a small `ink` dot), `onTap`.
+- The headline is the serif at 17/24 in `ink`: it's the Analyst speaking. Hairline under each row, no box.
+
+Added in A4 (2026-10-25) for the tape; no separate preview.
 
 ## AuraQuoteCard
 

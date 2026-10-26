@@ -7,6 +7,7 @@ import '../tone.dart';
 import '../widgets/aura_avatar.dart';
 import '../widgets/aura_banner.dart';
 import '../widgets/aura_button.dart';
+import '../widgets/aura_chart.dart';
 import '../widgets/aura_chart_tooltip.dart';
 import '../widgets/aura_code_field.dart';
 import '../widgets/aura_countdown.dart';
@@ -17,6 +18,7 @@ import '../widgets/aura_icon_tile.dart';
 import '../widgets/aura_impact_disc.dart';
 import '../widgets/aura_money.dart';
 import '../widgets/aura_nav_card.dart';
+import '../widgets/aura_news_row.dart';
 import '../widgets/aura_price_change.dart';
 import '../widgets/aura_quote_card.dart';
 import '../widgets/aura_range_bar.dart';
@@ -534,6 +536,41 @@ final List<GallerySection> componentStates = [
       ]),
     ),
   ]),
+  GallerySection('Chart', [
+    GalleryState(
+      '1D, up on the previous close, with a ruling',
+      (_) => AuraChart(
+        points: _chartPoints(_anna),
+        previousClose: _d('116.31'),
+        markers: [
+          AuraChartMarker(
+            at: _chartStart.add(const Duration(minutes: 90)),
+            label: '+22 ruling',
+            tone: AuraTone.up,
+          ),
+        ],
+      ),
+    ),
+    GalleryState(
+      'Scrubbing onto a ruling',
+      (_) => AuraChart(
+        points: _chartPoints(_jakeChart),
+        previousClose: _d('112.40'),
+        markers: [
+          AuraChartMarker(
+            at: _chartStart.add(const Duration(minutes: 45)),
+            label: '−18 ruling',
+            tone: AuraTone.down,
+          ),
+        ],
+        scrubbing: 3,
+      ),
+    ),
+    GalleryState(
+      'No trades yet',
+      (_) => const AuraChart(points: [], height: 120),
+    ),
+  ]),
   GallerySection('ChartTooltip', [
     GalleryState(
       'Ruling up, ruling down, rumor, plain',
@@ -688,6 +725,28 @@ final List<GallerySection> componentStates = [
             onTap: _tap,
           ),
         ],
+      ),
+    ),
+  ]),
+  GallerySection('NewsRow', [
+    GalleryState(
+      'A ruling, with the move it caused',
+      (_) => AuraNewsRow(
+        source: r'$JAKE · Ruling · 2 h ago',
+        headline:
+            'Jake indicated sharply lower after overnight “who is this” '
+            'incident',
+        movePct: _d('-12.19'),
+        onTap: _tap,
+      ),
+    ),
+    GalleryState(
+      'Unread, no move',
+      (_) => const AuraNewsRow(
+        source: r'$MIA · Rumor · 4 min ago',
+        headline: 'Unconfirmed: reports of a late-night karaoke incident.',
+        unread: true,
+        onTap: _tap,
       ),
     ),
   ]),
@@ -1105,3 +1164,18 @@ class _LiveCodeFieldState extends State<_LiveCodeField> {
     enabled: widget.enabled,
   );
 }
+
+final _chartStart = DateTime.utc(2026, 10, 24);
+
+List<AuraChartPoint> _chartPoints(List<double> prices) => [
+  for (final (i, p) in prices.indexed)
+    AuraChartPoint(
+      _chartStart.add(Duration(minutes: 15 * i)),
+      Decimal.parse(p.toStringAsFixed(2)),
+    ),
+];
+
+const _jakeChart = [
+  112.4, 112.2, 112.5, 104.0, 103.6, 103.0, //
+  103.4, 104.2, 105.1, 104.6, 104.9, 101.9,
+];
