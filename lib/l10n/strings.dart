@@ -1040,6 +1040,48 @@ String quietHoursUntil(String end) => 'Quiet hours until $end';
 const quietHoursBody = 'Nothing buzzes until then. It all waits in here.';
 
 // ---------------------------------------------------------------------------
+// Portfolio (SCREENS.md #20, #21, #22)
+// ---------------------------------------------------------------------------
+
+const netWorthToday = 'Net worth · today';
+const statCash = 'Cash';
+const statHeldForOrders = 'Held for orders';
+const statSeason = 'This season';
+const positionsHeading = 'Positions';
+const openOrdersHeading = 'Open orders';
+const noPositionsTitle = 'No positions yet';
+const noPositionsBody =
+    'Your portfolio is all cash. Very conservative. Buy or short a friend '
+    'to get started.';
+const browseTheMarket = 'Browse the market';
+
+/// "12 shares", "Short 60".
+String longQuantity(Decimal quantity) =>
+    '${formatQuantity(quantity)} ${quantity == Decimal.one ? 'share' : 'shares'}';
+const tagLiquidated = 'Liquidated';
+
+/// "Limit buy 12 $ANNA".
+String orderTitle(OrderType type, Decimal quantity, String ticker) =>
+    '${orderTypeWord(type)} ${formatQuantity(quantity)} '
+    '${formatTicker(ticker)}';
+
+/// "Fills at A$118.00 · A$1,437.24 held".
+String orderSubtitle(Decimal trigger, Decimal held) =>
+    'Fills at ${formatMoney(trigger)} · ${formatMoney(held)} held';
+const cancelLabel = 'Cancel';
+const cancelingOrder = 'Canceling…';
+const cancelOrderTitle = 'Cancel this order?';
+const cancelOrderBody = 'What it held goes back to your cash.';
+const keepIt = 'Keep it';
+
+/// The portfolio's margin banner: "At 130% collateral; the minimum is
+/// 125%."
+String marginBannerBody(Decimal ratioPct, Decimal minimumPct) =>
+    "It's at ${_pct(ratioPct)} collateral; the minimum is "
+    '${_pct(minimumPct)}.';
+const seeIt = 'See it';
+
+// ---------------------------------------------------------------------------
 // Stock page (SCREENS.md #7, #8)
 // ---------------------------------------------------------------------------
 

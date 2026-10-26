@@ -67,7 +67,12 @@ void main() {
 
   late FakeAdapter http;
   late ProviderContainer container;
-  const args = (listingId: listing, side: Side.buy, marketOpen: true);
+  const args = (
+    listingId: listing,
+    side: Side.buy,
+    marketOpen: true,
+    quantity: 1,
+  );
 
   setUp(() {
     quoteN = 0;

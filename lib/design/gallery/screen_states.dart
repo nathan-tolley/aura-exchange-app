@@ -17,6 +17,7 @@ import 'fixtures/events.dart';
 import 'fixtures/frames.dart';
 import 'fixtures/market.dart';
 import 'fixtures/onboarding.dart';
+import 'fixtures/portfolio.dart';
 import 'fixtures/stock.dart';
 import 'fixtures/tape.dart';
 import 'fixtures/trade.dart';
@@ -224,6 +225,15 @@ final List<GalleryScreen> screenStates = [
   GalleryScreen('S19b', 'Notifications, quiet hours', (_) => inboxQuiet()),
   GalleryScreen('S19c', 'Notifications, empty', (_) => inboxEmpty()),
   GalleryScreen('S19d', 'Notifications, loading', (_) => inboxLoading()),
+  GalleryScreen(
+    'S20a',
+    'Portfolio, positions and cash',
+    (_) => portfolioPositions(),
+  ),
+  GalleryScreen('S20b', 'Portfolio, open orders', (_) => portfolioOrders()),
+  GalleryScreen('S20c', 'Portfolio, empty', (_) => portfolioEmpty()),
+  GalleryScreen('S20d', 'Portfolio, loading', (_) => portfolioLoading()),
+  GalleryScreen('S20e', 'Portfolio, cancel an order', (_) => portfolioCancel()),
   GalleryScreen(
     'W05',
     'Trade sheet, rejected',

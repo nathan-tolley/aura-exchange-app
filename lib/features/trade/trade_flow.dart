@@ -92,7 +92,12 @@ class TradeFlowState {
 
 /// What the trade sheet is for: a listing, a side, and whether the market
 /// takes market orders right now.
-typedef TradeArgs = ({String listingId, Side side, bool marketOpen});
+typedef TradeArgs = ({
+  String listingId,
+  Side side,
+  bool marketOpen,
+  int quantity,
+});
 
 final tradeFlowProvider = NotifierProvider.autoDispose
     .family<TradeFlow, TradeFlowState, TradeArgs>(TradeFlow.new);
@@ -124,6 +129,7 @@ class TradeFlow extends Notifier<TradeFlowState> {
     final start = TradeFlowState(
       side: args.side,
       orderType: market ? orderMarket : orderLimit,
+      quantity: args.quantity,
     );
     if (market) Future.microtask(_quote);
     return start;

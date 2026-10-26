@@ -23,10 +23,18 @@ import 'trade_sheet_view.dart';
 /// or the resting order. Closing after a fill returns the [Trade], so the
 /// stock page can say what happened.
 class TradeSheet extends ConsumerStatefulWidget {
-  const TradeSheet({super.key, required this.listingId, required this.side});
+  const TradeSheet({
+    super.key,
+    required this.listingId,
+    required this.side,
+    this.quantity = 1,
+  });
 
   final String listingId;
   final Side side;
+
+  /// Where the stepper starts: "Cover 30" starts at 30.
+  final int quantity;
 
   @override
   ConsumerState<TradeSheet> createState() => _TradeSheetState();
@@ -60,6 +68,7 @@ class _TradeSheetState extends ConsumerState<TradeSheet> {
       listingId: widget.listingId,
       side: widget.side,
       marketOpen: state0 == MarketState.open,
+      quantity: widget.quantity,
     );
     final state = ref.watch(tradeFlowProvider(args));
     final flow = ref.read(tradeFlowProvider(args).notifier);

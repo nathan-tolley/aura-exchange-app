@@ -34,6 +34,7 @@ class AuraStockRow extends StatelessWidget {
     this.tag,
     this.tagTone = AuraTone.neutral,
     this.points,
+    this.sparkline = true,
     this.onTap,
     this.onLongPress,
   });
@@ -51,6 +52,11 @@ class AuraStockRow extends StatelessWidget {
 
   /// Today's prices for the sparkline, oldest first.
   final List<double>? points;
+
+  /// Keeps the sparkline's 72 pt even without [points], so prices line up
+  /// in a list that mixes both. A list with no sparklines at all (the
+  /// Portfolio's positions) turns it off and gives the name the room.
+  final bool sparkline;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
@@ -120,19 +126,20 @@ class AuraStockRow extends StatelessWidget {
                 ),
               ),
               if (priced) ...[
-                SizedBox(
-                  width: 72,
-                  height: 30,
-                  child: points == null
-                      ? null
-                      // Drawn at 84×30 and scaled to fit, like the reference.
-                      : FittedBox(
-                          child: AuraSparkline(
-                            points: points!,
-                            trend: Trend.of(pct.round(scale: 2)),
+                if (sparkline || points != null)
+                  SizedBox(
+                    width: 72,
+                    height: 30,
+                    child: points == null
+                        ? null
+                        // Drawn at 84×30 and scaled to fit, like the reference.
+                        : FittedBox(
+                            child: AuraSparkline(
+                              points: points!,
+                              trend: Trend.of(pct.round(scale: 2)),
+                            ),
                           ),
-                        ),
-                ),
+                  ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,

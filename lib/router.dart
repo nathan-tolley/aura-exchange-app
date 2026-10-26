@@ -15,6 +15,7 @@ import 'features/events/file_sheet.dart';
 import 'features/home/home_screen.dart';
 import 'features/market/market_screen.dart';
 import 'features/onboarding/create_exchange_screen.dart';
+import 'features/portfolio/portfolio_screen.dart';
 import 'features/onboarding/ipo_screen.dart';
 import 'features/onboarding/join_screen.dart';
 import 'features/onboarding/sign_in_screen.dart';
@@ -72,10 +73,11 @@ abstract final class Routes {
   static String fileAbout(String listingId) =>
       Uri(path: file, queryParameters: {'subject': listingId}).toString();
   static String event(String eventId) => '/events/$eventId';
-  static String trade(String listingId, Side side) => Uri(
+  static String trade(String listingId, Side side, {int? quantity}) => Uri(
     path: '/trade/$listingId',
-    queryParameters: {'side': side.json},
+    queryParameters: {'side': side.json, 'quantity': ?quantity?.toString()},
   ).toString();
+  static String position(String positionId) => '/positions/$positionId';
 
   /// The tab roots, in tab-bar order.
   static const tabs = [home, market, tape, portfolio, you];
@@ -178,6 +180,11 @@ final List<RouteBase> _routes = [
   GoRoute(path: Routes.notifications, builder: (_, _) => const InboxScreen()),
   GoRoute(path: Routes.settings, builder: (_, _) => const _Pending()),
   GoRoute(
+    path: '/positions/:id',
+    builder: (_, state) =>
+        PositionScreen(positionId: state.pathParameters['id']!),
+  ),
+  GoRoute(
     path: Routes.file,
     pageBuilder: (_, state) => AuraSheetPage(
       key: state.pageKey,
@@ -199,6 +206,8 @@ final List<RouteBase> _routes = [
       child: TradeSheet(
         listingId: state.pathParameters['listingId']!,
         side: Side.fromJson(state.uri.queryParameters['side'] ?? 'BUY'),
+        quantity:
+            int.tryParse(state.uri.queryParameters['quantity'] ?? '') ?? 1,
       ),
     ),
   ),
@@ -214,6 +223,7 @@ final List<RouteBase> _routes = [
                 AuraTab.home => const HomeScreen(),
                 AuraTab.market => const MarketScreen(),
                 AuraTab.tape => const TapeScreen(),
+                AuraTab.portfolio => const PortfolioScreen(),
                 _ => _Pending(tab: tab),
               },
             ),

@@ -109,7 +109,8 @@ Build these against Prism first, then switch to the real API as each endpoint la
   - *2026-10-25: S13a–c, S15a–e and S17a–b in the gallery with goldens, plus W01, W02 and W10 driven by live events. `/events/:id` chooses your filing, about you, halted (the stock page) or the public view. W02's statement, super-injunction and appeal rows aren't wired yet (NOTES.md).*
 - [x] Tape (all, filtered, empty, unread) · notifications inbox (grouped by stock, quiet hours, empty)
   - *2026-10-25: the Tape tab and `/notifications`, S18a–e and S19a–d in the gallery with goldens; live tape and notifications from the stream; the bell's unread badge and the tape dot on Home.*
-- [ ] Portfolio (positions and cash, open orders, empty) · margin warning sheet · liquidated receipt
+- [x] Portfolio (positions and cash, open orders, empty) · margin warning sheet · liquidated receipt
+  - *2026-10-26: the Portfolio tab (S20a–e with goldens), W07 live from your short, Cover at a quantity. W08 is built and in the gallery (A3) but can only be fed live once contract request #7 sends a liquidation's settlement; until then a liquidated position opens its stock page.*
 - [ ] You (listing, stats, super-injunctions left) · settings (notification prefs, quiet hours, opt out of being listed)
 - [ ] App-wide: closed / halted / offline banners, the update-required screen, the exchange-down screen, skeleton loading everywhere
 - **Check:** every state is reachable in the State Gallery and has a golden. Each flow works end to end against Prism, and then against the real API.
