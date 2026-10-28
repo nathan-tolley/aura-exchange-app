@@ -11,10 +11,12 @@ import '../../data/live_market.dart';
 import '../../data/me.dart';
 import '../../data/repositories.dart';
 import '../../design/icons.dart';
+import '../../design/text.dart';
 import '../../design/tokens.dart';
 import '../../design/widgets/aura_banner.dart';
 import '../../design/widgets/aura_button.dart';
 import '../../design/widgets/aura_nav_card.dart';
+import '../../design/widgets/aura_photo_tile.dart';
 import '../../design/widgets/aura_search_field.dart';
 import '../../design/widgets/aura_sheet.dart';
 import '../../design/widgets/aura_stock_row.dart';
@@ -25,6 +27,7 @@ import '../../l10n/strings.dart';
 import '../../router.dart';
 import '../onboarding/create_exchange_model.dart' show problemBanner;
 import '../shared/banner_model.dart';
+import 'receipts.dart';
 
 /// Someone an event can be about: a listing in the exchange.
 @immutable
@@ -49,10 +52,13 @@ class FileModel {
     required this.subjects,
     required this.canFile,
     required this.button,
+    required this.receipts,
     this.subject,
     this.banner,
     this.note,
     this.discarding = false,
+    this.choosing = false,
+    this.cameraOff = false,
   });
 
   final List<FileSubject> subjects;
@@ -68,6 +74,15 @@ class FileModel {
 
   /// Asking "Discard this filing?".
   final bool discarding;
+
+  /// The photos or screenshots going with it.
+  final ReceiptsModel receipts;
+
+  /// Asking where a receipt comes from: your photos or the camera.
+  final bool choosing;
+
+  /// The camera was refused: the chooser says how to turn it on.
+  final bool cameraOff;
 }
 
 FileModel fileModel({
@@ -77,8 +92,12 @@ FileModel fileModel({
   required bool filing,
   required ApiError? problem,
   bool discarding = false,
+  List<ReceiptDraft> receipts = const [],
+  bool choosing = false,
+  bool cameraOff = false,
   ErrorContext context = const ErrorContext(),
 }) {
+  final photos = receiptsModel(receipts, filing: filing);
   final limit = problem?.errorCode == ErrorCode.dailyFilingLimit;
   BannerModel? banner;
   if (limit) {
@@ -101,19 +120,23 @@ FileModel fileModel({
     subjects: subjects,
     subject: subject,
     banner: banner,
-    canFile: hasText && !filing && !limit,
+    canFile: hasText && !filing && !limit && photos.blocksFiling == null,
     button: filing ? filingLabel : fileIt,
     note: !hasText
         ? writeWhatHappened
-        : subject == null || subject.isMe
-        ? onlyModeratorsKnow
-        : onlyTheyKnow(subject.name),
+        : photos.blocksFiling ??
+              (subject == null || subject.isMe
+                  ? onlyModeratorsKnow
+                  : onlyTheyKnow(subject.name)),
     discarding: discarding,
+    receipts: photos,
+    choosing: choosing,
+    cameraOff: cameraOff,
   );
 }
 
-/// The filing sheet's view: the subject picker, the compose step, or
-/// "Discard this filing?".
+/// The filing sheet's view: the subject picker, the compose step with its
+/// receipts, where a receipt comes from, or "Discard this filing?".
 class FileSheetView extends StatelessWidget {
   const FileSheetView({
     super.key,
@@ -129,6 +152,13 @@ class FileSheetView extends StatelessWidget {
     this.onClose,
     this.onKeepWriting,
     this.onDiscard,
+    this.onAddReceipt,
+    this.onRetryReceipt,
+    this.onRemoveReceipt,
+    this.onChooseLibrary,
+    this.onTakePhoto,
+    this.onCancelChoosing,
+    this.receiptImage = _photo,
   });
 
   final FileModel model;
@@ -143,10 +173,61 @@ class FileSheetView extends StatelessWidget {
   final VoidCallback? onClose;
   final VoidCallback? onKeepWriting;
   final VoidCallback? onDiscard;
+  final VoidCallback? onAddReceipt;
+  final ValueChanged<int>? onRetryReceipt;
+  final ValueChanged<int>? onRemoveReceipt;
+  final VoidCallback? onChooseLibrary;
+  final VoidCallback? onTakePhoto;
+  final VoidCallback? onCancelChoosing;
+
+  /// Draws a receipt's photo; the State Gallery draws stand-ins.
+  final Widget Function(ReceiptTile) receiptImage;
+
+  /// A photo that can't be drawn leaves the tile's fill.
+  static Widget _photo(ReceiptTile tile) => Image.memory(
+    tile.bytes,
+    fit: BoxFit.cover,
+    gaplessPlayback: true,
+    errorBuilder: (_, _, _) => const SizedBox.expand(),
+  );
 
   @override
   Widget build(BuildContext context) {
     final m = model;
+    if (m.choosing) {
+      return AuraSheet(
+        title: addAReceipt,
+        onClose: onCancelChoosing,
+        children: [
+          Text(
+            addReceiptBody,
+            style: AuraType.body.copyWith(color: AuraColors.inkSecondary),
+          ),
+          if (m.cameraOff)
+            const ModelBanner(
+              BannerModel(
+                tone: AuraBannerTone.warn,
+                title: cameraOffTitle,
+                body: cameraOffBody,
+              ),
+            ),
+          AuraButton(
+            chooseFromPhotos,
+            variant: AuraButtonVariant.primary,
+            block: true,
+            onPressed: onChooseLibrary,
+          ),
+          AuraButton(takeAPhoto, block: true, onPressed: onTakePhoto),
+          AuraButton(
+            cancelLabel,
+            variant: AuraButtonVariant.ghost,
+            size: AuraButtonSize.md,
+            block: true,
+            onPressed: onCancelChoosing,
+          ),
+        ],
+      );
+    }
     if (m.discarding) {
       return AuraSheet(
         title: discardTitle,
@@ -230,6 +311,13 @@ class FileSheetView extends StatelessWidget {
           inputFormatters: [LengthLimitingTextInputFormatter(800)],
           onChanged: onText,
         ),
+        _Receipts(
+          model: m.receipts,
+          image: receiptImage,
+          onAdd: onAddReceipt,
+          onRetry: onRetryReceipt,
+          onRemove: onRemoveReceipt,
+        ),
         AuraButton(
           m.button,
           variant: AuraButtonVariant.primary,
@@ -247,9 +335,74 @@ class FileSheetView extends StatelessWidget {
   }
 }
 
+/// The receipts under what happened: a field-style label, the photos with
+/// the slot that adds one, and a note on how they're going.
+class _Receipts extends StatelessWidget {
+  const _Receipts({
+    required this.model,
+    required this.image,
+    this.onAdd,
+    this.onRetry,
+    this.onRemove,
+  });
+
+  final ReceiptsModel model;
+  final Widget Function(ReceiptTile) image;
+  final VoidCallback? onAdd;
+  final ValueChanged<int>? onRetry;
+  final ValueChanged<int>? onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final m = model;
+    final retry = onRetry;
+    final remove = onRemove;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ExcludeSemantics(
+          child: auraLiftFootnote(
+            Text(
+              receiptsLabel,
+              style: AuraType.footnote.copyWith(color: AuraColors.inkTertiary),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final t in m.tiles)
+              AuraPhotoTile(
+                key: ValueKey(t.id),
+                image: image(t),
+                label: t.label,
+                status: t.status,
+                progress: t.progress,
+                onTap: t.status == AuraPhotoStatus.failed && retry != null
+                    ? () => retry(t.id)
+                    : null,
+                onRemove: remove == null ? null : () => remove(t.id),
+                removeLabel: t.removeLabel,
+              ),
+            if (m.canAdd) AuraPhotoTile.add(label: addAReceipt, onTap: onAdd),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Semantics(
+          liveRegion: true,
+          child: AuraFieldNote(m.note, tone: m.noteTone),
+        ),
+      ],
+    );
+  }
+}
+
 /// The filing sheet (`/file?subject=`), large. Closing it with something
-/// written asks first. Filing returns the new [Event], so the caller can
-/// open its status (and the unsend window).
+/// written or attached asks first. Filing returns the new [Event], so the
+/// caller can open its status (and the unsend window).
 class FileSheet extends ConsumerStatefulWidget {
   const FileSheet({super.key, this.subjectId});
 
@@ -265,10 +418,12 @@ class _FileSheetState extends ConsumerState<FileSheet> {
   late String? _subjectId = widget.subjectId;
   bool _filing = false;
   bool _discarding = false;
+  bool _choosing = false;
+  bool _cameraOff = false;
   ApiError? _problem;
 
-  /// One per filing: Retry sends the same one; editing the text makes it a
-  /// new filing.
+  /// One per filing: Retry sends the same one; editing the text or the
+  /// receipts makes it a new filing.
   IdempotencyKey? _key;
   String? _keyFor;
 
@@ -283,7 +438,8 @@ class _FileSheetState extends ConsumerState<FileSheet> {
     final body = _text.text.trim();
     final subject = _subjectId;
     if (subject == null || body.isEmpty) return;
-    final keyFor = '$subject:$body';
+    final receiptIds = ref.read(receiptsProvider.notifier).receiptIds;
+    final keyFor = '$subject:$body:${receiptIds.join(',')}';
     if (_keyFor != keyFor) {
       _key = IdempotencyKey();
       _keyFor = keyFor;
@@ -300,6 +456,7 @@ class _FileSheetState extends ConsumerState<FileSheet> {
               exchangeId: exchangeId,
               subjectListingId: subject,
               text: body,
+              receiptIds: receiptIds.isEmpty ? null : receiptIds,
             ),
             _key!,
           );
@@ -314,12 +471,24 @@ class _FileSheetState extends ConsumerState<FileSheet> {
     }
   }
 
+  /// Where a receipt comes from. The chooser stays up if the camera is
+  /// off, saying so; otherwise it goes once the picker is done.
+  Future<void> _add(Future<AddOutcome> Function(Receipts) from) async {
+    final outcome = await from(ref.read(receiptsProvider.notifier));
+    if (!mounted) return;
+    setState(() {
+      _cameraOff = outcome == AddOutcome.cameraOff;
+      _choosing = _cameraOff;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final exchangeId = ref.watch(currentExchangeIdProvider);
     final market = exchangeId == null
         ? null
         : ref.watch(marketProvider(exchangeId)).value;
+    final receipts = ref.watch(receiptsProvider);
     final q = _search.text.trim().toLowerCase();
     final subjects =
         [
@@ -352,6 +521,9 @@ class _FileSheetState extends ConsumerState<FileSheet> {
       filing: _filing,
       problem: _problem,
       discarding: _discarding,
+      receipts: receipts,
+      choosing: _choosing,
+      cameraOff: _cameraOff,
       context: ErrorContext(
         zone: exchangeZone(
           exchangeId == null
@@ -362,11 +534,20 @@ class _FileSheetState extends ConsumerState<FileSheet> {
         now: ref.watch(clockProvider),
       ),
     );
+    final empty = _text.text.trim().isEmpty && receipts.isEmpty;
     return PopScope(
-      // Half-filled: ask before it goes (COMPONENTS.md → Sheet).
-      canPop: _text.text.trim().isEmpty || _filing,
+      // Half-filled: ask before it goes (COMPONENTS.md → Sheet). Closing
+      // the receipt chooser goes back to the filing.
+      canPop: !_choosing && (empty || _filing),
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) setState(() => _discarding = true);
+        if (didPop) return;
+        setState(() {
+          if (_choosing) {
+            _choosing = false;
+          } else {
+            _discarding = true;
+          }
+        });
       },
       child: Padding(
         padding: EdgeInsets.only(
@@ -388,6 +569,19 @@ class _FileSheetState extends ConsumerState<FileSheet> {
             _text.clear();
             Navigator.of(context).pop();
           },
+          onAddReceipt: () => setState(() {
+            _choosing = true;
+            _cameraOff = false;
+          }),
+          onChooseLibrary: () => _add((r) => r.fromLibrary()),
+          onTakePhoto: () => _add((r) => r.fromCamera()),
+          onCancelChoosing: () => setState(() => _choosing = false),
+          onRetryReceipt: (id) {
+            setState(() => _problem = null);
+            ref.read(receiptsProvider.notifier).retry(id);
+          },
+          onRemoveReceipt: (id) =>
+              ref.read(receiptsProvider.notifier).remove(id),
         ),
       ),
     );

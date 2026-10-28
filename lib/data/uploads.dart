@@ -4,11 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../api/client.dart';
 import '../api/errors.dart';
 import '../api/generated/export.dart';
 import 'api_providers.dart';
-import 'repositories.dart';
 
 /// A photo the person chose or took, read into memory.
 @immutable
@@ -154,34 +152,3 @@ final receiptStorageProvider = Provider<ReceiptStorage>((ref) {
   ref.onDispose(storage.close);
   return storage;
 });
-
-/// Uploads one receipt: asks for a signed URL with [key], then sends the
-/// bytes. [upload] is a URL already given for this receipt; it's reused
-/// while it hasn't expired, so a retry doesn't ask again. Returns the
-/// upload used, whose `receiptId` goes into the filing.
-Future<Upload> uploadReceipt({
-  required EventsRepository events,
-  required ReceiptStorage storage,
-  required PickedPhoto photo,
-  required IdempotencyKey key,
-  required DateTime now,
-  Upload? upload,
-  ValueChanged<double>? onProgress,
-}) async {
-  final target = upload != null && upload.expiresAt.isAfter(now)
-      ? upload
-      : await events.upload(
-          UploadRequest(
-            contentType: UploadRequestContentType.fromJson(photo.contentType),
-            byteSize: photo.bytes.length,
-          ),
-          key,
-        );
-  await storage.put(
-    target,
-    photo.bytes,
-    contentType: photo.contentType,
-    onProgress: onProgress,
-  );
-  return target;
-}

@@ -5,6 +5,7 @@ import 'package:aura_exchange/data/freshness.dart';
 import 'package:aura_exchange/data/live_market.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 
 import 'fake_socket.dart';
 
@@ -33,6 +34,7 @@ ProviderContainer testContainer({
   required DateTime now,
   Tokens? tokens = signedInTokens,
   String baseUrl = 'http://api.test/v1',
+  List<Override> overrides = const [],
 }) => ProviderContainer(
   retry: noRetry,
   overrides: [
@@ -47,5 +49,6 @@ ProviderContainer testContainer({
       return socket;
     }),
     clockProvider.overrideWith(() => FixedClock(now)),
+    ...overrides,
   ],
 );
