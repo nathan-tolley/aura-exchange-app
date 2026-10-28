@@ -87,7 +87,7 @@ Each screen is driven by fixtures identical to the reference data. These prove t
 - [x] W01 Rumor about you · W02 Ruling on you · W03 SEC charge · W04 Chapter 7 · W05 Trade rejected · W06 Requote · W07 Margin warning · W08 Liquidated · W09 Home closed · W10 Halted · W11 Home offline · W12 Home IPO day · W13 Exchange down
   - *2026-10-25: all 13 done, through presenters from API-shaped fixtures (or local records where the contract has no shape yet: contract requests #6–#9), each in the State Gallery under Screens. Share of pixels that differ by more than 24 levels: W01 2.15%, W02 2.26%, W03 2.27%, W04 1.95%, W05 1.15%, W06 1.36%, W07 2.42%, W08 2.32%, W09 2.17%, W10 1.90%, W11 2.01%, W12 2.00%, W13 2.57%. On the way, the components moved to where the screens draw them (12.5 pt text, banner, receipt, sheet), and every component golden got closer to its reference (now 0.03–2.81%).*
 - **Check:** for each one, open the golden (390×844 @2x) and `design/reference/screens/W##-*.png` side by side. They are near identical apart from the font. Note any deliberate difference in `docs/aura/NOTES.md`.
-  - *2026-10-25: passes. Each golden was diffed (`python tool/golden_diff.py diff`) and looked at beside its reference. What's left is Inter against SF Pro (including the hero number sitting 1 pt high) and the approximated sparklines. Deliberate differences, all in `NOTES.md`: W07's "Your short" heading 2 pt high, W05's dimmed price 2 pt low (the stock header follows W10), W13's note 2 pt high, and W13's footnote lead-in, which waits on Nathan.*
+  - *2026-10-25: passes. Each golden was diffed (`python tool/golden_diff.py diff`) and looked at beside its reference. What's left is Inter against SF Pro (including the hero number sitting 1 pt high) and the approximated sparklines. Deliberate differences, all in `NOTES.md`: W07's "Your short" heading 2 pt high, W05's dimmed price 2 pt low (the stock header follows W10), W13's note 2 pt high, and W13's footnote lead-in, kept as drawn (Nathan, 2026-10-28; push makes it true in A6).*
 
 ## A4: Phase 1 flows (every state in `SCREENS.md`)
 
@@ -117,7 +117,7 @@ Build these against Prism first, then switch to the real API as each endpoint la
 - [x] App-wide: closed / halted / offline banners, the update-required screen, the exchange-down screen, skeleton loading everywhere
   - *2026-10-26: banners by severity on every price screen; the update screen over everything on any `UPDATE_REQUIRED`; W13 or the problem screen when a first load fails, a down banner (S23a) when the exchange goes down after numbers were shown; skeletons on every screen that loads.*
 - **Check:** every state is reachable in the State Gallery and has a golden. Each flow works end to end against Prism, and then against the real API.
-  - *2026-10-26: partly passes. Every built state is in the State Gallery with a golden: 119 screen states (S01–S31 plus the 13 drawn W screens, which stay within A3's diffs) and all 38 components. Every flow runs end to end through the real router and repositories against a fake server in widget tests (sign in, create an exchange, invite, join from a link, IPO, Home, trade with requote and retry, file and unsend, rumors, rulings and votes, tape, inbox, portfolio, settings, the update takeover): 637 tests, analyze clean. Against Prism in Chrome, sign-in works through `/auth/email/verify`, and everything after it stops at `/me` because Prism's example token can't be sent in a header (contract request #5). Against the live API, Chrome is blocked by CORS (contract request #10). Still open: photo receipts when filing (they need the `image_picker` plugin: Nathan's call), and W02's statement, super-injunction and appeal actions.*
+  - *2026-10-26: partly passes. Every built state is in the State Gallery with a golden: 119 screen states (S01–S31 plus the 13 drawn W screens, which stay within A3's diffs) and all 38 components. Every flow runs end to end through the real router and repositories against a fake server in widget tests (sign in, create an exchange, invite, join from a link, IPO, Home, trade with requote and retry, file and unsend, rumors, rulings and votes, tape, inbox, portfolio, settings, the update takeover): 637 tests, analyze clean. Against Prism in Chrome, sign-in works through `/auth/email/verify`, and everything after it stops at `/me` because Prism's example token can't be sent in a header (contract request #5). Against the live API, Chrome is blocked by CORS (contract request #10). Still open: photo receipts when filing (they need the `image_picker` plugin: Nathan's call), and W02's statement, super-injunction and appeal actions.* *2026-10-28: photo receipts are in; Prism's example token is ASCII now (contract request #5) and the live API allows the preview's origin (#10), so both routes can be walked in Chrome. W02's actions are still open.*
 
 ## A5: On the phone
 
@@ -135,3 +135,32 @@ Build these against Prism first, then switch to the real API as each endpoint la
 
   Every case must land on a designed screen.
 - **Check (Gate 1, with the API):** 5–8 friends use sideloaded builds for a full week.
+
+## A6: Apple Developer Program (push, Sign in with Apple, TestFlight)
+
+**Don't start until Nathan has enrolled** in the paid Apple Developer Program (he said yes on 2026-10-28; DECISIONS.md → question 9). Nothing here is built before then. The contract already has what it needs, marked `x-phase: later`: `POST /devices` (an APNs token, `sandbox` or `production`) and `POST /auth/apple` (returns a `TokenPair`). At the start, check that the API serves both; if it doesn't yet, build against Prism and say so.
+
+- [ ] **Account setup (Nathan, with steps written for him).**
+  - The App ID `io.github.nathantolley.auraexchange` (it never changes) with the Push Notifications and Sign in with Apple capabilities.
+  - An APNs auth key (`.p8`, its key ID and the team ID). It goes to the API's server and is **never** committed or pasted into chat.
+  - An App Store Connect app record, a distribution certificate and an App Store provisioning profile.
+  - An App Store Connect API key for uploads, stored as GitHub secrets with the certificate (`.p12` and its password) and the profile, all base64.
+- [ ] **Signed builds and TestFlight.** A new workflow, `TestFlight`, beside iOS release: install the certificate and profile from the secrets into a temporary keychain, `flutter build ipa --release --export-options-plist=…` with `--dart-define=API_BASE_URL`, then upload to TestFlight with the API key. iOS release (unsigned, for Sideloadly) stays as it is. The build number keeps rising from the run number.
+- [ ] **Push notifications (APNs).**
+  - Entitlement `aps-environment` (development for debug, production for TestFlight), a plugin that gives the raw APNs token (no Firebase), and `POST /devices` with the token and its environment, sent again when the token changes and on every launch. Sign-out stops pushes (ask the API how a token is removed; if the contract has no way, write a contract request).
+  - Ask permission at a designed moment, not at launch: a sheet after your IPO or your first filing that says what you'll be told (rumors and rulings about you, margin warnings, liquidations, fills) and offers Turn on notifications or Not now. Every state designed, in the State Gallery with goldens: not asked yet, asking, on, off (Settings says where to turn them on), and a token that failed to register (Try again).
+  - A push opens its `deepLink` through the router, as the inbox already does (`aura://events/ID` → `/events/ID`), from a cold start too. The inbox and the bell's badge stay; a push arriving while the app is open becomes the toast and the badge, not a banner from iOS.
+  - Settings: drop the "push comes later" note; the toggles and quiet hours now decide what reaches the lock screen.
+  - W13's footnote ("You'll get a notification when it's back") becomes true: confirm with the API that the exchange coming back sends one.
+- [ ] **Sign in with Apple.**
+  - Entitlement `com.apple.developer.applesignin` and the `sign_in_with_apple` package; `POST /auth/apple` with Apple's identity token and authorization code, then the same `TokenPair` handling as the email code.
+  - On the sign-in screen, Continue with Apple goes above the email field, in Apple's own button style (their guidelines require it; record it in COMPONENTS.md as the one exception to Aura-only widgets). The email code stays for anyone without an Apple ID.
+  - States: canceled (back to the screen, nothing said), failed (a banner with Try again), offline, and an Apple ID whose email already has an account (ask the API how accounts are linked; don't guess).
+- [ ] **TestFlight for the group.** Internal testing for Nathan first, then external testers for the Gate 1 friends (Beta App Review), replacing Sideloadly and its 7-day re-signing. The sideload path stays documented in README.md as the fallback.
+- **Check:**
+  - A TestFlight build installs on Nathan's phone without Sideloadly and talks to the live API.
+  - Sign in with Apple creates an account and signs into it again after a reinstall; canceling and going offline land on designed states.
+  - With the phone locked, a rumor about you arrives as a push and opens W01; quiet hours hold pushes; turning notifications off in iOS shows the off state in the app.
+  - The exchange going down and coming back sends the push W13 promises.
+  - `flutter analyze` and `flutter test` are clean, and every new state is in the State Gallery with a golden.
+
