@@ -41,6 +41,10 @@
 	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Aura Exchange uses the camera when you take a photo to add as a receipt to an event you file.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Aura Exchange opens your photos when you choose a photo or screenshot to add as a receipt to an event you file.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
