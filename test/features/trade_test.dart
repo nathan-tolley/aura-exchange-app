@@ -1,7 +1,10 @@
 import 'package:aura_exchange/api/errors.dart';
 import 'package:aura_exchange/api/generated/export.dart' hide Freshness;
 import 'package:aura_exchange/features/trade/trade_flow.dart';
+import 'package:aura_exchange/features/trade/trade_model.dart';
+import 'package:aura_exchange/format/time.dart';
 import 'package:aura_exchange/l10n/strings.dart';
+import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -171,6 +174,69 @@ void main() {
     flow().applyFix();
     expect(state().quantity, 18);
     expect(state().problem, isNull);
+  });
+
+  test('a quote refused when priced shows its own receipt (W05)', () {
+    const refused = ApiError(
+      code: 'INSUFFICIENT_CASH',
+      params: {
+        'needed': '2494.41',
+        'available': '2264.50',
+        'shortBy': '229.91',
+        'maxQuantity': '18',
+        'nextStimulusAt': '2026-10-25T22:00:00Z',
+        'price': '124.10',
+        'gross': '2482.00',
+        'feeRate': '0.50',
+        'fee': '12.41',
+        'total': '2494.41',
+      },
+      retryable: false,
+      action: ApiAction.reduceQuantity,
+      status: 422,
+    );
+    final model = liveTicketModel(
+      state: const TradeFlowState(
+        side: Side.buy,
+        orderType: orderMarket,
+        quantity: 20,
+        problem: refused,
+      ),
+      ticker: r'$ANNA',
+      lastPrice: Decimal.parse('124.10'),
+      holdsPosition: false,
+      // Sunday 1 pm in Sydney: Monday's 9 am check is tomorrow's.
+      now: DateTime.utc(2026, 10, 25, 2),
+      zone: exchangeZone('Australia/Sydney'),
+    );
+    expect(model.rows.map((r) => r.value), ['A\$2,482.00', 'A\$12.41']);
+    expect(model.total.value, 'A\$2,494.41');
+    expect(model.canTrade, isFalse);
+    expect(model.banner?.body, contains("tomorrow's stimulus check"));
+    expect(model.banner?.action, 'Buy 18');
+  });
+
+  test('a refusal that was never priced has no receipt', () {
+    final model = liveTicketModel(
+      state: const TradeFlowState(
+        side: Side.buy,
+        orderType: orderMarket,
+        quantity: 500,
+        problem: ApiError(
+          code: 'ORDER_TOO_LARGE',
+          params: {'maxQuantity': '400'},
+          retryable: false,
+          action: ApiAction.reduceQuantity,
+          status: 422,
+        ),
+      ),
+      ticker: r'$ANNA',
+      lastPrice: Decimal.parse('124.10'),
+      holdsPosition: false,
+      now: DateTime.utc(2026, 10, 25, 2),
+    );
+    expect(model.rows, isEmpty);
+    expect(model.banner?.action, 'Buy 400');
   });
 
   test('a limit order needs a price, and rests', () async {

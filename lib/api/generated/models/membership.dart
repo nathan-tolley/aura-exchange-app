@@ -21,6 +21,7 @@ class Membership {
     required this.joinedAt,
     required this.badges,
     required this.superInjunctionsLeft,
+    required this.superInjunctionsPerSeason,
   });
   
   factory Membership.fromJson(Map<String, Object?> json) => _$MembershipFromJson(json);
@@ -35,6 +36,9 @@ class Membership {
   final DateTime joinedAt;
   final List<MembershipBadges> badges;
   final int superInjunctionsLeft;
+
+  /// How many a season allows ("2 of 3 left")
+  final int superInjunctionsPerSeason;
 
   Map<String, Object?> toJson() => _$MembershipToJson(this);
 }

@@ -87,6 +87,7 @@ class ListingTick {
   const ListingTick({
     required this.id,
     required this.price,
+    this.changeAbs,
     required this.changePct,
     required this.state,
   });
@@ -94,6 +95,7 @@ class ListingTick {
   factory ListingTick.fromJson(Map<String, Object?> json) => ListingTick(
     id: json['id']! as String,
     price: json['price']! as String,
+    changeAbs: json['changeAbs'] as String?,
     changePct: json['changePct']! as String,
     state: ListingState.fromJson(json['state']! as String),
   );
@@ -102,6 +104,10 @@ class ListingTick {
 
   /// Decimal string, 2 dp.
   final String price;
+
+  /// Since the previous close, decimal string, 2 dp (draft.7). Null from a
+  /// server that doesn't send it yet.
+  final String? changeAbs;
 
   /// Percent units, decimal string, 2 dp.
   final String changePct;

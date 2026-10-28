@@ -49,8 +49,9 @@ class LiquidatedModel {
   final AuraReceiptRow total;
   final String tapeLabel;
 
-  /// The tape's line, from the server as-is.
-  final String tape;
+  /// The tape's line, from the server as-is; null while it isn't found,
+  /// and then the section isn't shown.
+  final String? tape;
   final String tapeSource;
   final String seeStock;
   final String portfolio;
@@ -110,17 +111,19 @@ class LiquidatedView extends StatelessWidget {
                     ),
                     const SizedBox(height: 23),
                     AuraReceipt(rows: m.rows, total: m.total),
-                    const SizedBox(height: 22),
-                    auraLiftFootnote(
-                      Text(
-                        m.tapeLabel,
-                        style: AuraType.footnote.copyWith(
-                          color: AuraColors.inkTertiary,
+                    if (m.tape case final tape?) ...[
+                      const SizedBox(height: 22),
+                      auraLiftFootnote(
+                        Text(
+                          m.tapeLabel,
+                          style: AuraType.footnote.copyWith(
+                            color: AuraColors.inkTertiary,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    AuraQuoteCard(quote: m.tape, source: m.tapeSource),
+                      const SizedBox(height: 8),
+                      AuraQuoteCard(quote: tape, source: m.tapeSource),
+                    ],
                   ],
                 ),
               ),

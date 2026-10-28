@@ -27,6 +27,7 @@ Portfolio _$PortfolioFromJson(Map<String, dynamic> json) => Portfolio(
       .map((e) => Order.fromJson(e as Map<String, dynamic>))
       .toList(),
   canDeclareBankruptcy: json['canDeclareBankruptcy'] as bool,
+  nextStimulusAt: DateTime.parse(json['nextStimulusAt'] as String),
 );
 
 Map<String, dynamic> _$PortfolioToJson(Portfolio instance) => <String, dynamic>{
@@ -44,4 +45,5 @@ Map<String, dynamic> _$PortfolioToJson(Portfolio instance) => <String, dynamic>{
   'positions': instance.positions,
   'openOrders': instance.openOrders,
   'canDeclareBankruptcy': instance.canDeclareBankruptcy,
+  'nextStimulusAt': instance.nextStimulusAt.toIso8601String(),
 };

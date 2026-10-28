@@ -32,6 +32,7 @@ Membership _membership({bool listed = true}) => Membership.fromJson({
   'joinedAt': '2026-10-24T10:40:00Z',
   'badges': <String>[],
   'superInjunctionsLeft': 2,
+  'superInjunctionsPerSeason': 3,
 });
 
 final _listing = ListingDetail.fromJson({

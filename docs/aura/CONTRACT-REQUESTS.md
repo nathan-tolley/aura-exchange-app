@@ -25,7 +25,9 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** The app's error-mapping tests use local fixtures copied from the table in `API-CONTRACT.md`.
 
-## 2. When the next stimulus check lands (2026-10-25 · open)
+## 2. When the next stimulus check lands (2026-10-25 · answered, synced 2026-10-28 in draft.7)
+
+**Answered: accepted, served now.** `nextStimulusAt` is in `INSUFFICIENT_CASH`'s params and on `Portfolio` (the next Monday 09:00 in the exchange's timezone). W05 says "tomorrow's" or "Monday's" from it, live as well as in the gallery: the trade sheet now passes the exchange's timezone into the copy.
 
 **What's missing.** W05's rejection says "wait for **tomorrow's** stimulus check". The allowance is a game rule (PLAN.md: A$1,000, Mondays 9 am), and the app mustn't copy game rules, so it can't work out "tomorrow's" or "Monday's" by itself. Nothing in `/v1` says when the next one lands.
 
@@ -33,7 +35,9 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** `lib/l10n/strings.dart` already reads `params.nextStimulusAt` when it's there ("tomorrow's", "Monday's", from the exchange's calendar) and says "the next stimulus check" when it isn't. W05's golden in A3 uses a fixture with the param, so it matches the reference.
 
-## 3. The change amount on ticks (2026-10-25 · open)
+## 3. The change amount on ticks (2026-10-25 · answered, synced 2026-10-28 in draft.7)
+
+**Answered: accepted, with `/stream` (Phase 1).** Each `ticks` listing carries `changeAbs` since the previous close (API-CONTRACT.md → Realtime). `LiveMarket` uses it when it's there and still works it out from price and percent when a tick doesn't have it.
 
 **What's missing.** A `ticks` message gives each listing's `price` and `changePct` but not `changeAbs`, which every price row shows (`↑ +7.79 (+6.70%)`, `AuraPriceChange`).
 
@@ -41,7 +45,9 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** `LiveMarket` (`lib/data/live_market.dart`) works the amount out from the tick's own price and percent (`price − price × 100 / (100 + changePct)`, rounded half-up to 2 dp). That matches the fixtures (124.10 at +6.70% → +7.79; 101.90 at −9.34% → −10.50), but because the percent is already rounded it can be a cent off the server's figure.
 
-## 4. A heartbeat in quiet market states (2026-10-25 · question)
+## 4. A heartbeat in quiet market states (2026-10-25 · answered, synced 2026-10-28 in draft.7)
+
+**Answered: accepted, with `/stream` (Phase 1).** Every subscribed exchange gets a `ticks` message at least every 30 s in every market state, with `listings: []` when nothing changed. So the single "older than 60 s → Delayed" rule holds everywhere. The app already moves `asOf` on an empty `ticks` (tested); CLOSED still reads "at the close", as W09 is drawn.
 
 **The question.** The app marks prices Delayed when `asOf` is over 60 s old (API-CONTRACT.md → Freshness). Ticks come "at most every 15 s" and only with the listings that changed. While the market is OPEN the price engine moves every listing every 15 s, so that's fine. But in PRE, AFTER and an exchange-wide HALTED nothing may move for minutes, and the app would show Delayed although nothing was missed.
 
@@ -49,7 +55,9 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** The app follows the contract as written, except that CLOSED reads "at the close" (as W09 is drawn).
 
-## 5. ASCII example tokens (2026-10-25 · open)
+## 5. ASCII example tokens (2026-10-25 · answered, synced 2026-10-28 in draft.7)
+
+**Answered: accepted.** `TokenPair`'s examples are now `eyJhbGciOiJIUzI1NiJ9.e30.c2lnbmF0dXJl` and `rt_9d8c4e2a`, so a refresh against Prism can be replayed.
 
 **What's wrong.** `TokenPair`'s examples are `"accessToken": "eyJhbGciOi…"` and `"refreshToken": "rt_9d8c…"`. The `…` (U+2026) can't be sent in an HTTP header, so after Prism answers `POST /auth/refresh`, the client can't replay the request with the new token. It fails before sending.
 
@@ -57,7 +65,9 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** The Prism check forces `AUTH_EXPIRED` signed out (no refresh). The refresh and replay are tested against a fake server.
 
-## 6. A refused quote that still shows its numbers (2026-10-25 · open)
+## 6. A refused quote that still shows its numbers (2026-10-25 · answered, synced 2026-10-28 in draft.7)
+
+**Answered: option B, served now.** `INSUFFICIENT_CASH` and `SHORT_CAP` add `price`, `gross`, `feeRate`, `fee` and `total` (for the quantity asked) to their params. Option A was declined: it would turn an existing 422 into a 201. `ORDER_TOO_LARGE` keeps only `maxQuantity`, because an order that large is refused before it's priced. So the app builds W05's receipt from the refusal's params (`refusedReceipt()` in `trade_model.dart`), live and in the gallery, and a too-large order shows the cap and the fix without a receipt (S10b).
 
 **What's missing.** W05 shows a refused trade with its receipt (20 × A$124.10 = A$2,482.00, fee A$12.41, estimated total A$2,494.41) **and** the reason with its fix ("You're A$229.91 short … Buy 18 instead"). Today `POST /quotes` either returns a `Quote` (whose `cashAfter` can be negative, "the trade would be rejected", but which has no `maxQuantity`) or fails with `422 INSUFFICIENT_CASH` (which has `maxQuantity` but no gross, fee or total). Neither answer has both.
 
@@ -67,7 +77,9 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** `tradeTicketModel()` (`lib/features/trade/trade_model.dart`) takes a `Quote` and an optional `ApiError` rejection, which is option A's shape. The W05 fixture supplies both.
 
-## 7. How a liquidation settled (2026-10-25 · open)
+## 7. How a liquidation settled (2026-10-25 · answered, synced 2026-10-28 in draft.7)
+
+**Answered: accepted with two changes, filled in Phase 1 (margin).** `Position.liquidation` (the `Liquidation` schema), `null` unless `LIQUIDATED`. It's `feeRate`, not `feeRatePct` (the name `Quote.feeRate` already uses), and `collateral` moved inside it. The local `Liquidation` record is gone: W08 reads the generated one, and `/positions/:id` opens W08 for a liquidated short, with the tape's line once the stock's tape has it.
 
 **What's missing.** W08 is the liquidation receipt: when it happened, the price the stock crossed and the maintenance ratio it fell under, the collateral held, the buy-back (quantity, price, cost), the fee, what came back to your cash, and the realised loss on the trade with its percent. `Position` (status `LIQUIDATED`) gives the collateral and quantity, but nothing in `/v1` gives the settlement. Working it out in the app would copy the server's settlement rules.
 
@@ -75,7 +87,9 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** `Liquidation` (`lib/features/portfolio/liquidated_model.dart`) has exactly these fields, and the W08 fixture fills it.
 
-## 8. What Chapter 7 would do (2026-10-25 · open)
+## 8. What Chapter 7 would do (2026-10-25 · answered: deferred to Phase 2)
+
+**Answered: deferred to Phase 2 (bankruptcy).** The shape will be as asked: `minimumEquity`, `resetCash`, `badge`, `tapeHeadline` on `Portfolio` while `canDeclareBankruptcy`. The local `BankruptcyOffer` stays until then.
 
 **What's missing.** W04 offers bankruptcy at the moment of the loss and shows its terms: the minimum to trade (A$100.00), the cash you'd restart with (A$2,000.00), the badge you'd carry until the season ends ("Chapter 7"), and the Analyst's line for the tape. `/v1` has `Portfolio.canDeclareBankruptcy` and `POST /exchanges/{id}/bankruptcy` ("reset to A$2,000 with a badge" in its summary), but none of those values. They're game rules, so the app shouldn't hold them.
 
@@ -83,7 +97,9 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 
 **Meanwhile.** `BankruptcyOffer` (`lib/features/portfolio/bankruptcy_model.dart`) has these fields, and the W04 fixture fills them. The banner's copy is the same `underMinimumCopy()` that `EQUITY_TOO_LOW` uses.
 
-## 9. What the "about you" screens need besides the event (2026-10-25 · open)
+## 9. What the "about you" screens need besides the event (2026-10-25 · answered, synced 2026-10-28 in draft.7)
+
+**Answered, split.** `Membership.superInjunctionsPerSeason` is served now, and W02 reads it ("2 of 3 left"). `Event.denialPenaltyPct` is in the spec (always set, `"20.00"`, filled with the event pipeline in Phase 1), and W01 reads it. `ratingChange` (W02) and the `SecCase` schema (W03) are deferred to Phase 2; W02's rating change stays an input and `SecCharge` stays the stand-in. The API asks one question for Phase 2: can a ruling move the rating by itself, when PLAN.md makes ratings weekly?
 
 **What's missing.** W01–W03 come mostly from `Event`, `Ruling`, `Votes`, `Appeal` and `Membership`, but a few numbers are game rules the app shouldn't hold, and the SEC case has no schema at all:
 

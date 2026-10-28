@@ -45,6 +45,15 @@ void main() {
     final portfolio = Portfolio.fromJson(fixture('portfolio'));
     expect(portfolio.netWorth, '12486.20');
     expect(portfolio.positions.first.unrealizedPnl, '-888.00');
+    expect(portfolio.nextStimulusAt, DateTime.utc(2026, 10, 26, 13));
+  });
+
+  test('Position: how a liquidation settled (draft.7, feeRate)', () {
+    final position = Portfolio.fromJson(fixture('portfolio')).positions.first;
+    final l = position.liquidation!;
+    expect(l.feeRate, '0.50');
+    expect(l.collateral, '8745.75');
+    expect(l.returned, '1633.36');
   });
 
   test('Health: minimum build', () {

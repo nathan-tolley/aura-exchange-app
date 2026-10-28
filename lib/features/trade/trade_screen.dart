@@ -12,6 +12,7 @@ import '../../data/me.dart';
 import '../../design/widgets/aura_sheet.dart';
 import '../../design/widgets/aura_skeleton.dart';
 import '../../format/ticker.dart';
+import '../../format/time.dart';
 import '../../l10n/strings.dart';
 import 'trade_flow.dart';
 import 'trade_model.dart';
@@ -56,6 +57,9 @@ class _TradeSheetState extends ConsumerState<TradeSheet> {
     final market = exchangeId == null
         ? null
         : ref.watch(marketProvider(exchangeId)).value;
+    final exchange = exchangeId == null
+        ? null
+        : ref.watch(exchangeProvider(exchangeId)).value;
     if (detail == null) {
       return AuraSheet(
         title: ' ',
@@ -139,6 +143,7 @@ class _TradeSheetState extends ConsumerState<TradeSheet> {
           lastPrice: live?.price ?? Decimal.parse(detail.price),
           holdsPosition: detail.myPosition != null,
           now: now,
+          zone: exchange == null ? null : exchangeZone(exchange.timezone),
         ),
         price: _price,
         onPrice: flow.setPrice,

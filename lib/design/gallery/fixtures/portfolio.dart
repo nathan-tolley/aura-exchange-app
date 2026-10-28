@@ -68,6 +68,7 @@ Portfolio _portfolio({
   'cash': cash,
   'reservedCash': reserved,
   'netWorth': '12486.20',
+  'nextStimulusAt': '2026-10-25T22:00:00Z',
   'seasonChangeAbs': '2486.20',
   'seasonChangePct': '24.86',
   'dayChangeAbs': '312.40',

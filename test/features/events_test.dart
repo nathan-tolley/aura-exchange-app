@@ -39,6 +39,7 @@ void main() {
     'happenedAt': null,
     'createdAt': '2026-10-24T10:37:00Z',
     'unsendUntil': null,
+    'denialPenaltyPct': '20.00',
     'rumorEndsAt': '2026-10-24T10:47:00Z',
     'reactions': {'cosigns': 2, 'caps': 1, 'mine': reaction},
     'subjectStatement': null,

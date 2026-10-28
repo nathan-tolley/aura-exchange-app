@@ -307,6 +307,16 @@ final List<GalleryScreen> screenStates = [
     reference: 'W08-Liquidated',
   ),
   GalleryScreen(
+    'S22a',
+    'Liquidated, before the tape line',
+    (_) => LiquidatedView(
+      model: liquidated(tape: false),
+      onClose: _noop,
+      onSeeStock: _noop,
+      onPortfolio: _noop,
+    ),
+  ),
+  GalleryScreen(
     'W04',
     'Chapter 7 offer',
     (_) => BankruptcyView(

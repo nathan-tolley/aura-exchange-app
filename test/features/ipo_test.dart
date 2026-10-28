@@ -25,6 +25,7 @@ void main() {
     'joinedAt': '2026-10-24T10:40:00Z',
     'badges': <String>[],
     'superInjunctionsLeft': 3,
+    'superInjunctionsPerSeason': 3,
   };
   const listing = {
     'id': '11111111-0000-4000-8000-000000000003',

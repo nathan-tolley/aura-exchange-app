@@ -1132,7 +1132,6 @@ const slideToDelist = 'Slide to delist yourself';
 const stayListed = 'Stay listed';
 const savingFailed = "That setting didn't save. It's back to how it was.";
 
-
 // ---------------------------------------------------------------------------
 
 const chartRange = 'Chart range';
@@ -1492,9 +1491,8 @@ const respondDeny = 'Deny it';
 /// "If it's confirmed, the hit is 20% bigger".
 /// The deny row's risk. The size comes from the server (contract request
 /// #9); without it the note says so without a number.
-String denyNote(Decimal? penaltyPct) => penaltyPct == null
-    ? "If it's confirmed, the hit is bigger"
-    : "If it's confirmed, the hit is ${penaltyPct.abs()}% bigger";
+String denyNote(Decimal penaltyPct) =>
+    "If it's confirmed, the hit is ${penaltyPct.abs()}% bigger";
 const risky = 'Risky';
 const respondNothing = 'Say nothing';
 

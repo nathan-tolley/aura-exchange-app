@@ -24,6 +24,9 @@ Position _$PositionFromJson(Map<String, dynamic> json) => Position(
   closedAt: json['closedAt'] == null
       ? null
       : DateTime.parse(json['closedAt'] as String),
+  liquidation: json['liquidation'] == null
+      ? null
+      : Liquidation.fromJson(json['liquidation'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$PositionToJson(Position instance) => <String, dynamic>{
@@ -40,4 +43,5 @@ Map<String, dynamic> _$PositionToJson(Position instance) => <String, dynamic>{
   'short': instance.short,
   'openedAt': instance.openedAt.toIso8601String(),
   'closedAt': instance.closedAt?.toIso8601String(),
+  'liquidation': instance.liquidation,
 };

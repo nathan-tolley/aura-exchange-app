@@ -51,6 +51,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
   appeal: json['appeal'] == null
       ? null
       : Appeal.fromJson(json['appeal'] as Map<String, dynamic>),
+  denialPenaltyPct: json['denialPenaltyPct'] as String,
 );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
@@ -76,4 +77,5 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'halt': instance.halt,
   'votes': instance.votes,
   'appeal': instance.appeal,
+  'denialPenaltyPct': instance.denialPenaltyPct,
 };

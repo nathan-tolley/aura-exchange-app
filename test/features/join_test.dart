@@ -119,6 +119,7 @@ void main() {
       'joinedAt': '2026-10-24T10:40:00Z',
       'badges': <String>[],
       'superInjunctionsLeft': 3,
+      'superInjunctionsPerSeason': 3,
     };
     final http = FakeAdapter((r) {
       switch (r.path) {

@@ -27,6 +27,7 @@ class Portfolio {
     required this.positions,
     required this.openOrders,
     required this.canDeclareBankruptcy,
+    required this.nextStimulusAt,
   });
   
   factory Portfolio.fromJson(Map<String, Object?> json) => _$PortfolioFromJson(json);
@@ -65,6 +66,9 @@ class Portfolio {
 
   /// Net worth under A$100.00 (Phase 2)
   final bool canDeclareBankruptcy;
+
+  /// When the next weekly allowance (the "stimulus check") lands
+  final DateTime nextStimulusAt;
 
   Map<String, Object?> toJson() => _$PortfolioToJson(this);
 }
