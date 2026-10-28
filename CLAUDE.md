@@ -48,15 +48,15 @@ Sessions can stop at any moment: usage limits, a crash, a closed laptop. Work so
 
 ## The boundary (most important rule)
 
-- The server is a **separate repo** (`aura-api`, a branch of the friend's `Aura-Exchange`). This app knows the server **only** through `/v1` in `api/openapi.yaml`.
+- The server is a **separate repo**: `nathan-tolley/aura-exchange-api` (public, forked off the friend's `Aura-Exchange`; locally `..\Aura-Exchange`). This app knows the server **only** through `/v1` in `api/openapi.yaml`. Read that repo, never write to it.
   - No shared code.
   - No assumptions about the server's internals.
   - No business rules duplicated here: the server computes prices, liquidation prices, fees, max quantities and statuses. The app displays them.
 - **The API repo owns the contract.**
   - `api/openapi.yaml` here is a copy. Never edit it to make the app work.
   - If the app needs something the contract doesn't have, write the request in `docs/aura/CONTRACT-REQUESTS.md` and tell Nathan. Build against a local fixture until it lands.
-- To sync after the API changes:
-  1. Copy `openapi/v1.yaml` from the API repo to `api/openapi.yaml`.
+- **Sync on your own.** At the start of each milestone step, compare `info.version` in `..\Aura-Exchange\openapi\v1.yaml` with `api/openapi.yaml`. If the API's is newer, sync before building on it (Nathan's standing instruction, 2026-10-28). To sync:
+  1. Copy `openapi/v1.yaml` from the API repo to `api/openapi.yaml` (and `docs/aura/API-CONTRACT.md` when it changed).
   2. Regenerate the client.
   3. Fix any compile errors.
   4. Note the sync in `api/SYNCED.md` (date + the API's `CHANGES.md` entry).

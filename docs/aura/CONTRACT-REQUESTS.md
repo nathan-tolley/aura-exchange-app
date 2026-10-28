@@ -94,7 +94,15 @@ The app then picks one with `Prefer: code=409, example=QUOTE_STALE`. This is add
 **Meanwhile.** The presenters take these as inputs (`lib/features/events/about_you_models.dart`; `SecCharge` is the W03 record) and the fixtures fill them.
 
 
-## 10. CORS for the web preview (2026-10-25 · open)
+## 10. CORS for the web preview (2026-10-25 · done, live since 2026-10-25, checked 2026-10-26 and 2026-10-28)
+
+**Answered.** `/v1` allows the origins in the server's `CORS_ORIGINS` (`http://localhost:5555` on the box): preflights get 204 with the allow headers, every response (errors too) carries `Access-Control-Allow-Origin`, and no credentials are used. So the Chrome dev build can call `https://tae.app.elicit-marketing.com/v1`:
+
+```powershell
+flutter run -d chrome --web-port 5555 --dart-define=API_BASE_URL=https://tae.app.elicit-marketing.com/v1
+```
+
+The original request follows.
 
 **What's wrong.** The app is previewed in Chrome on Windows (`flutter run -d chrome --web-port 5555`, CLAUDE.md → Previewing on Windows), so its requests to the live API are cross-origin. The live server at `https://tae.app.elicit-marketing.com/v1` doesn't allow that:
 

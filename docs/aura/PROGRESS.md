@@ -4,26 +4,14 @@ The live log for this repo. A fresh session reads "Now" first (see `CLAUDE.md` �
 
 ## Now
 
-- Step: A4 done and merged into `main` (`4acde59`), pushed to origin on 2026-10-26, except photo receipts when filing, which wait on Nathan
-- State: done; A5 not started
-- Next action: A5: set the repo variable `API_BASE_URL` to `https://tae.app.elicit-marketing.com/v1`, run iOS release (Nathan's OK), sideload it, do Gate 0 on the phone, then the break-it checklist (ROADMAP.md → A5).
+- Step: Resume after Nathan's answers of 2026-10-28 (`..\DECISIONS-2026-10-28.md`): record them, then sync draft.7, photo receipts, A5, the A6 milestone
+- State: in progress (answers recorded; syncing draft.7 next)
+- Next action: sync the contract to `1.0.0-draft.7` from `..\Aura-Exchange\openapi\v1.yaml` (api/SYNCED.md), rename `feeRatePct` to `feeRate` in the liquidation model, close contract requests #2-#9
 - Uncommitted work: none
 - How to compare: `python tool/golden_diff.py diff GOLDEN REFERENCE` gives the share of differing pixels and a side-by-side image (look at it); `bands` lists where content sits, in points, for measuring the drawn screens. Component goldens are 840 px wide and now 0.03–2.81% from their references; screens are 780×1688 (`expectScreen`), Home at about 2%.
 - Lessons: 12.5 pt text goes through `auraLiftFootnote()`. Build screens as a view over a view-model plus a presenter from API payloads; fixtures are API-shaped JSON. `AuraSheetScope` (`lib/design/surface.dart`) lifts fills and hairlines inside sheets; use it for every raised fill and hairline. Put a style on `Text(style:)` or `Text.rich(style:)`, never only on an inner `TextSpan`, or the sans family is lost. `Semantics(excludeSemantics: true)` on a control must restate `onTap`. Control labels use `auraControlText()`. Hairlines are `foregroundDecoration`. Colors with meaning use `AuraTone`. Never `dart format lib` or `dart format .`: name your own files. It reformats the generated token files (the drift test fails) and `lib/api/generated` (123 files); if it happens, rerun `dart run tool/gen_tokens.dart` and `git checkout -- lib/api/generated`. Never write a doc through PowerShell's `Set-Content` (it adds a BOM and mangles non-ASCII), and don't pass Python to `python -c` from PowerShell (its quoting breaks); edit with the Edit tool, or write the script to the scratchpad and run it. A Bash heredoc whose body contains `'''` fails the same way. Gallery fixture names can clash with copy constants; `screen_states.dart` imports strings with `show`. Whole-app widget tests set Reduce Motion (skeletons breathe forever otherwise) and end by unmounting and disposing the container (`done`).
-- Waiting on Nathan:
-  - **Gate 0 check (A4 dev build).** Sign-in, creating an exchange and the invite link work end to end against Prism (`flutter run -d chrome --web-port 5555 --dart-define=API_BASE_URL=http://localhost:4010`). Against the live API, Chrome blocks every call (no CORS: contract request #10, written up 2026-10-25). Either the API adds CORS, then run `flutter run -d chrome --web-port 5555 --dart-define=API_BASE_URL=https://tae.app.elicit-marketing.com/v1`, or OK pushing `a4-flows` and running iOS release with `API_BASE_URL` set, and check on the phone.
-  - **First iOS release run.** The GitHub repo exists (public, created by Nathan on 2026-10-24); `main` was pushed through A4's merge on 2026-10-26. Later pushes and the A0 check's one manual run of iOS release still need your OK.
-  - **Contract request #2** (`docs/aura/CONTRACT-REQUESTS.md`): `nextStimulusAt` on `INSUFFICIENT_CASH`, so W05 can say "tomorrow's stimulus check" without the app copying the schedule. Not blocking; the copy falls back to "the next stimulus check".
-  - **Photo receipts when filing.** They need the `image_picker` plugin, which isn't in CLAUDE.md's stack and adds iOS permission keys (`NSPhotoLibraryUsageDescription`, `NSCameraUsageDescription`) and pods that only the macOS runner can check. Add it, or leave receipts for later? Not blocking; filing works without them.
-  - **Contract request #11**: who's joined and who's been invited, for IPO day's rows (W12). Not blocking; Home shows who's listed and Invite someone.
-  - **Contract request #9**: the "about you" screens' game numbers (denial penalty, rating change, super-injunctions per season) and an SEC case schema (W01–W03). Not blocking; presenters take them as inputs.
-  - **Contract request #8**: Chapter 7's terms on `Portfolio` (W04). Not blocking; a local `BankruptcyOffer` stands in.
-  - **Contract request #7**: a liquidation's settlement on `Position` (W08). Not blocking; a local `Liquidation` record stands in.
-  - **Contract request #6**: a refused quote that still carries its numbers (W05 needs the receipt and `maxQuantity` together). Not blocking; the presenter takes a `Quote` plus the rejection.
-  - **Contract request #5**: ASCII example tokens, so a refresh against Prism can be replayed. Not blocking.
-  - **Contract requests #3 and #4** (`docs/aura/CONTRACT-REQUESTS.md`): `changeAbs` on ticks (the app derives it meanwhile), and whether the server sends a tick at least every 60 s in PRE, AFTER and HALTED (otherwise quiet periods read Delayed). Not blocking.
-  - **W13's footnote** says "You'll get a notification when it's back", which the app can't do without push. Keep it, or change the lead-in (for example "This screen checks again by itself", with the screen polling `/health`)?
-  - Not blocking yet: the open questions and the three design-pass rules in `docs/aura/DECISIONS.md`.
+- Waiting on Nathan: nothing. Every question was answered on 2026-10-28 (`DECISIONS.md`).
+- Waiting on the API (not blocking; each has a stand-in): contract request #11 (who's joined and who's invited, W12); Phase 2: #8 (Chapter 7's terms, W04), #9b (`ratingChange`, W02), #9d (`SecCase`, W03).
 
 ## Log
 
@@ -85,3 +73,4 @@ One line per finished step: date · step · what · commit.
 - 2026-10-26 · A4 · You (S30a–c) and Settings (S31a–e); `AuraToggleRow` (component 38); quiet hours off sent as an explicit null; opting out with the slide; the redirect no longer forces the IPO on unlisted members; You and Settings box ticked · (this commit)
 - 2026-10-26 · A4 · App-wide: the update screen over everything on any `UPDATE_REQUIRED`; exchange down mid-session as a down banner with actions off (S23a); A4 check written up (119 screen states with goldens, 38 components, 637 tests) · (this commit)
 - 2026-10-26 · A4 · Merged `a4-flows` into `main` (`4acde59`): analyze clean, 637 tests; pushed to origin · (this commit)
+- 2026-10-28 · Resume · Nathan's answers of 2026-10-28 in DECISIONS.md (every open question struck through and answered); the API is its own repo, `nathan-tolley/aura-exchange-api`; CORS on `/v1` is live (contract request #10 done, checked again today); standing rule to sync the spec at the start of each step. Analyze clean, 637 tests · (this commit)
