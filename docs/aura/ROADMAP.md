@@ -122,6 +122,7 @@ Build these against Prism first, then switch to the real API as each endpoint la
 ## A5: On the phone
 
 - [ ] Point a release build at the cloud API (repo variable `API_BASE_URL`), run **iOS release**, and sideload it.
+  - *2026-10-28: built. `API_BASE_URL` is `https://tae.app.elicit-marketing.com/v1` (set 2026-10-26). Run 40771139646 on `main` at `ac5e5aa` passed analyze and tests on macOS, and published [v1.0.0.4](https://github.com/nathan-tolley/aura-exchange-app/releases/tag/v1.0.0.4) (`aura-exchange-app-v1.0.0.4.ipa`, 8.8 MB). The `.ipa` was checked: it has the live URL, both permission strings and the image_picker plugin. Sideloading and Gate 0 on the phone are Nathan's (PROGRESS.md → Waiting on Nathan).*
 - [ ] Run the break-it checklist on the device:
   - airplane mode mid-trade
   - stale quote
