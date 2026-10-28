@@ -206,6 +206,33 @@ final List<GalleryScreen> screenStates = [
   GalleryScreen('S11d', 'File an event, daily limit', (_) => fileLimit()),
   GalleryScreen('S11e', 'File an event, discard', (_) => fileDiscard()),
   GalleryScreen('S11f', 'File an event, nothing typed', (_) => fileEmpty()),
+  GalleryScreen('S11g', 'File an event, with receipts', (_) => fileReceipts()),
+  GalleryScreen(
+    'S11h',
+    'File an event, add a receipt',
+    (_) => fileAddReceipt(),
+  ),
+  GalleryScreen('S11i', 'File an event, camera off', (_) => fileCameraOff()),
+  GalleryScreen(
+    'S11j',
+    'File an event, receipt uploading',
+    (_) => fileReceiptUploading(),
+  ),
+  GalleryScreen(
+    'S11k',
+    "File an event, receipt didn't upload",
+    (_) => fileReceiptFailed(),
+  ),
+  GalleryScreen(
+    'S11l',
+    'File an event, receipt offline',
+    (_) => fileReceiptOffline(),
+  ),
+  GalleryScreen(
+    'S11m',
+    'File an event, four receipts',
+    (_) => fileReceiptsFull(),
+  ),
   GalleryScreen('S12a', 'Your filing, sending', (_) => filingSending()),
   GalleryScreen('S12b', 'Your filing, rumor live', (_) => filingRumor()),
   GalleryScreen('S12c', 'Your filing, ruled', (_) => filingRuled()),

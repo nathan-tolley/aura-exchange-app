@@ -330,6 +330,18 @@ The 6-digit sign-in code: one `raised` cell per digit, the digit in the `price` 
 
 Added in A4 (2026-10-25) for sign-in; no separate preview.
 
+## AuraPhotoTile
+
+One photo a filing carries as a receipt, or the slot that adds one. A 64pt square with `md` corners, in a row 8pt apart under a field-style label ("Receipts") and over an `AuraFieldNote`.
+
+- Provide `image` (the photo, cropped to fill), `label` (VoiceOver's name: "Receipt 1"), optional `status` (`ready`, `uploading`, `failed`), `progress` (0–1 while uploading), `onTap` and `onRemove` with `removeLabel`. `AuraPhotoTile.add(label:, onTap:)` is the slot that adds one.
+- Uploading dims the photo to 40% with a 3pt `ink` bar on a `line-strong` track along the bottom, 8pt in from the edges: how much has been sent, never a spinner.
+- Failed dims it under an `alert` glyph in `down`. The words are in the note under the row ("A photo didn't upload. Tap it to try again, or remove it."), and tapping the tile tries again.
+- Remove is a 12pt `close` glyph on a 20pt `bg` disc, 4pt in from the top-right corner, with a 44pt hit area inside the tile.
+- The add slot is the field's fill (`raised`, `raised-2` inside sheets) with a `plus` glyph in `ink-secondary`, so it reads as part of the form above it. Leave it out when no more can be added; the note says why.
+
+Added in A4 (2026-10-28) for receipts when filing; no separate preview. The State Gallery draws photos as flat stand-ins (`fixtures/photos.dart`).
+
 ## AuraSkeleton
 
 Where content is loading, at the content's real size: `raised` blocks (`raised-2` inside sheets) that breathe slowly, and hold still with Reduce Motion. Never a full-screen spinner.

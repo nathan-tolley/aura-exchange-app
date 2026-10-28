@@ -19,6 +19,7 @@ import '../widgets/aura_impact_disc.dart';
 import '../widgets/aura_money.dart';
 import '../widgets/aura_nav_card.dart';
 import '../widgets/aura_news_row.dart';
+import '../widgets/aura_photo_tile.dart';
 import '../widgets/aura_price_change.dart';
 import '../widgets/aura_quote_card.dart';
 import '../widgets/aura_range_bar.dart';
@@ -41,6 +42,7 @@ import '../widgets/aura_tape.dart';
 import '../widgets/aura_text_field.dart';
 import '../widgets/aura_toast.dart';
 import '../widgets/aura_toggle_row.dart';
+import 'fixtures/photos.dart';
 import 'gallery_screen.dart';
 
 Decimal _d(String s) => Decimal.parse(s);
@@ -840,6 +842,56 @@ final List<GallerySection> componentStates = [
     GalleryState(
       'A screen that is the message, 52 pt, warn (W13)',
       (_) => const AuraIconTile(AuraIcons.alert, size: 52, tone: AuraTone.warn),
+    ),
+  ]),
+  GallerySection('PhotoTile', [
+    GalleryState(
+      'Add a receipt',
+      (_) => const AuraPhotoTile.add(label: 'Add a receipt', onTap: _tap),
+    ),
+    GalleryState(
+      'Uploaded, with remove',
+      (_) => AuraPhotoTile(
+        image: fixturePhoto(0),
+        label: 'Receipt 1',
+        onRemove: _tap,
+        removeLabel: 'Remove receipt 1',
+      ),
+    ),
+    GalleryState(
+      'Uploading, 60% sent',
+      (_) => AuraPhotoTile(
+        image: fixturePhoto(1),
+        label: 'Receipt 2, uploading',
+        status: AuraPhotoStatus.uploading,
+        progress: 0.6,
+        onRemove: _tap,
+        removeLabel: 'Remove receipt 2',
+      ),
+    ),
+    GalleryState(
+      "Didn't upload: tap to try again",
+      (_) => AuraPhotoTile(
+        image: fixturePhoto(3),
+        label: "Receipt 3, didn't upload",
+        status: AuraPhotoStatus.failed,
+        onTap: _tap,
+        onRemove: _tap,
+        removeLabel: 'Remove receipt 3',
+      ),
+    ),
+    GalleryState(
+      'A row, as in the filing sheet',
+      (_) => _row([
+        for (var i = 0; i < 3; i++)
+          AuraPhotoTile(
+            image: fixturePhoto(i),
+            label: 'Receipt ${i + 1}',
+            onRemove: _tap,
+            removeLabel: 'Remove receipt ${i + 1}',
+          ),
+        const AuraPhotoTile.add(label: 'Add a receipt', onTap: _tap),
+      ]),
     ),
   ]),
   GallerySection('Skeleton', [

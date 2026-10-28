@@ -1,18 +1,24 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../../api/client.dart';
 import '../../../api/errors.dart';
 import '../../../l10n/strings.dart' show ErrorContext;
 import '../../../api/generated/export.dart' hide Freshness;
 import '../../../features/stock/halted_view.dart';
 import '../../../data/freshness.dart';
+import '../../../data/uploads.dart';
 import '../../../features/events/about_you_models.dart';
 import '../../../features/events/about_you_views.dart';
 import '../../../features/events/file_sheet.dart';
 import '../../../features/events/filing_status.dart';
+import '../../../features/events/receipts.dart';
 import '../../../format/time.dart';
 import '../../tokens.dart';
+import '../../widgets/aura_photo_tile.dart';
 import '../screen_fixtures.dart' show halted;
 import 'frames.dart';
+import 'photos.dart';
 
 // Filing an event and its status (SCREENS.md #11, #12), at 9:41 pm in
 // Sydney.
@@ -53,6 +59,9 @@ Widget _file({
   String text = _text,
   ApiError? problem,
   bool discarding = false,
+  List<ReceiptDraft> receipts = const [],
+  bool choosing = false,
+  bool cameraOff = false,
 }) => Controlled(
   texts: [text, ''],
   builder: (context, c) => sheetOver(
@@ -65,8 +74,12 @@ Widget _file({
         filing: false,
         problem: problem,
         discarding: discarding,
+        receipts: receipts,
+        choosing: choosing,
+        cameraOff: cameraOff,
         context: ErrorContext(zone: _sydney, now: _now),
       ),
+      receiptImage: (t) => fixturePhoto(t.id),
       text: c[0],
       search: c[1],
       onSearch: (_) {},
@@ -78,8 +91,29 @@ Widget _file({
       onClose: _noop,
       onKeepWriting: _noop,
       onDiscard: _noop,
+      onAddReceipt: _noop,
+      onRetryReceipt: (_) {},
+      onRemoveReceipt: (_) {},
+      onChooseLibrary: _noop,
+      onTakePhoto: _noop,
+      onCancelChoosing: _noop,
     ),
   ),
+);
+
+/// A receipt on the filing; the gallery draws its photo as a stand-in.
+ReceiptDraft _receipt(
+  int id, {
+  AuraPhotoStatus status = AuraPhotoStatus.ready,
+  double progress = 1,
+  ApiError? problem,
+}) => ReceiptDraft(
+  id: id,
+  photo: PickedPhoto(bytes: Uint8List(0), contentType: 'image/jpeg'),
+  key: IdempotencyKey(),
+  status: status,
+  progress: progress,
+  problem: problem,
 );
 
 /// S11a: who it's about.
@@ -111,6 +145,65 @@ Widget fileDiscard() => _file(subject: _subjects.first, discarding: true);
 
 /// S11f: nothing typed yet.
 Widget fileEmpty() => _file(subject: _subjects.first, text: '');
+
+/// S11g: two screenshots attached and uploaded.
+Widget fileReceipts() =>
+    _file(subject: _subjects.first, receipts: [_receipt(0), _receipt(2)]);
+
+/// S11h: where a receipt comes from.
+Widget fileAddReceipt() =>
+    _file(subject: _subjects.first, receipts: [_receipt(0)], choosing: true);
+
+/// S11i: the camera is off for the app.
+Widget fileCameraOff() => _file(
+  subject: _subjects.first,
+  receipts: [_receipt(0)],
+  choosing: true,
+  cameraOff: true,
+);
+
+/// S11j: one still uploading, so File waits.
+Widget fileReceiptUploading() => _file(
+  subject: _subjects.first,
+  receipts: [
+    _receipt(0),
+    _receipt(1, status: AuraPhotoStatus.uploading, progress: 0.6),
+  ],
+);
+
+/// S11k: one didn't upload; tap it to try again.
+Widget fileReceiptFailed() => _file(
+  subject: _subjects.first,
+  receipts: [
+    _receipt(0),
+    _receipt(
+      3,
+      status: AuraPhotoStatus.failed,
+      progress: 0.3,
+      problem: const ApiError.unexpected(),
+    ),
+  ],
+);
+
+/// S11l: one didn't upload because you went offline.
+Widget fileReceiptOffline() => _file(
+  subject: _subjects.first,
+  receipts: [
+    _receipt(0),
+    _receipt(
+      1,
+      status: AuraPhotoStatus.failed,
+      progress: 0.3,
+      problem: const ApiError.offline(),
+    ),
+  ],
+);
+
+/// S11m: four, the most a filing can carry.
+Widget fileReceiptsFull() => _file(
+  subject: _subjects.first,
+  receipts: [for (var i = 0; i < 4; i++) _receipt(i)],
+);
 
 Event _event(
   String status, {

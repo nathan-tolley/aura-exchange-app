@@ -267,6 +267,11 @@ class EventsRepository {
 
   final AuraApi _api;
 
+  /// A signed URL to upload one receipt to (`POST /uploads`).
+  Future<Upload> upload(UploadRequest request, IdempotencyKey key) => guardApi(
+    () => _api.events.postUploads(idempotencyKey: key.value, body: request),
+  );
+
   /// Files an event. It starts in `SENDING` for its unsend window.
   Future<Event> file(EventCreate event, IdempotencyKey key) => guardApi(
     () => _api.events.postEvents(idempotencyKey: key.value, body: event),

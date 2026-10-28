@@ -936,6 +936,39 @@ const discardBody = "What you wrote won't be kept.";
 const keepWriting = 'Keep writing';
 const discard = 'Discard';
 
+/// Receipts on a filing: photos or screenshots, each uploading as it's
+/// added. [max] is the contract's limit.
+String receiptsHelp(int max) => 'Photos or screenshots, up to $max.';
+String receiptsFull(int max) => "That's $max, the most a filing can carry.";
+String uploadingPhotos(int n) =>
+    n == 1 ? 'Uploading 1 photo…' : 'Uploading $n photos…';
+const receiptDidntUpload =
+    "A photo didn't upload. Tap it to try again, or remove it.";
+const receiptOffline =
+    "You're offline, so a photo didn't upload. Tap it to try again when "
+    "you're back.";
+const waitForReceipts = 'You can file once your photos have uploaded.';
+const fixReceiptsToFile =
+    "Try the photo that didn't upload again, or remove it, to file.";
+
+/// VoiceOver's name for receipt [n] on the filing.
+String receiptLabel(int n, {bool uploading = false, bool failed = false}) =>
+    failed
+    ? "Receipt $n, didn't upload. Double-tap to try again"
+    : uploading
+    ? 'Receipt $n, uploading'
+    : 'Receipt $n';
+String removeReceipt(int n) => 'Remove receipt $n';
+const addAReceipt = 'Add a receipt';
+const addReceiptBody =
+    'A screenshot or a photo of what happened. The Analyst looks at them '
+    'with what you wrote.';
+const chooseFromPhotos = 'Choose from your photos';
+const takeAPhoto = 'Take a photo';
+const cameraOffTitle = 'The camera is off for Aura Exchange';
+const cameraOffBody =
+    'Turn it on in Settings, under Aura Exchange, or choose from your photos.';
+
 /// Filing while offline.
 const fileOffline = ErrorCopy(
   title: "You're offline",
