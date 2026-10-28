@@ -21,6 +21,7 @@ Membership _$MembershipFromJson(Map<String, dynamic> json) => Membership(
       .map((e) => MembershipBadges.fromJson(e as String))
       .toList(),
   superInjunctionsLeft: (json['superInjunctionsLeft'] as num).toInt(),
+  superInjunctionsPerSeason: (json['superInjunctionsPerSeason'] as num).toInt(),
 );
 
 Map<String, dynamic> _$MembershipToJson(Membership instance) =>
@@ -33,4 +34,5 @@ Map<String, dynamic> _$MembershipToJson(Membership instance) =>
       'joinedAt': instance.joinedAt.toIso8601String(),
       'badges': instance.badges,
       'superInjunctionsLeft': instance.superInjunctionsLeft,
+      'superInjunctionsPerSeason': instance.superInjunctionsPerSeason,
     };

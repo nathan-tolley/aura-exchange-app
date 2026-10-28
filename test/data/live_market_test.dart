@@ -49,14 +49,26 @@ void main() {
 
   LiveMarket shown() => container.read(marketProvider(exchange)).requireValue;
 
-  void tick(String price, String pct, {DateTime? at, String id = anna}) {
+  void tick(
+    String price,
+    String pct, {
+    String? abs,
+    DateTime? at,
+    String id = anna,
+  }) {
     sockets.last.receive({
       'type': 'ticks',
       'exchangeId': id == anna ? exchange : 'other',
       'asOf': (at ?? asOf.add(const Duration(seconds: 15))).toIso8601String(),
       'marketState': 'OPEN',
       'listings': [
-        {'id': anna, 'price': price, 'changePct': pct, 'state': 'ACTIVE'},
+        {
+          'id': anna,
+          'price': price,
+          'changeAbs': ?abs,
+          'changePct': pct,
+          'state': 'ACTIVE',
+        },
       ],
     });
   }
@@ -81,7 +93,7 @@ void main() {
       final listing = shown().listings.single;
       expect(listing.price, Decimal.parse('124.10'));
       expect(listing.changePct, Decimal.parse('6.70'));
-      // Derived from the tick's own numbers (contract request #3).
+      // Derived from the tick's own numbers when it has no changeAbs.
       expect(listing.changeAbs, Decimal.parse('7.79'));
       expect(shown().freshness.asOf, asOf.add(const Duration(seconds: 15)));
       expect(shown().freshness.marketState, MarketState.open);
@@ -89,6 +101,33 @@ void main() {
       tick('101.90', '-9.34');
       await pumpEventQueue();
       expect(shown().listings.single.changeAbs, Decimal.parse('-10.50'));
+
+      // The server's amount wins when the tick carries it (draft.7).
+      tick(
+        '101.90',
+        '-9.34',
+        abs: '-10.49',
+        at: asOf.add(const Duration(seconds: 30)),
+      );
+      await pumpEventQueue();
+      expect(shown().listings.single.changeAbs, Decimal.parse('-10.49'));
+    });
+
+    test('a heartbeat with no listings keeps the numbers fresh', () async {
+      await load();
+      tick('124.10', '6.70', abs: '7.79');
+      await pumpEventQueue();
+      sockets.last.receive({
+        'type': 'ticks',
+        'exchangeId': exchange,
+        'asOf': asOf.add(const Duration(seconds: 45)).toIso8601String(),
+        'marketState': 'CLOSED',
+        'listings': <Object?>[],
+      });
+      await pumpEventQueue();
+      expect(shown().freshness.asOf, asOf.add(const Duration(seconds: 45)));
+      expect(shown().freshness.marketState, MarketState.closed);
+      expect(shown().listings.single.price, Decimal.parse('124.10'));
     });
 
     test("ignores old ticks and other exchanges' ticks", () async {

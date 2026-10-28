@@ -169,6 +169,7 @@ Exchange _exchange({int listed = 0, int members = 1}) => Exchange.fromJson({
     'joinedAt': '2026-10-24T10:40:00Z',
     'badges': <String>[],
     'superInjunctionsLeft': 3,
+    'superInjunctionsPerSeason': 3,
   },
 });
 

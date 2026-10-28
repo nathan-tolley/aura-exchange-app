@@ -85,6 +85,7 @@ void main() {
       'happenedAt': null,
       'createdAt': now.subtract(const Duration(seconds: 6)).toIso8601String(),
       'unsendUntil': unsendUntil?.toIso8601String(),
+      'denialPenaltyPct': '20.00',
       'rumorEndsAt': status == 'RUMOR'
           ? now.add(const Duration(minutes: 6)).toIso8601String()
           : null,

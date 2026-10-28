@@ -148,6 +148,7 @@ Event _event(
   'unsendUntil': status == 'SENDING'
       ? _now.add(Duration(seconds: sendingLeft)).toIso8601String()
       : null,
+  'denialPenaltyPct': '20.00',
   'rumorEndsAt': status == 'SENDING'
       ? null
       : _now.add(const Duration(minutes: 6, seconds: 12)).toIso8601String(),

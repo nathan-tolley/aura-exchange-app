@@ -110,7 +110,7 @@ Build these against Prism first, then switch to the real API as each endpoint la
 - [x] Tape (all, filtered, empty, unread) · notifications inbox (grouped by stock, quiet hours, empty)
   - *2026-10-25: the Tape tab and `/notifications`, S18a–e and S19a–d in the gallery with goldens; live tape and notifications from the stream; the bell's unread badge and the tape dot on Home.*
 - [x] Portfolio (positions and cash, open orders, empty) · margin warning sheet · liquidated receipt
-  - *2026-10-26: the Portfolio tab (S20a–e with goldens), W07 live from your short, Cover at a quantity. W08 is built and in the gallery (A3) but can only be fed live once contract request #7 sends a liquidation's settlement; until then a liquidated position opens its stock page.*
+  - *2026-10-26: the Portfolio tab (S20a–e with goldens), W07 live from your short, Cover at a quantity. W08 is built and in the gallery (A3) but can only be fed live once contract request #7 sends a liquidation's settlement; until then a liquidated position opens its stock page.* *2026-10-28: W08 is live from `Position.liquidation` (draft.7), with S22a for the receipt before its tape line is found.*
 - [x] You (listing, stats, super-injunctions left) · settings (notification prefs, quiet hours, opt out of being listed)
   - *2026-10-26: the You tab and `/settings`, S30a–c and S31a–e in the gallery with goldens; prefs save as you toggle and revert if they fail; opting out ends in the slide.*
 - [x] App-wide: closed / halted / offline banners, the update-required screen, the exchange-down screen, skeleton loading everywhere

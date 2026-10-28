@@ -48,6 +48,7 @@ export 'models/quote.dart';
 export 'models/trade_request.dart';
 export 'models/short_detail.dart';
 export 'models/position.dart';
+export 'models/liquidation.dart';
 export 'models/trade.dart';
 export 'models/order_type.dart';
 export 'models/order_create.dart';

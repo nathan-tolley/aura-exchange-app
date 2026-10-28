@@ -31,6 +31,7 @@ void main() {
       'joinedAt': '2026-10-24T13:20:00Z',
       'badges': <String>[],
       'superInjunctionsLeft': 3,
+      'superInjunctionsPerSeason': 3,
     };
     AsyncValue<Me?> me(List<Map<String, Object?>> memberships) => AsyncData(
       Me.fromJson({'user': tokenPairJson['user'], 'memberships': memberships}),

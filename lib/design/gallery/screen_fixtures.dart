@@ -112,6 +112,7 @@ Portfolio _portfolio({
   'cash': '2264.50',
   'reservedCash': '0.00',
   'netWorth': netWorth,
+  'nextStimulusAt': '2026-10-25T22:00:00Z',
   'seasonChangeAbs': seasonAbs,
   'seasonChangePct': seasonPct,
   'dayChangeAbs': '0.00',
@@ -476,18 +477,11 @@ Quote _quote({
 /// Monday's 9 am stimulus check is tomorrow's.
 TradeTicketModel tradeRejected() {
   final now = DateTime.utc(2026, 10, 25, 2);
-  return tradeTicketModel(
-    quote: _quote(
-      side: 'BUY',
-      quantity: '20',
-      price: '124.10',
-      gross: '2482.00',
-      fee: '12.41',
-      total: '2494.41',
-      cashAfter: '-229.91',
-      now: now,
-    ),
+  return refusedTicketModel(
+    side: Side.buy,
+    quantity: Decimal.fromInt(20),
     ticker: r'$ANNA',
+    lastPrice: Decimal.parse('124.10'),
     rejection: const ApiError(
       code: 'INSUFFICIENT_CASH',
       params: {
@@ -496,6 +490,11 @@ TradeTicketModel tradeRejected() {
         'shortBy': '229.91',
         'maxQuantity': '18',
         'nextStimulusAt': '2026-10-25T22:00:00Z',
+        'price': '124.10',
+        'gross': '2482.00',
+        'feeRate': '0.50',
+        'fee': '12.41',
+        'total': '2494.41',
       },
       retryable: false,
       action: ApiAction.reduceQuantity,
@@ -636,16 +635,33 @@ Map<String, Object?> _jakeShort({required String status}) => {
   'marketValue': '6738.00',
   'unrealizedPnl': '-888.00',
   'unrealizedPnlPct': '-15.18',
-  'short': {
-    'collateral': '8775.00',
-    'collateralRatioPct': '130.00',
-    'warningRatioPct': '140.00',
-    'maintenanceRatioPct': '125.00',
-    'liquidationPrice': '117.00',
-    'borrowFeeDailyPct': '0.60',
-  },
+  'short': status != 'OPEN'
+      ? null
+      : {
+          'collateral': '8775.00',
+          'collateralRatioPct': '130.00',
+          'warningRatioPct': '140.00',
+          'maintenanceRatioPct': '125.00',
+          'liquidationPrice': '117.00',
+          'borrowFeeDailyPct': '0.60',
+        },
   'openedAt': '2026-10-20T01:00:00Z',
   'closedAt': status == 'OPEN' ? null : '2026-10-24T04:12:00Z',
+  'liquidation': status != 'LIQUIDATED'
+      ? null
+      : {
+          'at': '2026-10-24T04:12:00Z',
+          'triggerPrice': '117.00',
+          'maintenanceRatioPct': '125.00',
+          'collateral': '8775.00',
+          'price': '118.10',
+          'cost': '7086.00',
+          'feeRate': '0.50',
+          'fee': '35.43',
+          'returned': '1653.57',
+          'realizedPnl': '-1271.43',
+          'realizedPnlPct': '-21.73',
+        },
 };
 
 /// $JAKE's stock page on the day of W07.
@@ -690,41 +706,33 @@ ShortPageModel shortNearLiquidation() => shortPageModel(
 );
 
 /// W08: the same short, liquidated at 3:12 pm when $JAKE crossed A$117.00.
-LiquidatedModel liquidated() => liquidatedModel(
-  liquidation: Liquidation(
-    position: Position.fromJson(_jakeShort(status: 'LIQUIDATED')),
-    at: DateTime.utc(2026, 10, 24, 4, 12),
-    triggerPrice: '117.00',
-    maintenanceRatioPct: '125.00',
-    price: '118.10',
-    cost: '7086.00',
-    feeRatePct: '0.50',
-    fee: '35.43',
-    returned: '1653.57',
-    realizedPnl: '-1271.43',
-    realizedPnlPct: '-21.73',
-  ),
-  tape: TapeItem.fromJson({
-    'id': '66666666-0000-4000-8000-000000000001',
-    'type': 'LIQUIDATION',
-    'at': '2026-10-24T04:12:00Z',
-    'listing': {
-      'id': _jake,
-      'ticker': r'$JAKE',
-      'displayName': 'Jake',
-      'avatarUrl': null,
-    },
-    'headline':
-        r'Bears obliterated as $JAKE rips 15%. One short seller forcibly '
-        'removed from the position.',
-    'body': null,
-    'impact': null,
-    'priceMovePct': '15.00',
-    'eventId': null,
-    'haltId': null,
-  }),
+/// [tape] false is the receipt before the tape's line is found.
+LiquidatedModel liquidated({bool tape = true}) => liquidatedModel(
+  position: Position.fromJson(_jakeShort(status: 'LIQUIDATED')),
+  tape: tape ? jakeLiquidationTape : null,
   zone: sydney,
 );
+
+/// The tape's line about W08's liquidation.
+final jakeLiquidationTape = TapeItem.fromJson({
+  'id': '66666666-0000-4000-8000-000000000001',
+  'type': 'LIQUIDATION',
+  'at': '2026-10-24T04:12:00Z',
+  'listing': {
+    'id': _jake,
+    'ticker': r'$JAKE',
+    'displayName': 'Jake',
+    'avatarUrl': null,
+  },
+  'headline':
+      r'Bears obliterated as $JAKE rips 15%. One short seller forcibly '
+      'removed from the position.',
+  'body': null,
+  'impact': null,
+  'priceMovePct': '15.00',
+  'eventId': null,
+  'haltId': null,
+});
 
 /// W04: Eli is down to A$64.12 with one position left, under the A$100.00
 /// needed to open a position.
@@ -737,6 +745,7 @@ BankruptcyModel bankrupt() {
     'cash': '12.40',
     'reservedCash': '0.00',
     'netWorth': '64.12',
+    'nextStimulusAt': '2026-10-25T22:00:00Z',
     'seasonChangeAbs': '-9935.88',
     'seasonChangePct': '-99.36',
     'dayChangeAbs': '-412.30',
@@ -828,6 +837,7 @@ Map<String, Object?> _event({
   'happenedAt': null,
   'createdAt': createdAt.toIso8601String(),
   'unsendUntil': null,
+  'denialPenaltyPct': '20.00',
   'rumorEndsAt': rumorEndsAt?.toIso8601String(),
   'reactions': {'cosigns': cosigns, 'caps': 0, 'mine': null},
   'subjectStatement': null,
@@ -856,7 +866,6 @@ RumorAboutYouModel rumorOnYou() {
       ),
     ),
     market: _closedOvernight,
-    denialPenaltyPct: Decimal.fromInt(20),
     zone: sydney,
     now: now,
   );

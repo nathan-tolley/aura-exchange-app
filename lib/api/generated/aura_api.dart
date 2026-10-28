@@ -15,7 +15,7 @@ import 'clients/tape_client.dart';
 import 'clients/safety_client.dart';
 import 'clients/realtime_client.dart';
 
-/// Aura Exchange API `v1.0.0-draft.6`.
+/// Aura Exchange API `v1.0.0-draft.7`.
 ///
 /// The v1 contract between the iPhone app and the server. Rules that apply everywhere (money as strings, freshness, errors, statuses, realtime, idempotency) are in API-CONTRACT.md. Every operation is tagged x-phase.
 class AuraApi {
@@ -28,7 +28,7 @@ class AuraApi {
   final Dio _dio;
   final String? _baseUrl;
 
-  static String get version => '1.0.0-draft.6';
+  static String get version => '1.0.0-draft.7';
 
   SystemClient? _system;
   AuthClient? _auth;

@@ -154,13 +154,14 @@ class _EventScreenState extends ConsumerState<EventScreen> {
       );
     }
     if (e.isAboutMe && e.ruling != null && listing != null) {
+      final membership = ref.watch(currentMembershipProvider);
       return RulingOnYouView(
         model: rulingOnYouModel(
           event: e,
           listing: listing,
           market: freshness,
-          superInjunctionsLeft:
-              ref.watch(currentMembershipProvider)?.superInjunctionsLeft ?? 0,
+          superInjunctionsLeft: membership?.superInjunctionsLeft ?? 0,
+          superInjunctionsPerSeason: membership?.superInjunctionsPerSeason,
           zone: zone,
           now: now,
         ),

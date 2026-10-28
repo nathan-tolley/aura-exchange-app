@@ -9,6 +9,7 @@ import '../../data/exchange_data.dart';
 import '../../data/lifecycle.dart';
 import '../../data/listing_data.dart';
 import '../../data/me.dart';
+import '../../format/time.dart';
 import '../../data/repositories.dart';
 import '../../design/sheet_route.dart';
 import '../../design/widgets/aura_tab_bar.dart';
@@ -17,6 +18,8 @@ import '../stock/short_model.dart';
 import '../stock/short_view.dart';
 import '../stock/stock_screen.dart';
 import '../system/load_failure.dart';
+import 'liquidated_model.dart';
+import 'liquidated_view.dart';
 import 'portfolio_view.dart';
 
 /// The Portfolio tab, live from `GET /portfolio` (refetched as prices move).
@@ -72,7 +75,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
         if (id != null) context.push(Routes.position(id));
       },
       onPosition: (x) => context.push(
-        x.short && x.open ? Routes.position(x.id) : Routes.stock(x.listingId),
+        x.short ? Routes.position(x.id) : Routes.stock(x.listingId),
       ),
       onOrder: (o) => _cancel(exchangeId, o),
       onBrowse: () => goTab(context, AuraTab.market),
@@ -129,7 +132,8 @@ final positionProvider = FutureProvider.autoDispose.family<Position, String>((
 });
 
 /// A position (`/positions/:id`): an open short is W07, with its margin
-/// detail and Cover; anything else is its stock page.
+/// detail and Cover; a liquidated one is its receipt (W08), once the server
+/// sends how it settled; anything else is its stock page.
 class PositionScreen extends ConsumerWidget {
   const PositionScreen({super.key, required this.positionId});
 
@@ -153,6 +157,9 @@ class PositionScreen extends ConsumerWidget {
         child: SizedBox.expand(),
       );
     }
+    if (p.status == PositionStatus.liquidated && p.liquidation != null) {
+      return _Liquidated(position: p, onClose: back);
+    }
     final listing = ref.watch(listingProvider(p.listing.id)).value;
     if (p.short == null || p.status != PositionStatus.open || listing == null) {
       return StockScreen(listingId: p.listing.id);
@@ -167,6 +174,41 @@ class PositionScreen extends ConsumerWidget {
       onCoverAll: () => context.push(
         Routes.trade(p.listing.id, Side.cover, quantity: quantity),
       ),
+    );
+  }
+}
+
+/// W08 for a liquidated short, in the exchange's time, with the tape's line
+/// about it once the stock's tape has it.
+class _Liquidated extends ConsumerWidget {
+  const _Liquidated({required this.position, required this.onClose});
+
+  final Position position;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final exchangeId = ref.watch(currentExchangeIdProvider);
+    final exchange = exchangeId == null
+        ? null
+        : ref.watch(exchangeProvider(exchangeId)).value;
+    if (exchangeId == null || exchange == null) {
+      return const ColoredBox(
+        color: Color(0xFF0B0C0E),
+        child: SizedBox.expand(),
+      );
+    }
+    final listingId = position.listing.id;
+    final tape = ref.watch(listingTapeProvider((exchangeId, listingId))).value;
+    return LiquidatedView(
+      model: liquidatedModel(
+        position: position,
+        tape: liquidationTapeItem(tape ?? const [], position),
+        zone: exchangeZone(exchange.timezone),
+      ),
+      onClose: onClose,
+      onSeeStock: () => context.push(Routes.stock(listingId)),
+      onPortfolio: () => goTab(context, AuraTab.portfolio),
     );
   }
 }

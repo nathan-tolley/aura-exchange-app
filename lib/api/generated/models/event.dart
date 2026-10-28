@@ -41,6 +41,7 @@ class Event {
     required this.halt,
     required this.votes,
     required this.appeal,
+    required this.denialPenaltyPct,
   });
   
   factory Event.fromJson(Map<String, Object?> json) => _$EventFromJson(json);
@@ -86,6 +87,9 @@ class Event {
   final Votes? votes;
   @JsonKey(includeIfNull: true)
   final Appeal? appeal;
+
+  /// How much bigger a confirmed loss gets when the subject denied it (W01). Ruling.multipliers.denial is what was applied.
+  final String denialPenaltyPct;
 
   Map<String, Object?> toJson() => _$EventToJson(this);
 }

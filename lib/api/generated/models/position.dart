@@ -4,6 +4,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
+import 'liquidation.dart';
 import 'listing_ref.dart';
 import 'position_side.dart';
 import 'position_status.dart';
@@ -27,6 +28,7 @@ class Position {
     required this.short,
     required this.openedAt,
     required this.closedAt,
+    required this.liquidation,
   });
   
   factory Position.fromJson(Map<String, Object?> json) => _$PositionFromJson(json);
@@ -58,6 +60,10 @@ class Position {
   final DateTime openedAt;
   @JsonKey(includeIfNull: true)
   final DateTime? closedAt;
+
+  /// Set when status is LIQUIDATED
+  @JsonKey(includeIfNull: true)
+  final Liquidation? liquidation;
 
   Map<String, Object?> toJson() => _$PositionToJson(this);
 }

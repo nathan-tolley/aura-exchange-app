@@ -1,4 +1,5 @@
 import 'package:decimal/decimal.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import '../../api/errors.dart';
 import '../../api/generated/export.dart' hide Freshness;
@@ -11,46 +12,70 @@ import '../shared/banner_model.dart';
 import 'trade_flow.dart';
 import 'trade_sheet_view.dart';
 
-/// The ticket from a quote. With a [rejection] (cash, size, short cap and
-/// the rest, which the server checks when it prices), the banner says why
-/// and offers the fix, and the button is disabled (W05).
-///
-/// The receipt needs the priced quote and the banner needs the error's
-/// params (`maxQuantity`), so a refused quote needs both: contract request
-/// #6 asks for them in one answer.
-TradeTicketModel tradeTicketModel({
-  required Quote quote,
+/// A refused quote as W05 draws it: the refused order's receipt and the
+/// banner with why and the fix, over the disabled button. `INSUFFICIENT_CASH`
+/// and `SHORT_CAP` carry the receipt in their params (contract request #6,
+/// option B); a refusal that wasn't priced (`ORDER_TOO_LARGE`) has none.
+TradeTicketModel refusedTicketModel({
+  required Side side,
+  required Decimal quantity,
   required String ticker,
-  ApiError? rejection,
-  String orderType = orderMarket,
+  required Decimal lastPrice,
+  required ApiError rejection,
   ErrorContext context = const ErrorContext(),
 }) {
-  final quantity = Decimal.parse(quote.quantity);
-  final copy = rejection == null
-      ? null
-      : errorCopy(
-          rejection,
-          ErrorContext(side: quote.side, zone: context.zone, now: context.now),
-        );
+  final copy = errorCopy(
+    rejection,
+    ErrorContext(side: side, zone: context.zone, now: context.now),
+  );
+  final receipt = refusedReceipt(rejection, quantity);
   return TradeTicketModel(
-    title: tradeTitle(quote.side, ticker),
-    orderType: orderType,
+    title: tradeTitle(side, ticker),
+    orderType: orderMarket,
     quantity: quantity,
-    quantityNote: sharesAtAbout(Decimal.parse(quote.currentPrice)),
-    rows: _priceRows(quote),
-    total: AuraReceiptRow(estimatedTotal, _money(quote.total)),
-    button: tradeButton(quote.side, quantity, ticker),
-    canTrade: rejection == null,
-    banner: copy == null
-        ? null
-        : BannerModel(
-            tone: AuraBannerTone.down,
-            title: copy.title,
-            body: copy.body,
-            action: copy.action,
-          ),
+    quantityNote: sharesAtAbout(lastPrice),
+    rows: receipt?.$1 ?? const [],
+    total: receipt?.$2 ?? _noTotal,
+    button: tradeButton(side, quantity, ticker),
+    canTrade: false,
+    banner: BannerModel(
+      tone: AuraBannerTone.down,
+      title: copy.title,
+      body: copy.body,
+      action: copy.action,
+    ),
   );
 }
+
+/// The refused order's receipt from the refusal's params (`price`, `gross`,
+/// `feeRate`, `fee`, `total`, for the quantity asked), or null when the
+/// refusal doesn't carry one.
+(List<AuraReceiptRow>, AuraReceiptRow)? refusedReceipt(
+  ApiError? rejection,
+  Decimal quantity,
+) {
+  if (rejection?.params case {
+    'price': final price,
+    'gross': final gross,
+    'feeRate': final feeRate,
+    'fee': final fee,
+    'total': final total,
+  }) {
+    return (
+      [
+        AuraReceiptRow(
+          quantityAt(quantity, Decimal.parse(price)),
+          _money(gross),
+        ),
+        AuraReceiptRow(feeLabel(Decimal.parse(feeRate)), _money(fee)),
+      ],
+      AuraReceiptRow(estimatedTotal, _money(total)),
+    );
+  }
+  return null;
+}
+
+const _noTotal = AuraReceiptRow('', '');
 
 /// The requote from the new quote (which carries what you saw in
 /// `previous`) and the `QUOTE_STALE` that sent the app for it (W06).
@@ -91,20 +116,25 @@ RequoteModel requoteModel({
 /// The live ticket (SCREENS.md #9) from where the trade is. A good quote
 /// ends in the slide with its countdown; a refused one (at quote or at
 /// trade) shows why with the fix and the disabled button, over the receipt
-/// when there's a quote to show (W05). A limit or stop asks for its price
-/// and ends in the slide that places it.
+/// when there's one to show: the quote's, or the refusal's own (W05). A
+/// limit or stop asks for its price and ends in the slide that places it.
+/// [zone] is the exchange's, for "tomorrow's stimulus check".
 TradeTicketModel liveTicketModel({
   required TradeFlowState state,
   required String ticker,
   required Decimal lastPrice,
   required bool holdsPosition,
   required DateTime now,
+  tz.Location? zone,
 }) {
   final quantity = Decimal.fromInt(state.quantity);
   final side = state.side;
   final quote = state.orderType == orderMarket ? state.quote : null;
   final problem = state.problem;
-  final banner = _banner(problem, side);
+  final banner = _banner(
+    problem,
+    ErrorContext(side: side, zone: zone, now: now),
+  );
   final types = switch (side) {
     Side.short || Side.cover => const [orderMarket],
     _ when holdsPosition && side == Side.sell => const [
@@ -143,6 +173,7 @@ TradeTicketModel liveTicketModel({
   final left = quote?.expiresAt.difference(now);
   final expired = left != null && left <= Duration.zero;
   final short = quote?.short;
+  final refused = quote == null ? refusedReceipt(problem, quantity) : null;
   return TradeTicketModel(
     title: title,
     orderType: orderMarket,
@@ -152,7 +183,7 @@ TradeTicketModel liveTicketModel({
       quote == null ? lastPrice : Decimal.parse(quote.currentPrice),
     ),
     rows: quote == null
-        ? const []
+        ? refused?.$1 ?? const []
         : [
             ..._priceRows(quote),
             if (short != null) ...[
@@ -168,7 +199,7 @@ TradeTicketModel liveTicketModel({
             ],
           ],
     total: quote == null
-        ? const AuraReceiptRow('', '')
+        ? refused?.$2 ?? _noTotal
         : AuraReceiptRow(estimatedTotal, _money(quote.total)),
     loading: quote == null && state.quoting,
     holdsFor: quote == null || expired || problem != null || state.busy
@@ -194,7 +225,7 @@ TradeTicketModel liveTicketModel({
 
 /// A failure as the ticket shows it: W11's banner with Retry when offline,
 /// otherwise the error's copy with its fix (W05).
-BannerModel? _banner(ApiError? problem, Side side) {
+BannerModel? _banner(ApiError? problem, ErrorContext context) {
   if (problem == null) return null;
   if (problem.code == ApiError.appOffline) {
     return BannerModel(
@@ -204,7 +235,7 @@ BannerModel? _banner(ApiError? problem, Side side) {
       action: tradeOffline.action,
     );
   }
-  final copy = errorCopy(problem, ErrorContext(side: side));
+  final copy = errorCopy(problem, context);
   return BannerModel(
     tone: AuraBannerTone.down,
     title: copy.title,

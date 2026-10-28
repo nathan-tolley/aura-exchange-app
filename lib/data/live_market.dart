@@ -148,18 +148,20 @@ class LiveMarket {
     }
     final price = Decimal.parse(tick.price);
     final pct = Decimal.parse(tick.changePct);
+    final abs = tick.changeAbs;
     return LiveListing(
       summary: summary,
       price: price,
-      changeAbs: _changeAbs(price, pct),
+      changeAbs: abs == null ? _changeAbs(price, pct) : Decimal.parse(abs),
       changePct: pct,
       state: tick.state,
     );
   }
 
-  /// Ticks carry the percent but not the amount (contract request #3), so
-  /// the amount comes from the tick's own numbers: the move from the price
-  /// the percent is measured against, rounded half-up like the server.
+  /// A tick without `changeAbs` (a server older than draft.7) gets the
+  /// amount from its own numbers: the move from the price the percent is
+  /// measured against, rounded half-up like the server. It can be a cent
+  /// off, since the percent is already rounded.
   static Decimal _changeAbs(Decimal price, Decimal pct) {
     final hundred = Decimal.fromInt(100);
     final base = (price * hundred / (hundred + pct)).toDecimal(

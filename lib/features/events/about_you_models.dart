@@ -44,14 +44,12 @@ SubjectModel _subject(Event event, String subtitle, {int? impact}) =>
       impactLabel: impact == null ? null : impactWord(impact),
     );
 
-/// A rumor about you (W01), from the event. [denialPenaltyPct] is how much
-/// bigger a confirmed hit gets if you deny it: a game rule the contract
-/// doesn't send yet (contract request #9).
+/// A rumor about you (W01), from the event, including how much bigger a
+/// confirmed hit gets if you deny it (`denialPenaltyPct`).
 RumorAboutYouModel rumorAboutYouModel({
   required Event event,
   required Freshness market,
   required tz.Location zone,
-  Decimal? denialPenaltyPct,
   required DateTime now,
 }) {
   final left = (event.rumorEndsAt ?? now).difference(now);
@@ -75,7 +73,7 @@ RumorAboutYouModel rumorAboutYouModel({
       RowModel(
         icon: AuraIcons.alert,
         title: respondDeny,
-        subtitle: denyNote(denialPenaltyPct),
+        subtitle: denyNote(Decimal.parse(event.denialPenaltyPct)),
         trailing: risky,
         trailingTone: AuraTone.warn,
       ),
@@ -89,9 +87,9 @@ RumorAboutYouModel rumorAboutYouModel({
   );
 }
 
-/// The ruling on you (W02), from the ruled event and its stock page. The
-/// rating's change ("Downgrade") and the season's super-injunction count
-/// aren't in the contract yet (contract request #9).
+/// The ruling on you (W02), from the ruled event, its stock page and your
+/// membership's super-injunctions. The rating's change ("Downgrade") isn't
+/// in the contract until Phase 2 (contract request #9b).
 RulingOnYouModel rulingOnYouModel({
   required Event event,
   required ListingDetail listing,
