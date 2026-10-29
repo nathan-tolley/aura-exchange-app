@@ -54,6 +54,15 @@ ProblemModel problemModel(ApiError error) {
       action: 'Try again',
     );
   }
+  if (error.isNotServed) {
+    return const ProblemModel(
+      icon: AuraIcons.clock,
+      tone: AuraTone.neutral,
+      title: notLiveTitle,
+      body: notLiveBody,
+      action: 'Try again',
+    );
+  }
   final copy = errorCopy(error);
   if (error.errorCode == ErrorCode.updateRequired) {
     return ProblemModel(

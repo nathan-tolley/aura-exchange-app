@@ -109,6 +109,7 @@ final List<GalleryScreen> screenStates = [
   ),
   GalleryScreen('S24c', 'Launch, unknown error', (_) => launchUnknown()),
   GalleryScreen('S24d', 'Launch, exchange down', (_) => launchExchangeDown()),
+  GalleryScreen('S24e', 'Not live yet', (_) => launchNotLive()),
   // No watchlist editor yet, so no Edit link (as the live screen).
   GalleryScreen(
     'S05a',
@@ -254,10 +255,12 @@ final List<GalleryScreen> screenStates = [
   GalleryScreen('S18c', 'Tape, empty', (_) => tapeEmpty()),
   GalleryScreen('S18d', 'Tape, filter empty', (_) => tapeFilteredEmpty()),
   GalleryScreen('S18e', 'Tape, loading', (_) => tapeLoading()),
+  GalleryScreen('S18f', 'Tape, not live yet', (_) => tapeNotLive()),
   GalleryScreen('S19a', 'Notifications, by stock', (_) => inboxGrouped()),
   GalleryScreen('S19b', 'Notifications, quiet hours', (_) => inboxQuiet()),
   GalleryScreen('S19c', 'Notifications, empty', (_) => inboxEmpty()),
   GalleryScreen('S19d', 'Notifications, loading', (_) => inboxLoading()),
+  GalleryScreen('S19e', 'Notifications, not live yet', (_) => inboxNotLive()),
   GalleryScreen(
     'S20a',
     'Portfolio, positions and cash',

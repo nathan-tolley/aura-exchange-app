@@ -101,6 +101,12 @@ Widget tapeFilteredEmpty() => _tapeView(const [], filter: 'Halts');
 /// S18e: loading.
 Widget tapeLoading() => _tapeView(null);
 
+/// S18f: the exchange doesn't serve the tape yet.
+Widget tapeNotLive() =>
+    const TapeView(rows: null, filter: 'All', notLive: true, onTab: _noTab);
+
+void _noTab(Object _) {}
+
 Notification _note(
   String n,
   String type,
@@ -184,5 +190,9 @@ Widget inboxEmpty() => _inboxView(const []);
 
 /// S19d: loading.
 Widget inboxLoading() => _inboxView(null);
+
+/// S19e: the exchange doesn't serve notifications yet.
+Widget inboxNotLive() =>
+    const InboxView(model: null, notLive: true, onBack: _noop);
 
 void _noop() {}

@@ -56,6 +56,14 @@ class _TapeScreenState extends ConsumerState<TapeScreen> {
     final items = tape.value;
     if (items == null) {
       final failure = firstFailure([tape]);
+      if (failure is ApiError && failure.isNotServed) {
+        return TapeView(
+          rows: null,
+          filter: _filter,
+          notLive: true,
+          onTab: onTab,
+        );
+      }
       if (failure != null) {
         return LoadFailureView(
           error: failure,
@@ -126,6 +134,9 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
     final items = inbox.value;
     if (items == null) {
       final failure = firstFailure([inbox]);
+      if (failure is ApiError && failure.isNotServed) {
+        return InboxView(model: null, notLive: true, onBack: back);
+      }
       if (failure != null) {
         return LoadFailureView(
           error: failure,

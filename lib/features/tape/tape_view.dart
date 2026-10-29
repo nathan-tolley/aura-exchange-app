@@ -68,6 +68,7 @@ class TapeView extends StatelessWidget {
     super.key,
     required this.rows,
     required this.filter,
+    this.notLive = false,
     this.hasMore = false,
     this.onFilter,
     this.onRow,
@@ -80,6 +81,10 @@ class TapeView extends StatelessWidget {
 
   /// One of [tapeFilters]' keys.
   final String filter;
+
+  /// The exchange doesn't serve the tape yet: a calm note in place of the
+  /// filter and rows, with the tab bar still there.
+  final bool notLive;
   final bool hasMore;
   final ValueChanged<String>? onFilter;
   final ValueChanged<NewsRowModel>? onRow;
@@ -98,64 +103,75 @@ class TapeView extends StatelessWidget {
           ListView(
             padding: EdgeInsets.fromLTRB(16, top + 12, 16, 128),
             children: [
-              AuraSegmentedControl(
-                options: tapeFilters.keys.toList(),
-                value: filter,
-                label: tapeFilterLabel,
-                onChanged: onFilter,
-              ),
-              const SizedBox(height: 8),
-              if (rows == null)
-                for (var i = 0; i < 5; i++)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10,
-                      children: [
-                        AuraSkeleton(width: 150, height: 9),
-                        AuraSkeleton(height: 14),
-                        AuraSkeleton(width: 220, height: 14),
-                      ],
-                    ),
-                  )
-              else if (rows.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 48),
-                  child: filter == tapeFilterAll
-                      ? AuraEmptyState(
-                          icon: AuraIcons.tape,
-                          title: nothingOnTapeYet,
-                          body: tapeEmptyBody,
-                          action: fileAnEvent,
-                          onAction: onFile,
-                        )
-                      : const AuraEmptyState(
-                          icon: AuraIcons.filter,
-                          title: tapeFilteredEmptyTitle,
-                          body: tapeFilteredEmptyBody,
-                        ),
+              if (notLive)
+                const Padding(
+                  padding: EdgeInsets.only(top: 88),
+                  child: AuraEmptyState(
+                    icon: AuraIcons.clock,
+                    title: tapeNotLiveTitle,
+                    body: tapeNotLiveBody,
+                  ),
                 )
               else ...[
-                for (final r in rows)
-                  AuraNewsRow(
-                    source: r.source,
-                    headline: r.headline,
-                    movePct: r.movePct,
-                    unread: r.unread,
-                    onTap: r.link == null || onRow == null
-                        ? null
-                        : () => onRow!(r),
-                  ),
-                if (hasMore) ...[
-                  const SizedBox(height: 16),
-                  AuraButton(
-                    showOlder,
-                    variant: AuraButtonVariant.ghost,
-                    size: AuraButtonSize.md,
-                    block: true,
-                    onPressed: onMore,
-                  ),
+                AuraSegmentedControl(
+                  options: tapeFilters.keys.toList(),
+                  value: filter,
+                  label: tapeFilterLabel,
+                  onChanged: onFilter,
+                ),
+                const SizedBox(height: 8),
+                if (rows == null)
+                  for (var i = 0; i < 5; i++)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 10,
+                        children: [
+                          AuraSkeleton(width: 150, height: 9),
+                          AuraSkeleton(height: 14),
+                          AuraSkeleton(width: 220, height: 14),
+                        ],
+                      ),
+                    )
+                else if (rows.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 48),
+                    child: filter == tapeFilterAll
+                        ? AuraEmptyState(
+                            icon: AuraIcons.tape,
+                            title: nothingOnTapeYet,
+                            body: tapeEmptyBody,
+                            action: fileAnEvent,
+                            onAction: onFile,
+                          )
+                        : const AuraEmptyState(
+                            icon: AuraIcons.filter,
+                            title: tapeFilteredEmptyTitle,
+                            body: tapeFilteredEmptyBody,
+                          ),
+                  )
+                else ...[
+                  for (final r in rows)
+                    AuraNewsRow(
+                      source: r.source,
+                      headline: r.headline,
+                      movePct: r.movePct,
+                      unread: r.unread,
+                      onTap: r.link == null || onRow == null
+                          ? null
+                          : () => onRow!(r),
+                    ),
+                  if (hasMore) ...[
+                    const SizedBox(height: 16),
+                    AuraButton(
+                      showOlder,
+                      variant: AuraButtonVariant.ghost,
+                      size: AuraButtonSize.md,
+                      block: true,
+                      onPressed: onMore,
+                    ),
+                  ],
                 ],
               ],
             ],
@@ -235,9 +251,18 @@ bool _inQuietHours(QuietHours quiet, tz.Location zone, DateTime now) {
 /// The notifications inbox (SCREENS.md #19), behind Home's bell. [model]
 /// null is loading.
 class InboxView extends StatelessWidget {
-  const InboxView({super.key, required this.model, this.onBack, this.onRow});
+  const InboxView({
+    super.key,
+    required this.model,
+    this.notLive = false,
+    this.onBack,
+    this.onRow,
+  });
 
   final InboxModel? model;
+
+  /// The exchange doesn't serve notifications yet.
+  final bool notLive;
   final VoidCallback? onBack;
   final ValueChanged<NewsRowModel>? onRow;
 
@@ -261,7 +286,16 @@ class InboxView extends StatelessWidget {
                   const SizedBox(height: 16),
                   ModelBanner(banner),
                 ],
-                if (m == null)
+                if (notLive)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 64),
+                    child: AuraEmptyState(
+                      icon: AuraIcons.clock,
+                      title: inboxNotLiveTitle,
+                      body: inboxNotLiveBody,
+                    ),
+                  )
+                else if (m == null)
                   for (var i = 0; i < 4; i++)
                     const Padding(
                       padding: EdgeInsets.only(top: 24),

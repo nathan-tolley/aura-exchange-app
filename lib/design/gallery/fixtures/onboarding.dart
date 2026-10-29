@@ -102,6 +102,20 @@ Widget launchUnknown() => ProblemView(
   onSecondary: _noop,
 );
 
+/// S24e: a part of the app the exchange doesn't serve yet.
+Widget launchNotLive() => ProblemView(
+  model: problemModel(
+    const ApiError(
+      code: 'NOT_FOUND',
+      params: {'resource': 'route'},
+      retryable: false,
+      action: ApiAction.none,
+      status: 404,
+    ),
+  ),
+  onAction: _noop,
+);
+
 /// S24d: the exchange down at launch, before any numbers were kept.
 Widget launchExchangeDown() => ExchangeDownView(
   model: exchangeDownModel(

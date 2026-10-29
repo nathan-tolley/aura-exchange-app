@@ -135,6 +135,12 @@ class ApiError implements Exception {
   /// Whether this failure happened on the way to the server rather than in it.
   bool get isLocal => code.startsWith('APP_');
 
+  /// The server doesn't serve this endpoint yet: `NOT_FOUND` for the route
+  /// itself rather than for a thing on it. A part of the app that isn't live,
+  /// not something that went wrong.
+  bool get isNotServed =>
+      errorCode == ErrorCode.notFound && params['resource'] == 'route';
+
   /// The server's reference for `SERVER` and `MAINTENANCE`, shown so Nathan
   /// can find the log line.
   String? get reference => params['reference'];

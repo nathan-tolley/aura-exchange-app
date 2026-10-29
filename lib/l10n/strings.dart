@@ -732,6 +732,13 @@ const offlineAtLaunchBody =
 const checkAgain = 'Check again';
 const updateFootnote = 'Install the new build, then open the app again';
 const somethingWentWrongBody = 'Try again in a moment.';
+
+/// A part of the app the exchange doesn't serve yet (`NOT_FOUND` for the
+/// route). Calm, because nothing is wrong.
+const notLiveTitle = "This isn't live yet";
+const notLiveBody =
+    "This part of Aura Exchange is still being switched on. There's nothing "
+    'you need to do.';
 const signOut = 'Sign out';
 
 // ---------------------------------------------------------------------------
@@ -1062,10 +1069,18 @@ const tapeEmptyBody = 'It fills up as the group files events.';
 const tapeFilteredEmptyTitle = 'Nothing like that yet';
 const tapeFilteredEmptyBody = 'The rest of the tape is under All.';
 const showOlder = 'Show older';
+const tapeNotLiveTitle = "The tape isn't live yet";
+const tapeNotLiveBody =
+    'Rulings, rumors, halts and big trades will run here once it is. '
+    "There's nothing you need to do.";
 const notificationsTitle = 'Notifications';
 const noNotifications = 'No notifications';
 const noNotificationsBody =
     'Rulings about you, your fills and margin warnings land here.';
+const inboxNotLiveTitle = "Your inbox isn't live yet";
+const inboxNotLiveBody =
+    'News about your stock and the exchange will land here once it is. '
+    "There's nothing you need to do.";
 const theExchange = 'The exchange';
 
 /// Quiet hours on: "Quiet hours until 7:00 am".
