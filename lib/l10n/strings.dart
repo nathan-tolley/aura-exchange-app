@@ -531,6 +531,12 @@ ErrorCopy offlineBanner(
 // ---------------------------------------------------------------------------
 
 const signInTitle = 'Sign in to Aura Exchange';
+
+/// The brand lockup (`AuraWordmark`, the launch screen, the icon): the name
+/// and the exchange's own quote, in the tape's terminal style.
+const appName = 'Aura Exchange';
+const brandTapeLine = r'$AURA 1,000.00';
+const brandTapeChange = '▲ 7.79%';
 const signInBody =
     "Enter your email and we'll send you a 6-digit code. There's no password.";
 const emailLabel = 'Email';

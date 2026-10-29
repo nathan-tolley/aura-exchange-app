@@ -1,14 +1,21 @@
-"""Renders the brand directions: a 1024 icon master per direction, and a
-preview sheet with the icon at home-screen sizes plus the launch screen.
+"""The brand's pictures, drawn from the app's own fonts and colors.
 
-    python brand.py <repo> <outdir>
+    python tool/brand.py . design/brand/directions   # the three directions
+    python tool/brand.py . --install                 # the chosen icon (B, Ticker)
+
+`--install` writes the iOS icon set at every size (opaque RGB, as App Store
+Connect wants), the web icons, and `design/brand/icon-1024.png`. The launch
+images aren't drawn here: Flutter renders them from `AuraWordmark`
+(`flutter test test/goldens/brand_test.dart --update-goldens`).
 """
+import json
 import sys
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageChops
 
 REPO = Path(sys.argv[1])
-OUT = Path(sys.argv[2])
+INSTALL = sys.argv[2] == '--install'
+OUT = REPO / 'design' / 'brand' if INSTALL else Path(sys.argv[2])
 OUT.mkdir(parents=True, exist_ok=True)
 FONTS = REPO / 'assets' / 'fonts'
 
@@ -134,6 +141,47 @@ def launch(kind, scale=2):
     return im
 
 
+def icon_final(small=False):
+    """B as built: the symbol in the tape's mono over its move in the tape's
+    terminal style (a filled triangle, the unsigned percent, in up). Below
+    about 100 px the move can't be read, so small sizes keep only the
+    triangle, larger."""
+    s = 4
+    im = Image.new('RGB', (1024 * s, 1024 * s), BG)
+    d = ImageDraw.Draw(im)
+    if small:
+        text_center(d, 512 * s, 420 * s, 'AURA', font('JetBrainsMono-Variable', 320 * s, wght=500), INK)
+        text_center(d, 512 * s, 750 * s, '▲', font('JetBrainsMono-Variable', 300 * s, wght=500), UP)
+    else:
+        text_center(d, 512 * s, 452 * s, 'AURA', font('JetBrainsMono-Variable', 268 * s, wght=500), INK)
+        text_center(d, 512 * s, 706 * s, '▲ 7.79%', font('JetBrainsMono-Variable', 118 * s, wght=500), UP)
+    return im.resize((1024, 1024), Image.LANCZOS)
+
+
+def install():
+    full, small = icon_final(), icon_final(small=True)
+    full.save(OUT / 'icon-1024.png')
+    small.save(OUT / 'icon-small-1024.png')
+    sets = REPO / 'ios' / 'Runner' / 'Assets.xcassets' / 'AppIcon.appiconset'
+    contents = json.loads((sets / 'Contents.json').read_text(encoding='utf-8'))
+    for image in contents['images']:
+        pt = float(image['size'].split('x')[0])
+        px = round(pt * int(image['scale'][0]))
+        src = full if px >= 100 else small
+        src.resize((px, px), Image.LANCZOS).save(sets / image['filename'])
+    web = REPO / 'web'
+    for name, px in [('icons/Icon-192.png', 192), ('icons/Icon-512.png', 512), ('favicon.png', 16)]:
+        (small if px < 100 else full).resize((px, px), Image.LANCZOS).save(web / name)
+    # Maskable icons get cropped to a circle: shrink into the safe zone.
+    for name, px in [('icons/Icon-maskable-192.png', 192), ('icons/Icon-maskable-512.png', 512)]:
+        m = Image.new('RGB', (px, px), BG)
+        inner = round(px * 0.8)
+        m.paste(full.resize((inner, inner), Image.LANCZOS), ((px - inner) // 2,) * 2)
+        m.save(web / name)
+    sheet('icon-preview', 'B · Ticker, as built', full, Image.open(
+        REPO / 'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png'), 'Aura', small=small)
+
+
 # ------------------------------------------------------------------ the sheets
 
 def squircle(size):
@@ -159,7 +207,8 @@ def masked(icon, size):
     return i
 
 
-def sheet(name, title, icon, launch_im, label):
+def sheet(name, title, icon, launch_im, label, small=None):
+    small = small or icon
     W, H = 1500, 1000
     im = Image.new('RGB', (W, H), (28, 29, 32))
     d = ImageDraw.Draw(im)
@@ -188,20 +237,31 @@ def sheet(name, title, icon, launch_im, label):
     im.paste(big, (48, 470), big)
     x = 400
     for s, cap in [(180, '60 pt @3x'), (120, '40 pt @3x'), (58, '29 pt @2x'), (40, '20 pt @2x')]:
-        i = masked(icon, s)
+        i = masked(icon if s >= 100 else small, s)
         im.paste(i, (x, 790 - s), i)
         d.text((x, 805), cap, font=font('Inter-Variable', 16), fill=INK3)
         x += s + 40
     d.text((48, 805), '1024 master', font=font('Inter-Variable', 16), fill=INK3)
     # Launch screen at 390×844, shown at half size.
     lw, lh = 390, 844
-    lim = launch_im.resize((lw, lh), Image.LANCZOS)
+    if launch_im.size[0] < launch_im.size[1]:
+        lim = launch_im.resize((lw, lh), Image.LANCZOS)
+    else:  # just the launch image: centre it on bg at its 3x size / 2
+        lim = Image.new('RGB', (lw * 2, lh * 2), BG)
+        w, h = (round(v * 2 / 3) for v in launch_im.size)
+        lim.paste(launch_im.convert('RGB').resize((w, h), Image.LANCZOS), ((lw * 2 - w) // 2, (lh * 2 - h) // 2))
+        lim = lim.resize((lw, lh), Image.LANCZOS)
     lx, ly = W - lw - 60, 110
     im.paste(lim, (lx, ly))
     d.rectangle((lx - 1, ly - 1, lx + lw, ly + lh), outline=LINE_STRONG)
     d.text((lx, ly - 34), 'Launch screen', font=sf, fill=INK3)
     im.save(OUT / f'{name}.png')
 
+
+if INSTALL:
+    install()
+    print('ok')
+    sys.exit()
 
 directions = [
     ('A-masthead', 'A · Masthead: one serif capital, like an old bank', icon_masthead(), launch('masthead'), 'Aura'),

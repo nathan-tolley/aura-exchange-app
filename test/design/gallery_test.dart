@@ -9,9 +9,9 @@ import '../support/golden.dart';
 /// Every state in the State Gallery builds, on its own, without errors or
 /// overflow. A state that breaks fails here, not halfway down the gallery.
 void main() {
-  test('the gallery covers all 39 components', () {
+  test('the gallery covers all 40 components', () {
     final names = componentStates.map((s) => s.name).toSet();
-    expect(names, hasLength(39));
+    expect(names, hasLength(40));
     expect(componentStates.every((s) => s.states.isNotEmpty), isTrue);
   });
 

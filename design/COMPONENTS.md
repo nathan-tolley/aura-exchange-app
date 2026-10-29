@@ -342,6 +342,15 @@ One photo a filing carries as a receipt, or the slot that adds one. A 64pt squar
 
 Added in A4 (2026-10-28) for receipts when filing; no separate preview. The State Gallery draws photos as flat stand-ins (`fixtures/photos.dart`).
 
+## AuraWordmark
+
+The brand lockup: "Aura Exchange" in Inter 17pt semibold (`ink`), and 8pt under it the exchange's own quote in the tape's terminal style, `$AURA 1,000.00` in `ink-secondary` and `▲ 7.79%` in `up` at w500, 11pt mono. It's a logo: fixed size (240×56pt, centred), no text scaling, read by VoiceOver as "Aura Exchange".
+
+- The launch screen is this widget rendered: `test/goldens/brand_test.dart` writes the `LaunchImage` set, on `bg`. The boot screen shows it in the same place, so the app takes over without a jump.
+- Only on the launch and boot screens. The app icon is the same idea at icon size (`tool/brand.py`): `AURA` in the mono over `▲ 7.79%` in `up`.
+
+Added 2026-10-28 for branding (direction B, "Ticker"; the others are in `design/brand/directions/`).
+
 ## AuraSkeleton
 
 Where content is loading, at the content's real size: `raised` blocks (`raised-2` inside sheets) that breathe slowly, and hold still with Reduce Motion. Never a full-screen spinner.

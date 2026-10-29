@@ -42,6 +42,7 @@ import '../widgets/aura_tape.dart';
 import '../widgets/aura_text_field.dart';
 import '../widgets/aura_toast.dart';
 import '../widgets/aura_toggle_row.dart';
+import '../widgets/aura_wordmark.dart';
 import 'fixtures/photos.dart';
 import 'gallery_screen.dart';
 
@@ -892,6 +893,12 @@ final List<GallerySection> componentStates = [
           ),
         const AuraPhotoTile.add(label: 'Add a receipt', onTap: _tap),
       ]),
+    ),
+  ]),
+  GallerySection('Wordmark', [
+    GalleryState(
+      'The lockup, as on the launch and boot screens',
+      (_) => const AuraWordmark(),
     ),
   ]),
   GallerySection('Skeleton', [
